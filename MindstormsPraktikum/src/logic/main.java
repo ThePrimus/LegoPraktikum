@@ -59,7 +59,6 @@ public class main {
 		rightMotor.setSpeed(1000);
 		
 		LCD.clear();	// Make sure display is clear before the menu is displayed
-		LCD.clear();
 		
 		/*
 		EV3 ev3 = (EV3) BrickFinder.getLocal();
