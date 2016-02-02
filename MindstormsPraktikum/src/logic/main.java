@@ -48,7 +48,8 @@ public class main {
 	
 	
 	
-	public static void main(String[] args) {		
+	public static void main(String[] args) {	
+		
 		EV3LargeRegulatedMotor leftMotor = new EV3LargeRegulatedMotor(MotorPort.A);
 		leftMotor.setAcceleration(1000);
 		leftMotor.setSpeed(1000);
@@ -58,7 +59,7 @@ public class main {
 		rightMotor.setSpeed(1000);
 		
 		LCD.clear();	// Make sure display is clear before the menu is displayed
-	
+		LCD.clear();
 		
 		/*
 		EV3 ev3 = (EV3) BrickFinder.getLocal();
