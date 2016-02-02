@@ -13,6 +13,7 @@ import parkour.Bridge;
 import parkour.ChainBridge;
 import parkour.Elevator;
 import parkour.EndBoss;
+import parkour.FinalSpurt;
 import parkour.Maze;
 import parkour.Rolls;
 import parkour.Seesaw;
@@ -37,7 +38,8 @@ public class main {
 	public static final int PROGRAM_ROLLS = 4;
 	public static final int PROGRAM_SEESAW = 5;
 	public static final int PROGRAM_ELEVATOR = 6;
-	public static final int PROGRAM_FINAL_BOSS = 7;
+	public static final int PROGRAM_FINAL_SPURT = 7;
+	public static final int PROGRAM_FINAL_BOSS = 8;
 	
 	// All sensors of the robot
 	
@@ -63,10 +65,10 @@ public class main {
 		
 		keys.waitForAnyPress();
 		*/
-		/*for (int i = 0; i < 10000; i++) {
+		for (int i = 0; i < 10000; i++) {
 			leftMotor.backward();
 			rightMotor.backward();
-		}*/
+		}
 		
 		
 		
@@ -84,7 +86,7 @@ public class main {
 		*/
 		
 		// stop program when pressing ESCAPE
-		/*Button.ESCAPE.addButtonListener(new ButtonListener() {
+		/*Button..addButtonListener(new ButtonListener() {
 			public void buttonPressed(Button arg0) {
 				PROGRAM_STOP = true;
 			}
@@ -107,7 +109,8 @@ public class main {
 									"Rollen",
 									"Wippe",
 									"Aufzug",
-									"Endgegner" };
+									"Endspurt",
+									"Endgegner"};
 				
 			TextMenu menu = new TextMenu(viewItems, 1);
 			//LCD.clear();
@@ -130,36 +133,49 @@ public class main {
 				LCD.clear();
 				LCD.drawString("Mode: Linie folgen", 0, 0);
 				PROGRAM_STATUS = PROGRAM_FOLLOW_LINE;
+				followLine();
 			} else if (selection == 2) {
 				// Bridge
 				LCD.clear();
 				LCD.drawString("Mode: Bruecke", 0, 0);
 				PROGRAM_STATUS = PROGRAM_BRIDGE;
+				bridge();
 			} else if (selection == 3) {
-				// Bridge
+				// Chain bridge
 				LCD.clear();
 				LCD.drawString("Mode: Haengebruecke", 0, 0);
 				PROGRAM_STATUS = PROGRAM_CHAIN_BRDIGE;
+				chainBridge();
 			} else if (selection == 4) {
-				// Bridge
+				// Rolls
 				LCD.clear();
 				LCD.drawString("Mode: Rollen", 0, 0);
 				PROGRAM_STATUS = PROGRAM_ROLLS;
+				rolls();
 			} else if (selection == 5) {
-				// Bridge
+				// Seesaw
 				LCD.clear();
 				LCD.drawString("Mode: Wippe", 0, 0);
 				PROGRAM_STATUS = PROGRAM_SEESAW;
+				seesaw();
 			} else if (selection == 6) {
-				// Bridge
+				// Elevator
 				LCD.clear();
 				LCD.drawString("Mode: Aufzug", 0, 0);
 				PROGRAM_STATUS = PROGRAM_ELEVATOR;
+				elevator();
 			} else if (selection == 7) {
-				// Bridge
+				// Final spurt
+				LCD.clear();
+				LCD.drawString("Mode: Endspurt", 0, 0);
+				PROGRAM_STATUS = PROGRAM_FINAL_SPURT;
+				finalSpurt();
+			} else if (selection == 8) {
+				// Final boss
 				LCD.clear();
 				LCD.drawString("Mode: Endgegner", 0, 0);
 				PROGRAM_STATUS = PROGRAM_FINAL_BOSS;
+				finalBoss();
 			} 
 			
 			PROGRAM_STOP = false;
@@ -214,6 +230,13 @@ public class main {
 	 */
 	public static void elevator() {
 		Elevator elevator = new Elevator();
+	}
+	
+	/**
+	 * Initializing the final spurt.
+	 */
+	public static void finalSpurt() {
+		FinalSpurt finalSpurt = new FinalSpurt();
 	}
 	
 	/**
