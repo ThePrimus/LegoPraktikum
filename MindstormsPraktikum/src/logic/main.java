@@ -1,8 +1,9 @@
 package logic;
 
-import java.awt.Button;
-
 import lejos.hardware.BrickFinder;
+import lejos.hardware.Button;
+import lejos.hardware.Key;
+import lejos.hardware.KeyListener;
 import lejos.hardware.Keys;
 import lejos.hardware.ev3.EV3;
 import lejos.hardware.lcd.LCD;
@@ -65,10 +66,10 @@ public class main {
 		
 		keys.waitForAnyPress();
 		*/
-		for (int i = 0; i < 10000; i++) {
+		/*for (int i = 0; i < 10000; i++) {
 			leftMotor.backward();
 			rightMotor.backward();
-		}
+		}*/
 		
 		
 		
@@ -85,15 +86,18 @@ public class main {
 
 		*/
 		
-		// stop program when pressing ESCAPE
-		/*Button..addButtonListener(new ButtonListener() {
-			public void buttonPressed(Button arg0) {
+		// Stop program when the escape button is pressed on the ev3 brick
+		Button.ESCAPE.addKeyListener(new KeyListener() {
+			@Override
+			public void keyPressed(Key k) {
 				PROGRAM_STOP = true;
+				System.out.println("Success");
 			}
 
-			public void buttonReleased(Button arg0) {
+			@Override
+			public void keyReleased(Key k) {
 			}
-		});*/
+		});
 		
 		
 		/*
