@@ -9,6 +9,10 @@ import lejos.hardware.ev3.EV3;
 import lejos.hardware.lcd.LCD;
 import lejos.hardware.motor.EV3LargeRegulatedMotor;
 import lejos.hardware.port.MotorPort;
+import lejos.hardware.port.SensorPort;
+import lejos.hardware.sensor.EV3ColorSensor;
+import lejos.hardware.sensor.EV3TouchSensor;
+import lejos.hardware.sensor.EV3UltrasonicSensor;
 import lejos.utility.TextMenu;
 import parkour.Bridge;
 import parkour.ChainBridge;
@@ -43,20 +47,27 @@ public class main {
 	public static final int PROGRAM_FINAL_BOSS = 8;
 	
 	// All sensors of the robot
+	private static EV3LargeRegulatedMotor leftMotor = new EV3LargeRegulatedMotor(MotorPort.A);
+	private static EV3LargeRegulatedMotor rightMotor = new EV3LargeRegulatedMotor(MotorPort.B);
+	private static EV3ColorSensor light = new EV3ColorSensor(SensorPort.S1);
+	private static EV3UltrasonicSensor sonic = new EV3UltrasonicSensor(SensorPort.S2);
+	private static EV3TouchSensor touchLeft = new EV3TouchSensor(SensorPort.S3);
+	private static EV3TouchSensor touchRight = new EV3TouchSensor(SensorPort.S4);
 	
 	
+	// The class that handles the movement and navigation of the robot.
+	private static Drive drive = new Drive(leftMotor, rightMotor);
 	
 	
-	
+	/**
+	 * Main class. Initializes the main menu that enables the user to select
+	 * a certain obstacle mode.
+	 * 
+	 * @param args program arguments
+	 */
 	public static void main(String[] args) {	
 		
-		EV3LargeRegulatedMotor leftMotor = new EV3LargeRegulatedMotor(MotorPort.A);
-		leftMotor.setAcceleration(1000);
-		leftMotor.setSpeed(1000);
-		
-		EV3LargeRegulatedMotor rightMotor = new EV3LargeRegulatedMotor(MotorPort.B);
-		rightMotor.setAcceleration(1000);
-		rightMotor.setSpeed(1000);
+		drive.moveForward(drive.maxSpeed());
 		
 		LCD.clear();	// Make sure display is clear before the menu is displayed
 		
@@ -66,10 +77,10 @@ public class main {
 		
 		keys.waitForAnyPress();
 		*/
-		/*for (int i = 0; i < 10000; i++) {
-			leftMotor.backward();
-			rightMotor.backward();
-		}*/
+		for (int i = 0; i < 10000; i++) {
+			leftMotor.forward();
+			rightMotor.forward();
+		}
 		
 		
 		
