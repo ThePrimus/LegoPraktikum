@@ -7,6 +7,7 @@ import lejos.hardware.Keys;
 import lejos.hardware.ev3.EV3;
 import lejos.hardware.lcd.LCD;
 import lejos.hardware.motor.EV3LargeRegulatedMotor;
+import lejos.hardware.motor.EV3MediumRegulatedMotor;
 import lejos.hardware.port.MotorPort;
 import lejos.hardware.port.SensorPort;
 import lejos.hardware.sensor.EV3ColorSensor;
@@ -49,10 +50,11 @@ public class main {
 	// All sensors of the robot
 	private static EV3LargeRegulatedMotor leftMotor = new EV3LargeRegulatedMotor(MotorPort.A);
 	private static EV3LargeRegulatedMotor rightMotor = new EV3LargeRegulatedMotor(MotorPort.B);
+	private static EV3MediumRegulatedMotor sonicMotor = new EV3MediumRegulatedMotor(MotorPort.C);
 	private static EV3ColorSensor colorSensor = new EV3ColorSensor(SensorPort.S1);
-	private static EV3UltrasonicSensor sonicSensor = new EV3UltrasonicSensor(SensorPort.S2);
-	private static EV3TouchSensor touchLeftSensor = new EV3TouchSensor(SensorPort.S3);
-	private static EV3TouchSensor touchRightSensor = new EV3TouchSensor(SensorPort.S4);
+	//private static EV3UltrasonicSensor sonicSensor = new EV3UltrasonicSensor(SensorPort.S2);
+	//private static EV3TouchSensor touchLeftSensor = new EV3TouchSensor(SensorPort.S3);
+	//private static EV3TouchSensor touchRightSensor = new EV3TouchSensor(SensorPort.S4);
 	
 	
 	// The class that handles the movement and navigation of the robot.
@@ -67,7 +69,8 @@ public class main {
 	 */
 	public static void main(String[] args) {	
 		
-		drive.moveForward(drive.maxSpeed(), drive.maxSpeed() / 2);
+		drive.moveForward(drive.maxSpeed(), drive.maxSpeed());
+		drive.turnLeft(90);
 		
 		LCD.clear();	// Make sure display is clear before the menu is displayed
 		

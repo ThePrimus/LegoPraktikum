@@ -133,7 +133,15 @@ public class Drive {
 	 * @param degree how far the robot should turn left.
 	 */
 	public void turnLeft(int degree) {
+		//leftMotor.rotate((-1) * degree * 4, true);
+		//rightMotor.rotate(degree * 4, true);
 		
+		/*final int destTacho = (int) (degree * 3.7f);
+		
+		while (leftMotor.getTachoCount() < destTacho) {
+			leftMotor.backward();
+		}
+		leftMotor.forward();*/
 	}
 	
 	/**
