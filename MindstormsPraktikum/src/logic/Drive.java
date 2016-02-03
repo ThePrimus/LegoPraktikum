@@ -132,7 +132,6 @@ public class Drive {
 		leftMotor.backward();
 		rightMotor.backward();
 	}
-	
 	/**
 	 * Moves the robot backward until "stop" of this class is called.
 	 * Uses the speed that is currently set in this class.
@@ -190,6 +189,24 @@ public class Drive {
 		rightMotor.stop();
 	}
 	
+	/**
+	 * Returns if the right motor is still moving
+	 * @return state of right motor
+	 */
+	public boolean isRightMoving()
+	{
+		return rightMotor.isMoving();
+	}
+	
+	/**
+	 * Returns if the left motor is still moving
+	 * @return state of left motor
+	 */
+	public boolean isLeftMoving()
+	{
+		return leftMotor.isMoving();
+	}
+
 	/**
 	 * Sets the speed for both motors (left and right).
 	 * 
