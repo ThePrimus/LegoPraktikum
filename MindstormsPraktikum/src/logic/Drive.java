@@ -169,6 +169,8 @@ public class Drive {
 	public void setSpeed(float speed) {
 		this.speedLeft = speed;
 		this.speedRight = speed;
+		leftMotor.setSpeed(speed);
+		rightMotor.setSpeed(speed);
 	}
 	
 	/**
@@ -178,6 +180,7 @@ public class Drive {
 	 */
 	public void setSpeedLeftMotor(float speed) {
 		this.speedLeft = speed;
+		leftMotor.setSpeed(speed);
 	}
 	
 	/**
@@ -187,6 +190,7 @@ public class Drive {
 	 */
 	public void setSpeedRightMotor(float speed) {
 		this.speedRight = speed;
+		rightMotor.setSpeed(speed);
 	}
 	
 	/**
@@ -197,6 +201,8 @@ public class Drive {
 	public void setAcceleration(int acceleration) {
 		this.accelerationLeft = acceleration;
 		this.accelerationRight = acceleration;
+		leftMotor.setAcceleration(acceleration);
+		rightMotor.setAcceleration(acceleration);
 	}
 	
 	/**
