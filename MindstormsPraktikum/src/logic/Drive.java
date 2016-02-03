@@ -1,6 +1,5 @@
 package logic;
 
-import lejos.hardware.motor.BaseRegulatedMotor;
 import lejos.hardware.motor.EV3LargeRegulatedMotor;
 
 /**

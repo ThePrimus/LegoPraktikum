@@ -52,8 +52,8 @@ public class main implements Runnable {
 	private static EV3LargeRegulatedMotor rightMotor = new EV3LargeRegulatedMotor(MotorPort.B);
 	private static EV3MediumRegulatedMotor sonicMotor = new EV3MediumRegulatedMotor(MotorPort.D);
 	private static EV3ColorSensor colorSensor = new EV3ColorSensor(SensorPort.S1);
-	//private static EV3UltrasonicSensor sonicSensor = new EV3UltrasonicSensor(SensorPort.S2);
-	//private static EV3TouchSensor touchLeftSensor = new EV3TouchSensor(SensorPort.S3);
+	private static EV3UltrasonicSensor sonicSensor = new EV3UltrasonicSensor(SensorPort.S2);
+	private static EV3TouchSensor touchLeftSensor = new EV3TouchSensor(SensorPort.S3);
 	//private static EV3TouchSensor touchRightSensor = new EV3TouchSensor(SensorPort.S4);
 	
 	
@@ -250,7 +250,9 @@ public class main implements Runnable {
 	 * Initializing the final spurt.
 	 */
 	public static void finalSpurt() {
-		FinalSpurt finalSpurt = new FinalSpurt(drive);
+		FinalSpurt finalSpurt = new FinalSpurt(drive, sonicSensor, touchLeftSensor);
+		Thread endspurtThread = new Thread(finalSpurt);
+		endspurtThread.start();
 	}
 	
 	/**
