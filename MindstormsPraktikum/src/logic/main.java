@@ -98,7 +98,7 @@ public class main implements Runnable {
 		
 		// Start GUI in separate thread.
 		Thread GUIThread = new Thread(new main());
-		GUIThread.start();
+		GUIThread.start();		
 	}
 	
 	

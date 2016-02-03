@@ -11,6 +11,22 @@ import lejos.hardware.motor.EV3LargeRegulatedMotor;
 public class Drive {
 
 	/*
+	 * The diameter of the tire in mm.
+	 */
+	private static final float TIRE_DIAMETER = 34;
+	
+	/*
+	 * The distance between the left and right tire that are mounted on the
+	 * two motors.
+	 */
+	private static final float DISTANCE_TIRES = 130;
+	
+	/*
+	 * Pi
+	 */
+	private static final float PI = 3.14159265359f; 
+	
+	/*
 	 * The left motor of the robot.
 	 */
 	private EV3LargeRegulatedMotor leftMotor;
@@ -128,29 +144,43 @@ public class Drive {
 	}
 	
 	/**
-	 * Turns the robot left by the assigned degree.
+	 * Turns the robot right by the assigned degree.
 	 * 
-	 * @param degree how far the robot should turn left.
+	 * @param degree how far the robot should turn right (degree between 0 and 360).
 	 */
-	public void turnLeft(int degree) {
-		//leftMotor.rotate((-1) * degree * 4, true);
-		//rightMotor.rotate(degree * 4, true);
+	public void turnRight(int degree) {		
+		float distanceFullCircle = DISTANCE_TIRES * PI;
+		float distanceToMove = distanceFullCircle / 360.0f * degree;
 		
-		/*final int destTacho = (int) (degree * 3.7f);
+		float distanceOneRotation = TIRE_DIAMETER * PI;
 		
-		while (leftMotor.getTachoCount() < destTacho) {
-			leftMotor.backward();
-		}
-		leftMotor.forward();*/
+		float amountRotations = distanceToMove / distanceOneRotation;
+		int degreesToRotate = (int) (amountRotations * 360.0f);
+		
+		leftMotor.rotate(degreesToRotate, true);
+		rightMotor.rotate((-1) * degreesToRotate, true);
+		leftMotor.waitComplete();		// Wait for completion of turn
+		rightMotor.waitComplete();
 	}
 	
 	/**
-	 * Turns the robot right by the assigned degree.
+	 * Turns the robot left by the assigned degree.
 	 * 
-	 * @param degree how far the robot should turn right.
+	 * @param degree how far the robot should turn left (degree between 0 and 360).
 	 */
-	public void turnRight(int degree) {
+	public void turnLeft(int degree) {
+		float distanceFullCircle = DISTANCE_TIRES * PI;
+		float distanceToMove = distanceFullCircle / 360.0f * degree;
 		
+		float distanceOneRotation = TIRE_DIAMETER * PI;
+		
+		float amountRotations = distanceToMove / distanceOneRotation;
+		int degreesToRotate = (int) (amountRotations * 360.0f);
+		
+		leftMotor.rotate((-1) * degreesToRotate, true);
+		rightMotor.rotate(degreesToRotate, true);
+		leftMotor.waitComplete();		// Wait for completion of turn
+		rightMotor.waitComplete();
 	}
 	
 	/**
