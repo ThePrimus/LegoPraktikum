@@ -20,5 +20,7 @@ public class FinalSpurt {
 	 */
 	public FinalSpurt(Drive drive) {
 		this.drive = drive;
+		
+		this.drive.moveForward(drive.maxSpeed(), drive.maxSpeed());
 	}
 }

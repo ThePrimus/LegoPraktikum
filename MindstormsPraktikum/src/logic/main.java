@@ -30,7 +30,7 @@ import parkour.Seesaw;
  * 
  * @author Group 1
  */
-public class main {
+public class main implements Runnable {
 	
 	// Current mode/state of the robot
 	public static int PROGRAM_STATUS = -1;
@@ -50,7 +50,7 @@ public class main {
 	// All sensors of the robot
 	private static EV3LargeRegulatedMotor leftMotor = new EV3LargeRegulatedMotor(MotorPort.A);
 	private static EV3LargeRegulatedMotor rightMotor = new EV3LargeRegulatedMotor(MotorPort.B);
-	private static EV3MediumRegulatedMotor sonicMotor = new EV3MediumRegulatedMotor(MotorPort.C);
+	//private static EV3MediumRegulatedMotor sonicMotor = new EV3MediumRegulatedMotor(MotorPort.C);
 	private static EV3ColorSensor colorSensor = new EV3ColorSensor(SensorPort.S1);
 	//private static EV3UltrasonicSensor sonicSensor = new EV3UltrasonicSensor(SensorPort.S2);
 	//private static EV3TouchSensor touchLeftSensor = new EV3TouchSensor(SensorPort.S3);
@@ -68,9 +68,6 @@ public class main {
 	 * @param args program arguments
 	 */
 	public static void main(String[] args) {	
-		
-		drive.moveForward(drive.maxSpeed(), drive.maxSpeed());
-		drive.turnLeft(90);
 		
 		LCD.clear();	// Make sure display is clear before the menu is displayed
 		
@@ -99,9 +96,21 @@ public class main {
 			}
 		});
 		
+		// Start GUI in separate thread.
+		Thread GUIThread = new Thread(new main());
+		GUIThread.start();
+	}
+	
+	
+	/**
+	 * Lets the GUI run in a separate thread.
+	 */
+	@Override
+	public void run() {
 		
 		/*
 		 * Creating the menu to select certain robot states/obstacles.
+		 * Run GUI/menu in new thread.
 		 */
 		while (true) {
 		
@@ -187,6 +196,7 @@ public class main {
 		}
 	}
 	
+	
 	/**
 	 * Initializing the maze mode.
 	 */
@@ -249,4 +259,5 @@ public class main {
 	public static void finalBoss() {
 		EndBoss endBoss = new EndBoss(drive);
 	}
+
 }
