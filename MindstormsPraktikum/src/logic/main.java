@@ -50,7 +50,7 @@ public class main implements Runnable {
 	// All sensors of the robot
 	private static EV3LargeRegulatedMotor leftMotor = new EV3LargeRegulatedMotor(MotorPort.A);
 	private static EV3LargeRegulatedMotor rightMotor = new EV3LargeRegulatedMotor(MotorPort.B);
-	//private static EV3MediumRegulatedMotor sonicMotor = new EV3MediumRegulatedMotor(MotorPort.C);
+	private static EV3MediumRegulatedMotor sonicMotor = new EV3MediumRegulatedMotor(MotorPort.D);
 	private static EV3ColorSensor colorSensor = new EV3ColorSensor(SensorPort.S1);
 	//private static EV3UltrasonicSensor sonicSensor = new EV3UltrasonicSensor(SensorPort.S2);
 	//private static EV3TouchSensor touchLeftSensor = new EV3TouchSensor(SensorPort.S3);
