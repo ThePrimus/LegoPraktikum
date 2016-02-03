@@ -58,6 +58,7 @@ public class Drive {
 		speedRight = rightMotor.getMaxSpeed() / 2;
 	}
 	
+	
 	/**
 	 * Moves the robot forward until "stop" of this class is called.
 	 * 
@@ -71,13 +72,57 @@ public class Drive {
 	}
 	
 	/**
-	 * Moves the robot backward until "stop" of this class is called.
+	 * Moves the robot forward until "stop" of this class is called.
+	 * 
+	 * @param speedLeftMotor the speed for the left motor
+	 * @param speedLeftMotor the speed for the right motor
+	 */
+	public void moveForward(float speedLeftMotor, float speedRightMotor) {
+		leftMotor.setSpeed(speedLeftMotor);
+		rightMotor.setSpeed(speedRightMotor);
+		leftMotor.forward();
+		rightMotor.forward();
+	}
+	
+	/**
+	 * Moves the robot forward until "stop" of this class is called.
+	 * Uses the speed that is currently set in this class.
+	 */
+	public void moveForward() {
+		leftMotor.forward();
+		rightMotor.forward();
+	}
+	
+	/**
+	 * Moves the robot forward until "stop" of this class is called.
 	 * 
 	 * @param speed the speed of the movement.
 	 */
 	public void moveBackward(float speed) {
 		leftMotor.setSpeed(speed);
 		rightMotor.setSpeed(speed);
+		leftMotor.backward();
+		rightMotor.backward();
+	}
+	
+	/**
+	 * Moves the robot backward until "stop" of this class is called.
+	 * 
+	 * @param speedLeftMotor the speed for the left motor
+	 * @param speedLeftMotor the speed for the right motor
+	 */
+	public void moveBackward(float speedLeftMotor, float speedRightMotor) {
+		leftMotor.setSpeed(speedLeftMotor);
+		rightMotor.setSpeed(speedRightMotor);
+		leftMotor.backward();
+		rightMotor.backward();
+	}
+	
+	/**
+	 * Moves the robot backward until "stop" of this class is called.
+	 * Uses the speed that is currently set in this class.
+	 */
+	public void moveBackward() {
 		leftMotor.backward();
 		rightMotor.backward();
 	}
@@ -113,8 +158,26 @@ public class Drive {
 	 * 
 	 * @param the speed to set for both motors.
 	 */
-	public void setSpeed(int speed) {
+	public void setSpeed(float speed) {
 		this.speedLeft = speed;
+		this.speedRight = speed;
+	}
+	
+	/**
+	 * Sets the speed for both motors (left and right).
+	 * 
+	 * @param the speed to set for both motors.
+	 */
+	public void setSpeedLeftMotor(float speed) {
+		this.speedLeft = speed;
+	}
+	
+	/**
+	 * Sets the speed for both motors (left and right).
+	 * 
+	 * @param the speed to set for both motors.
+	 */
+	public void setSpeedRightMotor(float speed) {
 		this.speedRight = speed;
 	}
 	

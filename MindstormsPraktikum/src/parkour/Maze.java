@@ -1,5 +1,7 @@
 package parkour;
 
+import logic.Drive;
+
 /**
  * Implements the logic to beat the maze obstacle.
  * 
@@ -7,11 +9,17 @@ package parkour;
  */
 public class Maze {
 
+	// The navigation class.
+	private Drive drive;
+	
+	
 	/**
-	 * Constructor: 
+	 * Constructor:
+	 * 
+	 * @param drive the drive class for navigation and motor control.
 	 */
-	public Maze() {
-		
+	public Maze(Drive drive) {
+		this.drive = drive;
 	}
 	
 }

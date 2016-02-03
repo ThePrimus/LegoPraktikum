@@ -1,6 +1,5 @@
 package logic;
 
-import lejos.hardware.BrickFinder;
 import lejos.hardware.Button;
 import lejos.hardware.Key;
 import lejos.hardware.KeyListener;
@@ -13,6 +12,7 @@ import lejos.hardware.port.SensorPort;
 import lejos.hardware.sensor.EV3ColorSensor;
 import lejos.hardware.sensor.EV3TouchSensor;
 import lejos.hardware.sensor.EV3UltrasonicSensor;
+import lejos.robotics.navigation.DifferentialPilot;
 import lejos.utility.TextMenu;
 import parkour.Bridge;
 import parkour.ChainBridge;
@@ -49,10 +49,10 @@ public class main {
 	// All sensors of the robot
 	private static EV3LargeRegulatedMotor leftMotor = new EV3LargeRegulatedMotor(MotorPort.A);
 	private static EV3LargeRegulatedMotor rightMotor = new EV3LargeRegulatedMotor(MotorPort.B);
-	private static EV3ColorSensor light = new EV3ColorSensor(SensorPort.S1);
-	private static EV3UltrasonicSensor sonic = new EV3UltrasonicSensor(SensorPort.S2);
-	private static EV3TouchSensor touchLeft = new EV3TouchSensor(SensorPort.S3);
-	private static EV3TouchSensor touchRight = new EV3TouchSensor(SensorPort.S4);
+	private static EV3ColorSensor colorSensor = new EV3ColorSensor(SensorPort.S1);
+	private static EV3UltrasonicSensor sonicSensor = new EV3UltrasonicSensor(SensorPort.S2);
+	private static EV3TouchSensor touchLeftSensor = new EV3TouchSensor(SensorPort.S3);
+	private static EV3TouchSensor touchRightSensor = new EV3TouchSensor(SensorPort.S4);
 	
 	
 	// The class that handles the movement and navigation of the robot.
@@ -67,7 +67,7 @@ public class main {
 	 */
 	public static void main(String[] args) {	
 		
-		drive.moveForward(drive.maxSpeed());
+		drive.moveForward(drive.maxSpeed(), drive.maxSpeed() / 2);
 		
 		LCD.clear();	// Make sure display is clear before the menu is displayed
 		
@@ -77,32 +77,18 @@ public class main {
 		
 		keys.waitForAnyPress();
 		*/
+		/*
 		for (int i = 0; i < 10000; i++) {
 			leftMotor.forward();
 			rightMotor.forward();
-		}
-		
-		
-		
-/*
-		while(true){
-			leftMotor.backward();
-			rightMotor.backward();
-			if(keys.waitForAnyEvent() > 0) {
-				rightMotor.stop();
-				leftMotor.stop();
-				break;
-			}
-		}
+		}*/
 
-		*/
 		
 		// Stop program when the escape button is pressed on the ev3 brick
 		Button.ESCAPE.addKeyListener(new KeyListener() {
 			@Override
 			public void keyPressed(Key k) {
 				PROGRAM_STOP = true;
-				System.out.println("Success");
 			}
 
 			@Override
@@ -135,7 +121,7 @@ public class main {
 			 * Menu selection. Selection number is the index of the element in the viewItems array.
 			 */
 			if (selection == -1) {
-				// ESCAPE. End loop
+				// ESCAPE button pressed. End loop
 				break;
 			} else if (selection == 0) {
 				// Maze
@@ -202,62 +188,62 @@ public class main {
 	 * Initializing the maze mode.
 	 */
 	public static void maze() {
-		Maze maze = new Maze();
+		Maze maze = new Maze(drive);
 	}
 	
 	/**
 	 * Initializing the follow line mode.
 	 */
 	public static void followLine() {
-		LineFollowing lineFollowing = new LineFollowing();
+		LineFollowing lineFollowing = new LineFollowing(drive, colorSensor);
 	}
 	
 	/**
 	 * Initializing the bridge mode.
 	 */
 	public static void bridge() {
-		Bridge bridge = new Bridge();
+		Bridge bridge = new Bridge(drive);
 	}
 	
 	/**
 	 * Initializing the chain bridge mode.
 	 */
 	public static void chainBridge() {
-		ChainBridge chainBridge = new ChainBridge();
+		ChainBridge chainBridge = new ChainBridge(drive);
 	}
 	
 	/**
 	 * Initializing the roll mode.
 	 */
 	public static void rolls() {
-		Rolls rolls = new Rolls();
+		Rolls rolls = new Rolls(drive);
 	}
 	
 	/**
 	 * Initializing the seesaw mode.
 	 */
 	public static void seesaw() {
-		Seesaw seesaw = new Seesaw();
+		Seesaw seesaw = new Seesaw(drive);
 	}
 	
 	/**
 	 * Initializing the elevator mode.
 	 */
 	public static void elevator() {
-		Elevator elevator = new Elevator();
+		Elevator elevator = new Elevator(drive);
 	}
 	
 	/**
 	 * Initializing the final spurt.
 	 */
 	public static void finalSpurt() {
-		FinalSpurt finalSpurt = new FinalSpurt();
+		FinalSpurt finalSpurt = new FinalSpurt(drive);
 	}
 	
 	/**
 	 * Initializing the final boss mode.
 	 */
 	public static void finalBoss() {
-		EndBoss endBoss = new EndBoss();
+		EndBoss endBoss = new EndBoss(drive);
 	}
 }
