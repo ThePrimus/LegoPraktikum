@@ -223,6 +223,8 @@ public class main implements Runnable {
 	 */
 	public static void followLine() {
 		LineFollowing lineFollowing = new LineFollowing(drive, colorSensor);
+		obstacleThread = new Thread(lineFollowing);
+		obstacleThread.start();
 	}
 	
 	/**

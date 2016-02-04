@@ -1,7 +1,7 @@
 package logic;
 
 import lejos.hardware.sensor.EV3ColorSensor;
-import lejos.robotics.filter.OffsetCorrectionFilter;
+
 
 import java.lang.Math;
 
@@ -10,12 +10,9 @@ import java.lang.Math;
  * 
  * @author Group 1
  */
-public class LineFollowing {
+public class LineFollowing implements Runnable {
 	
 	private  EV3ColorSensor sensor;
-	private OffsetCorrectionFilter filter;
-	private float RedOffset;
-	private float BlackOffset;
 	private float redMax;
 	
 	// The navigation class.
@@ -30,12 +27,10 @@ public class LineFollowing {
 	public LineFollowing(Drive drive, EV3ColorSensor sensor) {
 		this.drive = drive;
 		this.sensor = sensor;
-		RedOffset = 0;
-		BlackOffset = 0;
+
 		redMax = 0;
 		
-		//sensor.setCurrentMode(0);
-		sensor.setFloodlight(lejos.robotics.Color.RED);
+		sensor.setCurrentMode("Red");
 	}
 	
 	/**
@@ -69,10 +64,9 @@ public class LineFollowing {
 		redMax = (redMaxR + redMaxL)/2;
 	}
 	
-	public void FollowLine(){
+	private void FollowLine(){
 		FindMaxIntensity();
-		filter = new OffsetCorrectionFilter(sensor);
-		float[] sample = new float[filter.sampleSize()];
+		float[] sample = new float[sensor.sampleSize()];
 		float lastSample = 0;
 		boolean rightTurn = false;
 		int count = 0;
@@ -81,12 +75,12 @@ public class LineFollowing {
 		
 		while(drive.isLeftMoving() && drive.isRightMoving())
 		{	
-			filter.fetchSample(sample, 0);
+			sensor.fetchSample(sample, 0);
 			
 			if(sample[0] < (redMax * 0.8) || !rightTurn){
 				while(sample[0] < redMax * 0.8)
 				{
-					filter.fetchSample(sample, 0);
+					sensor.fetchSample(sample, 0);
 					drive.turnRight(5);
 				}
 				rightTurn = true;
@@ -95,7 +89,7 @@ public class LineFollowing {
 			if(sample[0] < (redMax * 0.8) || rightTurn){
 				while(sample[0] < (redMax * 0.8))
 				{
-					filter.fetchSample(sample, 0);
+					sensor.fetchSample(sample, 0);
 					drive.turnLeft(5);
 					rightTurn = false;
 				}
@@ -109,6 +103,9 @@ public class LineFollowing {
 			}
 		}
 		
+	}
+	public void run(){
+		FollowLine();
 	}
 		
 }
