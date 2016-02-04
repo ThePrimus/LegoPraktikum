@@ -3,8 +3,6 @@ package logic;
 import lejos.hardware.Button;
 import lejos.hardware.Key;
 import lejos.hardware.KeyListener;
-import lejos.hardware.Keys;
-import lejos.hardware.ev3.EV3;
 import lejos.hardware.lcd.LCD;
 import lejos.hardware.motor.EV3LargeRegulatedMotor;
 import lejos.hardware.motor.EV3MediumRegulatedMotor;
@@ -13,7 +11,6 @@ import lejos.hardware.port.SensorPort;
 import lejos.hardware.sensor.EV3ColorSensor;
 import lejos.hardware.sensor.EV3TouchSensor;
 import lejos.hardware.sensor.EV3UltrasonicSensor;
-import lejos.robotics.navigation.DifferentialPilot;
 import lejos.utility.TextMenu;
 import parkour.Bridge;
 import parkour.ChainBridge;
@@ -265,7 +262,7 @@ public class main implements Runnable {
 	 * Initializing the final spurt.
 	 */
 	public static void finalSpurt() {
-		FinalSpurt finalSpurt = new FinalSpurt(drive, sonicSensor, touchLeftSensor);
+		FinalSpurt finalSpurt = new FinalSpurt(drive, sonicSensor, touchLeftSensor, sonicMotor);
 		obstacleThread = new Thread(finalSpurt);
 		obstacleThread.start();
 	}
