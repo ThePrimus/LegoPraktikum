@@ -34,7 +34,7 @@ public class LineFollowing {
 		BlackOffset = 0;
 		redMax = 0;
 		
-		sensor.setCurrentMode(0);
+		//sensor.setCurrentMode(0);
 		sensor.setFloodlight(lejos.robotics.Color.RED);
 	}
 	
