@@ -60,7 +60,7 @@ public class Bridge {
 			 Delay.msDelay(1000);
 		}
 		
-		bridgeRoutine();
+	//	bridgeRoutine();
 	}
 
 
