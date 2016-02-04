@@ -236,7 +236,9 @@ public class main implements Runnable {
 	 * Initializing the chain bridge mode.
 	 */
 	public static void chainBridge() {
-		ChainBridge chainBridge = new ChainBridge(drive);
+		ChainBridge chainBridge = new ChainBridge(drive, sonicSensor, sonicMotor);
+		obstacleThread = new Thread (chainBridge);
+		obstacleThread.start();
 	}
 	
 	/**
