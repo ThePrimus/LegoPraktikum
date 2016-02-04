@@ -1,7 +1,14 @@
 package logic;
 
+import lejos.hardware.BrickFinder;
+import lejos.hardware.Button;
+import lejos.hardware.Key;
+import lejos.hardware.KeyListener;
+import lejos.hardware.Keys;
+import lejos.hardware.ev3.EV3;
+import lejos.hardware.lcd.LCD;
 import lejos.hardware.sensor.EV3ColorSensor;
-
+import lejos.utility.Delay;
 
 import java.lang.Math;
 
@@ -18,7 +25,7 @@ public class LineFollowing implements Runnable {
 	// The navigation class.
 	private Drive drive;
 	
-	
+	public static boolean terminate;
 	/**
 	 * Constructor: 
 	 * 
@@ -27,8 +34,8 @@ public class LineFollowing implements Runnable {
 	public LineFollowing(Drive drive, EV3ColorSensor sensor) {
 		this.drive = drive;
 		this.sensor = sensor;
-
-		redMax = 0;
+		terminate = false;
+		redMax = 1;
 		
 		sensor.setCurrentMode("Red");
 	}
@@ -62,22 +69,43 @@ public class LineFollowing implements Runnable {
 		drive.turnRight(90);
 		
 		redMax = (redMaxR + redMaxL)/2;
+		
+		//LCD.clear();
+		LCD.drawString(String.valueOf(redMax), 0, 10);
+		
+		Delay.msDelay(5000);
 	}
 	
 	private void FollowLine(){
-		FindMaxIntensity();
+		//FindMaxIntensity();
 		float[] sample = new float[sensor.sampleSize()];
 		float lastSample = 0;
-		boolean rightTurn = false;
 		int count = 0;
+		char lastState = '\0';
+		int speed = 100;
+		EV3 ev3 = (EV3) BrickFinder.getLocal();
+		Keys key = ev3.getKeys();
+		drive.moveForward(speed/2, speed/2);
 		
-		drive.moveForward(drive.maxSpeed(), drive.maxSpeed());
 		
-		while(drive.isLeftMoving() && drive.isRightMoving())
-		{	
+		
+		while(count <= 50000){	
 			sensor.fetchSample(sample, 0);
+		
 			
-			if(sample[0] < (redMax * 0.8) || !rightTurn){
+			if(sample[0] > redMax * 0.6) {
+				drive.moveForward(0, speed);
+			}
+			if(sample[0] < redMax * 0.4) {
+				drive.moveForward(speed, 0);
+			}
+			else
+			{
+				drive.moveForward(speed/2, speed/2);
+			}
+			
+			count++;
+			/*if(sample[0] < (redMax * 0.8) || !rightTurn){
 				while(sample[0] < redMax * 0.8)
 				{
 					sensor.fetchSample(sample, 0);
@@ -100,10 +128,12 @@ public class LineFollowing implements Runnable {
 			if(count == 100)
 			{
 				drive.stop();
-			}
+			} */
 		}
+		drive.stop();
 		
 	}
+	@Override
 	public void run(){
 		FollowLine();
 	}
