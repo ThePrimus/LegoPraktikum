@@ -243,7 +243,9 @@ public class main implements Runnable {
 	 * Initializing the roll mode.
 	 */
 	public static void rolls() {
-		Rolls rolls = new Rolls(drive);
+		Rolls rolls = new Rolls(drive, sonicSensor, sonicMotor);
+		obstacleThread = new Thread(rolls);
+		obstacleThread.start();
 	}
 	
 	/**

@@ -20,6 +20,11 @@ public class FinalSpurt implements Runnable {
 	private static final float DISTANCE_TO_TURN_RIGHT = 5.0f;
 	
 	/*
+	 * Distance to the right wall until the robot movement needs to be corrected.
+	 */
+	private static final float DISTANCE_TO_CORRECT_MOVEMENT = 0.15f;
+	
+	/*
 	 * The position of the sonic motor, so that the sonic sensor faces sideways.
 	 */
 	private static final int SONIC_POSITION_SIDEWAYS = 50;
@@ -75,7 +80,6 @@ public class FinalSpurt implements Runnable {
 		//sonicMotor.waitComplete();
 		
 		this.drive.moveForward((int) (drive.maxSpeed() * 0.97), drive.maxSpeed());
-		Delay.msDelay(1000);
 		
 		boolean programRunning = true;
 		
@@ -87,11 +91,11 @@ public class FinalSpurt implements Runnable {
 			
 			if (touchSensorResults[0] == 1) {*/
 				
-				// Left touch sensor pressed: check the sonic sensor when to turn right
 				float[] sonicSensorResults = new float [sonicSensor.sampleSize()];
 				sonicSensor.fetchSample(sonicSensorResults, 0);
 				
-				if (sonicSensorResults[0] < 0.15f) {
+				if (sonicSensorResults[0] < DISTANCE_TO_CORRECT_MOVEMENT) {
+					// Sonic sensor encounters a needed movement correction
 					drive.turnLeft(20);
 					//drive.stop();
 					//drive.moveForward((int) (drive.maxSpeed() * 0.7), (int) (drive.maxSpeed() * 1.0));
