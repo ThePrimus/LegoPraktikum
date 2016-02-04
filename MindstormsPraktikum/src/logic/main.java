@@ -32,6 +32,16 @@ import parkour.Seesaw;
  */
 public class main implements Runnable {
 	
+	/*
+	 * Thread that executes the solution algorithm for the obstacles.
+	 */
+	private static Thread obstacleThread;
+	
+	/*
+	 * Thread that runs the GUI (main menu).
+	 */
+	private static Thread GUIThread;
+	
 	// Current mode/state of the robot
 	public static int PROGRAM_STATUS = -1;
 	public static boolean PROGRAM_STOP = false;
@@ -71,24 +81,23 @@ public class main implements Runnable {
 		
 		LCD.clear();	// Make sure display is clear before the menu is displayed
 		
-		/*
-		EV3 ev3 = (EV3) BrickFinder.getLocal();
-		Keys keys = ev3.getKeys();
-		
-		keys.waitForAnyPress();
-		*/
-		/*
-		for (int i = 0; i < 10000; i++) {
-			leftMotor.forward();
-			rightMotor.forward();
-		}*/
-
-		
 		// Stop program when the escape button is pressed on the ev3 brick
 		Button.ESCAPE.addKeyListener(new KeyListener() {
 			@Override
 			public void keyPressed(Key k) {
 				PROGRAM_STOP = true;
+				drive.stop();
+				
+				if (obstacleThread != null) {
+					obstacleThread.interrupt();
+					GUIThread.interrupt();
+					
+				}
+				
+				// Start the GUI thread again => main menu should be shown
+				// when the obstacle program has been interrupted
+				GUIThread = new Thread(new main());
+				GUIThread.run();
 			}
 
 			@Override
@@ -97,7 +106,7 @@ public class main implements Runnable {
 		});
 		
 		// Start GUI in separate thread.
-		Thread GUIThread = new Thread(new main());
+		GUIThread = new Thread(new main());
 		GUIThread.start();		
 	}
 	
@@ -123,7 +132,8 @@ public class main implements Runnable {
 									"Wippe",
 									"Aufzug",
 									"Endspurt",
-									"Endgegner"};
+									"Endgegner",
+									"Exit"};
 				
 			TextMenu menu = new TextMenu(viewItems, 1);
 			//LCD.clear();
@@ -189,7 +199,11 @@ public class main implements Runnable {
 				LCD.drawString("Mode: Endgegner", 0, 0);
 				PROGRAM_STATUS = PROGRAM_FINAL_BOSS;
 				finalBoss();
-			} 
+			} else if (selection == 9) {
+				LCD.clear();
+				PROGRAM_STOP = true;
+				System.exit(0);
+			}
 			
 			PROGRAM_STOP = false;
 			PROGRAM_STATUS = -1;
@@ -209,6 +223,8 @@ public class main implements Runnable {
 	 */
 	public static void followLine() {
 		LineFollowing lineFollowing = new LineFollowing(drive, colorSensor);
+		obstacleThread = new Thread(lineFollowing);
+		obstacleThread.start();
 	}
 	
 	/**
@@ -252,8 +268,8 @@ public class main implements Runnable {
 	 */
 	public static void finalSpurt() {
 		FinalSpurt finalSpurt = new FinalSpurt(drive, sonicSensor, touchLeftSensor);
-		Thread endspurtThread = new Thread(finalSpurt);
-		endspurtThread.start();
+		obstacleThread = new Thread(finalSpurt);
+		obstacleThread.start();
 	}
 	
 	/**
