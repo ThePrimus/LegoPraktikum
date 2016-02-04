@@ -229,7 +229,8 @@ public class main implements Runnable {
 	 * Initializing the bridge mode.
 	 */
 	public static void bridge() {
-		Bridge bridge = new Bridge(drive);
+		Bridge bridge = new Bridge(drive, sonicMotor, leftMotor, rightMotor, sonicSensor);
+		bridge.run();
 	}
 	
 	/**
