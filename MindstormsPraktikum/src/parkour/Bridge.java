@@ -24,7 +24,8 @@ public class Bridge {
 	private EV3UltrasonicSensor sonicSensor;
 	
 	
-	private final int SONICS_SENSOR_POS = 90;
+	private final int SONIC_SENSOR_WALL_POS = -30;
+	private final int SONIC_SENSOR_GROUND_POS = -90;
 	private SampleProvider distanceProvider;
 	
 	
@@ -46,19 +47,38 @@ public class Bridge {
 		this.distanceProvider = sonicSensor.getDistanceMode();
 	}
 	
+	public int standLeft = 100;
+	public int standRight = 80;
+	public int standRightCorrection = 120;
+	
 	public void run(){
 		initSonicMotor();
-	//	sonicTest();
+		float [] samples = new float[distanceProvider.sampleSize()];
+		for(int i = 0; i <= 10; i++) {
+			 distanceProvider.fetchSample(samples, 0);
+			 LCD.drawString(String.valueOf(samples[0]), 0, 0);
+			 Delay.msDelay(1000);
+		}
 		
-	//	drive.moveBackward(500, 400);
-	//	float [] samples = new float[distanceProvider.sampleSize()];
-		
-	//	while(!(samples[0] > DISTANCE_TO_GROUND)){
-			
-	//	}
+	//	bridgeRoutine();
 	}
 
 
+
+	private void bridgeRoutine() {
+		float [] samples = new float[distanceProvider.sampleSize()];
+		float curPos = 0;
+		while(true){
+			 distanceProvider.fetchSample(samples, 0);
+			 curPos = samples[0];
+			 if(curPos > DISTANCE_TO_GROUND) {
+				 drive.setSpeedLeftMotor(standRightCorrection);
+			 } else {
+				 drive.moveForward(standLeft, standRight);	
+			 }
+		}
+		
+	}
 
 	private void sonicTest() {
 		float [] samples = new float[distanceProvider.sampleSize()];
@@ -70,51 +90,14 @@ public class Bridge {
 		}
 		
 	}
+	
+	
 
 	private void initSonicMotor() {
-
-		
-		//sonicMotor.rotateTo(SONICS_SENSOR_POS);
-		/*
-		if(Math.abs(distanceProvider.sampleSize() - INITIAL_POS) <= 5){
-			return;
-		} else {
-			initSonicMotor();
-		}
-		*/
-	}
-
-	public Bridge(Drive drive2, EV3MediumRegulatedMotor sonicMotor) {
-	//	float pos = sonicMotor.getPosition();
-	//	for(int i = 0; i <= 1000; i++) {
-	//		pos = sonicMotor.getPosition();
-		//	LCD.drawString(String.valueOf(pos), 0, 0);
-		//	Delay.msDelay(2000);
-		//	LCD.clear();
-	//	}
-		
-		
-		sonicMotor.rotate(90);
-		/*
-		
-		for(int i = 0; i <= 90; i++){
-			sonicMotor.rotate(1);
-			LCD.drawString(String.valueOf(sonicMotor.getPosition()), 0, 0);
-			Delay.msDelay(1000);
-			LCD.clear();
-		}
-	*/
-	
-	//	sonicMotor.setSpeed(200);
-		//sonicMotor.rotateTo(0);
-		//Delay.msDelay(1000);
-		//sonicMotor.rotate(90);
-/*
-		Delay.msDelay(2000);
-		sonicMotor.rotateTo(180);
-
-		Delay.msDelay(2000);
-		sonicMotor.rotate(90);
-		*/
+		sonicMotor.rotate(SONIC_SENSOR_WALL_POS,true);
+		Delay.msDelay(1000);
+		sonicMotor.rotate(SONIC_SENSOR_GROUND_POS, true);
+		Delay.msDelay(1000);
+	//	sonicMotor.rotate(-SONIC_SENSOR_GROUND_POS, true);
 	}
 }
