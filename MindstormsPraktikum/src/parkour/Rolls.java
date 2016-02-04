@@ -16,7 +16,9 @@ public class Rolls implements Runnable {
 	 */
 	private static final float DISTANCE_TO_CORRECT_MOVEMENT = 0.10f;
 	
-	// The navigation class.
+	/*
+	 * The navigation class.
+	 */
 	private Drive drive;
 	
 	/*
@@ -44,11 +46,10 @@ public class Rolls implements Runnable {
 	
 	
 	/**
-	 * Solution for final spurt obstacle.
+	 * Solution for the rolls/swamp obstacle.
 	 *
-	 * Idea: move to the left wall and move along that as fast as possible, until
-	 * the sonic sensor measures a higher distance than the width of the path. Then
-	 * turn right to the next obstacle.
+	 * Idea: move forward until the bar code is scanned, that informs about the end of the
+	 * obstacle. Correct movement to left if a low distance to the right wall is measured.
 	 */
 	@Override
 	public void run() {
