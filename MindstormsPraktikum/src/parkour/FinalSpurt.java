@@ -1,5 +1,6 @@
 package parkour;
 
+import lejos.hardware.motor.EV3LargeRegulatedMotor;
 import lejos.hardware.motor.EV3MediumRegulatedMotor;
 import lejos.hardware.sensor.EV3TouchSensor;
 import lejos.hardware.sensor.EV3UltrasonicSensor;
@@ -49,6 +50,9 @@ public class FinalSpurt implements Runnable {
 	 */
 	private EV3MediumRegulatedMotor sonicMotor;
 	
+	private EV3LargeRegulatedMotor leftMotor;
+	private EV3LargeRegulatedMotor rightMotor;
+	
 	
 	
 	/**
@@ -57,11 +61,13 @@ public class FinalSpurt implements Runnable {
 	 * @param drive the drive class for navigation and motor control.
 	 */
 	public FinalSpurt(Drive drive, EV3UltrasonicSensor sonicSensor, EV3TouchSensor touchLeftSensor,
-						EV3MediumRegulatedMotor sonicMotor) {
+						EV3MediumRegulatedMotor sonicMotor, EV3LargeRegulatedMotor leftMotor, EV3LargeRegulatedMotor rightMotor) {
 		this.drive = drive;
 		this.sonicSensor = sonicSensor;
 		this.touchSensorLeft = touchLeftSensor;
 		this.sonicMotor = sonicMotor;
+		this.leftMotor = leftMotor;
+		this.rightMotor = rightMotor;
 	}
 	
 
@@ -78,8 +84,6 @@ public class FinalSpurt implements Runnable {
 		// Make sure the sonic sensor is facing sideways
 		//sonicMotor.rotateTo(SONIC_POSITION_SIDEWAYS, true);
 		//sonicMotor.waitComplete();
-		
-		this.drive.moveForward((int) (drive.maxSpeed() * 0.97), drive.maxSpeed());
 		
 		boolean programRunning = true;
 		
