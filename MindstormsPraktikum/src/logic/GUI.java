@@ -251,7 +251,9 @@ public class GUI {
 	 * Initializing the maze mode.
 	 */
 	private void maze() {
+
 		//Maze maze = new Maze(drive);
+
 	}
 	
 	/*
@@ -278,7 +280,7 @@ public class GUI {
 	 * Initializing the chain bridge mode.
 	 */
 	private void chainBridge() {
-		this.chainBridge = new ChainBridge(drive, sonicSensor, sonicMotor);
+		this.chainBridge = new ChainBridge(drive, sonicSensor, sonicMotor, colorSensor);
 		chainBridge.run();
 	}
 	
