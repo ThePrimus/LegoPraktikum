@@ -311,20 +311,11 @@ public class Drive {
 				/ 2.0f;
 	}
 
-	/**
-	 * Lets the left motor run backwards at a given speed
-	 * 
-	 * @param speed
-	 */
+
 	public void leftBackward(float speed) {
 		leftMotor.setSpeed(speed);
 		leftMotor.backward();
 	}
-	/**
-	 * Lets the left motor run backwards at a given speed
-	 * 
-	 * @param speed
-	 */
 	public void rightBackward(float speed) {
 		rightMotor.setSpeed(speed);
 		rightMotor.backward();

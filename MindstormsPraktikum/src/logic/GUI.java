@@ -247,20 +247,18 @@ public class GUI {
 	 * Initializing the maze mode.
 	 */
 	private void maze() {
-		Maze maze = new Maze(drive, sonicSensor, sonicMotor, leftMotor,
-				leftMotor, touchLeftSensor, touchLeftSensor);
-
+		Maze maze = new Maze(drive, sonicSensor, sonicMotor, touchLeftSensor,
+				touchLeftSensor);
 		// Maze maze = new Maze(drive);
 	}
 
 	/*
-	 * Initializing the follow line mode.
+	 * Initializing the follow line mode. <<<<<<< HEAD
 	 */
 
 	private void followLine() {
 		this.lineFollowing = new LineFollowing(drive, colorSensor);
-		lineFollowing.runt();
-
+		lineFollowing.run();
 	}
 
 	/*
@@ -310,7 +308,7 @@ public class GUI {
 	 */
 	private void finalSpurt() {
 		FinalSpurt finalSpurt = new FinalSpurt(drive, sonicSensor,
-				touchLeftSensor, sonicMotor, leftMotor, rightMotor);
+				touchLeftSensor, sonicMotor);
 		obstacleThread = new Thread(finalSpurt);
 		obstacleThread.start();
 	}
