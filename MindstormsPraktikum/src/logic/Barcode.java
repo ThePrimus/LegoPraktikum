@@ -5,7 +5,6 @@ import lejos.hardware.sensor.EV3ColorSensor;
 
 /**
  * Scans a barcode and returns the result.
- * Also barcode searching on ground?
  * 
  * @author Group 1
  */
@@ -26,15 +25,16 @@ public class Barcode implements Runnable {
 	private final int WHITE = 1;
 	
 	// The minimum color value of a white/silver element of the barcode.
-	private final float THRESHOLD_WHITE = 0.8f;
+	private final float THRESHOLD_WHITE = 0.7f;
 	
-	// The width of an element of the barcode (in millimeter).
+	// The width of an element pair of the barcode (in millimeter: one white line 
+	// (= 25mm), one black ground (= 25mm)).
 	private final float WIDTH_BARCODE_ELEMENT = 50.0f; 
 	
 	
 	
 	/**
-	 * Constructor: 
+	 * Constructor.
 	 */
 	public Barcode(Drive drive, EV3ColorSensor colorSensor) {
 		this.drive = drive;
@@ -44,6 +44,11 @@ public class Barcode implements Runnable {
 	}
 
 
+	/**
+	 * Every barcode consists of one or more single white lines that are horizontally to the
+	 * movement direction of the robot. Between a line to follow and the beginning of the barcode
+	 * are 5cm of black ground. 
+	 */
 	@Override
 	public void run() {
 		
@@ -94,7 +99,7 @@ public class Barcode implements Runnable {
 				if (position != BLACK) {
 					// Robot has previously detected a white line
 					position = BLACK;
-				} else if (barcode > 1 && traveledDistanceMM > WIDTH_BARCODE_ELEMENT) {
+				} else if (barcode >= 1 && traveledDistanceMM > WIDTH_BARCODE_ELEMENT) {
 					// Barcode completed and detected
 					programRunning = false;
 				}
@@ -102,8 +107,9 @@ public class Barcode implements Runnable {
 			
 					
 			// Reset barcode
-			if (barcode >= 9) {
+			if (barcode >= 7) {
 				barcode = 0;
+				programRunning = false;
 			}
 		}	
 	}
