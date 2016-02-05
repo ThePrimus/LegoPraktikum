@@ -22,22 +22,23 @@ import parkour.Rolls;
 import parkour.Seesaw;
 
 /**
- * Main class. Handles the program logic. Allows to start a certain obstacle mode 
- * for the robot by a key press. Each mode/obstacle is handled in a different class.
+ * Main class. Handles the program logic. Allows to start a certain obstacle
+ * mode for the robot by a key press. Each mode/obstacle is handled in a
+ * different class.
  * 
  * @author Group 1
  */
 public class GUI {
-	
+
 	/*
 	 * Thread that executes the solution algorithm for the obstacles.
 	 */
 	private Thread obstacleThread;
-	
+
 	// Current mode/state of the robot
 	public static int PROGRAM_STATUS = -1;
 	public static boolean PROGRAM_STOP = false;
-	
+
 	// Constants for the certain modes/obstacles
 	public static final int PROGRAM_FOLLOW_LINE = 0;
 	public static final int PROGRAM_MAZE = 1;
@@ -50,18 +51,20 @@ public class GUI {
 	public static final int PROGRAM_FINAL_BOSS = 8;
 	public static final int PROGRAM_EXIT = 9;
 	public static final int PROGRAM_BARCODE = 10;
-	
-	
+
 	// All sensors of the robot
-	private EV3LargeRegulatedMotor leftMotor = new EV3LargeRegulatedMotor(MotorPort.A);
-	private EV3LargeRegulatedMotor rightMotor = new EV3LargeRegulatedMotor(MotorPort.B);
-	private EV3MediumRegulatedMotor sonicMotor = new EV3MediumRegulatedMotor(MotorPort.D);
+	private EV3LargeRegulatedMotor leftMotor = new EV3LargeRegulatedMotor(
+			MotorPort.A);
+	private EV3LargeRegulatedMotor rightMotor = new EV3LargeRegulatedMotor(
+			MotorPort.B);
+	private EV3MediumRegulatedMotor sonicMotor = new EV3MediumRegulatedMotor(
+			MotorPort.D);
 	private EV3ColorSensor colorSensor = new EV3ColorSensor(SensorPort.S1);
-	private EV3UltrasonicSensor sonicSensor = new EV3UltrasonicSensor(SensorPort.S2);
+	private EV3UltrasonicSensor sonicSensor = new EV3UltrasonicSensor(
+			SensorPort.S2);
 	private EV3TouchSensor touchLeftSensor = new EV3TouchSensor(SensorPort.S3);
 	private EV3TouchSensor touchRightSensor = new EV3TouchSensor(SensorPort.S4);
-	
-	
+
 	// The class that handles the movement and navigation of the robot.
 	private Drive drive = new Drive(leftMotor, rightMotor);
 
@@ -69,16 +72,16 @@ public class GUI {
 	private Bridge bridge;
 	private ChainBridge chainBridge;
 	private LineFollowing lineFollowing;
-	
-	
-	
+
+	private Seesaw seesaw;
+
 	/**
-	 * Initializes the main menu that enables the user to select
-	 * a certain obstacle mode.
+	 * Initializes the main menu that enables the user to select a certain
+	 * obstacle mode.
 	 */
 	public GUI() {
-		
-		LCD.clear();	// Make sure display is clear before the menu is displayed
+
+		LCD.clear(); // Make sure display is clear before the menu is displayed
 
 		// Stop current obstacle program if the left button is pressed
 		Button.LEFT.addKeyListener(new KeyListener() {
@@ -87,45 +90,48 @@ public class GUI {
 				if (bridge != null) {
 					bridge.end();
 				}
-				
+
 				if (chainBridge != null) {
 					chainBridge.end();
 				}
-				if(lineFollowing != null) {
-					lineFollowing.end();
-				}
-				
 				if (lineFollowing != null) {
 					lineFollowing.end();
+				}
+
+				if (lineFollowing != null) {
+					lineFollowing.end();
+				}
+
+				if (seesaw != null) {
+					seesaw.end();
 				}
 			}
 
 			@Override
 			public void keyReleased(Key k) {
 			}
-			
+
 		});
-		
-		
+
 		// Stop program when the escape button is pressed on the ev3 brick
 		Button.ESCAPE.addKeyListener(new KeyListener() {
 			@Override
 			public void keyPressed(Key k) {
 				PROGRAM_STOP = true;
 				drive.stop();
-				
+
 				if (obstacleThread != null) {
 					obstacleThread.interrupt();
 				}
-				
-				if(bridge != null) {
+
+				if (bridge != null) {
 					bridge.end();
 				}
-				
-				if(chainBridge != null) {
+
+				if (chainBridge != null) {
 					chainBridge.end();
 				}
-				if(lineFollowing != null) {
+				if (lineFollowing != null) {
 					lineFollowing.end();
 				}
 				// Start the GUI again => main menu should be shown
@@ -138,37 +144,28 @@ public class GUI {
 			}
 		});
 
-		
-		startGUI();	
+		startGUI();
 	}
-	
-	
+
 	/*
 	 * Helper method to initialize the GUI/creating the main menu.
 	 */
 	private void startGUI() {
 		// Creating the menu to select certain robot states/obstacles.
 		while (true) {
-		
+
 			// The elements of the menu to display on the ev3 brick
-			String[] viewItems = {	"Labyrinth", 
-									"Linie folgen", 
-									"Bruecke",
-									"Haengebruecke",
-									"Rollen",
-									"Wippe",
-									"Aufzug",
-									"Endspurt",
-									"Endgegner",
-									"Exit",
-									"Barcode"};
-				
+			String[] viewItems = {"Labyrinth", "Linie folgen", "Bruecke",
+					"Haengebruecke", "Rollen", "Wippe", "Aufzug", "Endspurt",
+					"Endgegner", "Exit", "Barcode"};
+
 			TextMenu menu = new TextMenu(viewItems, 1);
-			//LCD.clear();
+			// LCD.clear();
 			int selection = menu.select();
-			
+
 			/*
-			 * Menu selection. Selection number is the index of the element in the viewItems array.
+			 * Menu selection. Selection number is the index of the element in
+			 * the viewItems array.
 			 */
 			if (selection == -1) {
 				// ESCAPE button pressed. End loop
@@ -240,20 +237,20 @@ public class GUI {
 				PROGRAM_STATUS = PROGRAM_BARCODE;
 				barcode();
 			}
-			
+
 			PROGRAM_STOP = false;
 			PROGRAM_STATUS = -1;
 		}
 	}
-	
-	
+
 	/*
 	 * Initializing the maze mode.
 	 */
 	private void maze() {
-		Maze maze = new Maze(drive, sonicSensor, sonicMotor, leftMotor, leftMotor, touchLeftSensor, touchLeftSensor);
+		Maze maze = new Maze(drive, sonicSensor, sonicMotor, leftMotor,
+				leftMotor, touchLeftSensor, touchLeftSensor);
 	}
-	
+
 	/*
 	 * Initializing the follow line mode.
 	 */
@@ -262,26 +259,28 @@ public class GUI {
 		this.lineFollowing = new LineFollowing(drive, colorSensor);
 		lineFollowing.runt();
 
-		//obstacleThread = new Thread(lineFollowing);
-		//obstacleThread.start();
+		// obstacleThread = new Thread(lineFollowing);
+		// obstacleThread.start();
 	}
-	
+
 	/*
 	 * Initializing the bridge mode.
 	 */
 	private void bridge() {
-		this.bridge = new Bridge(drive, sonicMotor, leftMotor, rightMotor, sonicSensor);
+		this.bridge = new Bridge(drive, sonicMotor, leftMotor, rightMotor,
+				sonicSensor);
 		bridge.run();
 	}
-	
+
 	/*
 	 * Initializing the chain bridge mode.
 	 */
 	private void chainBridge() {
-		this.chainBridge = new ChainBridge(drive, sonicSensor, sonicMotor, colorSensor);
+		this.chainBridge = new ChainBridge(drive, sonicSensor, sonicMotor,
+				colorSensor);
 		chainBridge.run();
 	}
-	
+
 	/*
 	 * Initializing the roll mode.
 	 */
@@ -290,37 +289,39 @@ public class GUI {
 		obstacleThread = new Thread(rolls);
 		obstacleThread.start();
 	}
-	
+
 	/*
 	 * Initializing the seesaw mode.
 	 */
 	private void seesaw() {
-		Seesaw seesaw = new Seesaw(drive);
+		this.seesaw = new Seesaw(drive, colorSensor);
+		seesaw.run();
 	}
-	
+
 	/*
 	 * Initializing the elevator mode.
 	 */
 	private void elevator() {
 		Elevator elevator = new Elevator(drive);
 	}
-	
+
 	/*
 	 * Initializing the final spurt.
 	 */
 	private void finalSpurt() {
-		FinalSpurt finalSpurt = new FinalSpurt(drive, sonicSensor, touchLeftSensor, sonicMotor, leftMotor, rightMotor);
+		FinalSpurt finalSpurt = new FinalSpurt(drive, sonicSensor,
+				touchLeftSensor, sonicMotor, leftMotor, rightMotor);
 		obstacleThread = new Thread(finalSpurt);
 		obstacleThread.start();
 	}
-	
+
 	/*
 	 * Initializing the final boss mode.
 	 */
 	private void finalBoss() {
 		EndBoss endBoss = new EndBoss(drive);
 	}
-	
+
 	/*
 	 * Start program to read a barcode.
 	 */
@@ -329,15 +330,14 @@ public class GUI {
 		obstacleThread = new Thread(barcode);
 		obstacleThread.start();
 	}
-	
-	
-	
+
 	/**
-	 * Main method. 
+	 * Main method.
 	 * 
-	 * @param args program arguments
+	 * @param args
+	 *            program arguments
 	 */
-	public static void main(String[] args) {	
+	public static void main(String[] args) {
 		new GUI();
 	}
 }
