@@ -1,14 +1,14 @@
 package parkour;
 
-import java.awt.Button;
+
 
 import lejos.hardware.lcd.LCD;
 import lejos.hardware.motor.EV3LargeRegulatedMotor;
 import lejos.hardware.motor.EV3MediumRegulatedMotor;
-import lejos.hardware.sensor.EV3TouchSensor;
 import lejos.hardware.sensor.EV3UltrasonicSensor;
 import lejos.robotics.SampleProvider;
 import lejos.utility.Delay;
+
 import logic.Drive;
 
 /**
@@ -16,7 +16,7 @@ import logic.Drive;
  * 
  * @author Group 1
  */
-public class Bridge implements Runnable {
+public class Bridge {
 
 	private static final float DISTANCE_TO_GROUND = 0.15f; // in m 
 	// The navigation class.
@@ -44,6 +44,9 @@ public class Bridge implements Runnable {
 	private boolean running = true;
 	private boolean runStartBridge = true;
 	private int standLeftCorrection;
+
+	public static boolean PROGRAM_STOP = false;
+	
 	
 	
 	/**
@@ -62,12 +65,12 @@ public class Bridge implements Runnable {
 		this.rightMotor = rightMotor;
 		this.sonicSensor = sonicSensor;
 		this.distanceProvider = sonicSensor.getDistanceMode();
-		this.standLeftCorrection = (int) drive.maxSpeed() / 5;
+		this.standLeftCorrection = (int) (drive.maxSpeed()*0.3);
 		this.standRightCorrection = (int) drive.maxSpeed();
 		this.standLeft = (int) (drive.maxSpeed());
-		this.standRight = (int) (drive.maxSpeed() / 5);
+		this.standRight = (int) (drive.maxSpeed()*0.8);
+
 	}
-	
 
 
 
@@ -80,26 +83,47 @@ public class Bridge implements Runnable {
 	}
 
 	private void bridgeRoutine() {
+		PROGRAM_STOP = false;
 		float curPos = 0;
+	//	leftMotor.setSpeed(standLeft);
+	//	leftMotor.forward();
+		
+
+	//	rightMotor.setSpeed(standRight);
+	//	rightMotor.forward();
+		
+
+		 drive.setSpeedLeftMotor(standLeft);
+		 drive.setSpeedRightMotor(standRight);
 		int count = 0;
-		drive.moveForward(standLeft, standRight);
-		LCD.clear();
-		while(count < 10){
-			drive.stop();
+		while(!PROGRAM_STOP ){
 			count++;
+			if(count > 100000) {
+				PROGRAM_STOP = true;
+			}
 			float [] samples = new float[distanceProvider.sampleSize()];
 			 distanceProvider.fetchSample(samples, 0);
-			 
 			 curPos = samples[0];
-			 LCD.drawString(String.valueOf(curPos),0,0);
-			 LCD.clear();
-			 Delay.msDelay(1000);
+			 
+
 			 if(curPos > DISTANCE_TO_GROUND) {
-				 drive.moveForward(standLeftCorrection, standRightCorrection);
-			 } else {	
-				 drive.moveForward(standLeft, standRight);
+				 drive.setSpeedLeftMotor(standLeftCorrection);
+				 drive.setSpeedRightMotor(standRightCorrection);
+				//	leftMotor.setSpeed(standLeftCorrection);					
+				//	rightMotor.setSpeed(standRightCorrection);
+				//	rightMotor.forward();
+				//	leftMotor.forward();
+			 } else {
+				 drive.setSpeedLeftMotor(standLeft);
+				 drive.setSpeedRightMotor(standRight);
+				//	leftMotor.setSpeed(standLeft);
+				//	rightMotor.setSpeed(standRight);
+				//	rightMotor.forward();
+				//	leftMotor.forward();
 			 }
+		
 		}
+		drive.stop();
 		
 	}
 
@@ -125,7 +149,6 @@ public class Bridge implements Runnable {
 	//	sonicMotor.rotate(-SONIC_SENSOR_GROUND_POS, true);
 	}
 
-	@Override
 	public void run() {
 	//	initSonicMotor();
 	//	test();
@@ -134,6 +157,10 @@ public class Bridge implements Runnable {
 	//	resetSonicMotor();
 	//	startBridgeRoutine();
 		bridgeRoutine();
+	}
+	
+	public void end() {
+		PROGRAM_STOP = true;
 	}
 
 	private void test() {
@@ -147,6 +174,7 @@ public class Bridge implements Runnable {
 	}
 
 	private void startBridgeRoutine() {
+		
 		while (runStartBridge) {
 			float [] sonicSensorResults = new float[distanceProvider.sampleSize()];
 			distanceProvider.fetchSample(sonicSensorResults, 0);
@@ -166,4 +194,5 @@ public class Bridge implements Runnable {
 		}
 		
 	}
+
 }

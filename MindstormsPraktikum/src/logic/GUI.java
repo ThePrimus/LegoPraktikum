@@ -51,6 +51,7 @@ public class GUI {
 	public static final int PROGRAM_EXIT = 9;
 	public static final int PROGRAM_BARCODE = 10;
 	
+	
 	// All sensors of the robot
 	private EV3LargeRegulatedMotor leftMotor = new EV3LargeRegulatedMotor(MotorPort.A);
 	private EV3LargeRegulatedMotor rightMotor = new EV3LargeRegulatedMotor(MotorPort.B);
@@ -63,6 +64,10 @@ public class GUI {
 	
 	// The class that handles the movement and navigation of the robot.
 	private Drive drive = new Drive(leftMotor, rightMotor);
+
+	private Bridge bridge;
+
+	private ChainBridge chainBridge;
 	
 	
 	
@@ -73,6 +78,32 @@ public class GUI {
 	public GUI() {
 		
 		LCD.clear();	// Make sure display is clear before the menu is displayed
+
+		
+		
+		
+		Button.LEFT.addKeyListener(new KeyListener() {
+
+			@Override
+			public void keyPressed(Key k) {
+				if(bridge != null) {
+					bridge.end();
+				}
+				
+				if(chainBridge != null) {
+					chainBridge.end();
+				}
+				
+			}
+
+			@Override
+			public void keyReleased(Key k) {
+				// TODO Auto-generated method stub
+				
+			}
+			
+		});
+		
 		
 		// Stop program when the escape button is pressed on the ev3 brick
 		Button.ESCAPE.addKeyListener(new KeyListener() {
@@ -94,6 +125,7 @@ public class GUI {
 			public void keyReleased(Key k) {
 			}
 		});
+
 		
 		startGUI();	
 	}
@@ -223,7 +255,7 @@ public class GUI {
 	 * Initializing the bridge mode.
 	 */
 	private void bridge() {
-		Bridge bridge = new Bridge(drive, sonicMotor, leftMotor, rightMotor, sonicSensor);
+		this.bridge = new Bridge(drive, sonicMotor, leftMotor, rightMotor, sonicSensor);
 		bridge.run();
 	}
 	
@@ -231,9 +263,8 @@ public class GUI {
 	 * Initializing the chain bridge mode.
 	 */
 	private void chainBridge() {
-		ChainBridge chainBridge = new ChainBridge(drive, sonicSensor, sonicMotor);
-		obstacleThread = new Thread (chainBridge);
-		obstacleThread.start();
+		this.chainBridge = new ChainBridge(drive, sonicSensor, sonicMotor);
+		chainBridge.run();
 	}
 	
 	/*
