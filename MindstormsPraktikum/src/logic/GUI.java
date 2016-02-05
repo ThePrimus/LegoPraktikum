@@ -215,8 +215,9 @@ public class GUI {
 	 */
 	private void followLine() {
 		LineFollowing lineFollowing = new LineFollowing(drive, colorSensor);
-		obstacleThread = new Thread(lineFollowing);
-		obstacleThread.start();
+		lineFollowing.run();
+		//obstacleThread = new Thread(lineFollowing);
+		//obstacleThread.start();
 	}
 	
 	/*
