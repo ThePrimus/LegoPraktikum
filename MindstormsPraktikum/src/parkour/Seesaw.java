@@ -15,6 +15,9 @@ public class Seesaw {
 	private Drive drive;
 	private boolean LineFollowing = true;
 	private SampleProvider colorProvider;
+	private final float mSpeed = 800;
+	private final float diffSpeed = 250;
+	private final float initSpeed = mSpeed - 2 * diffSpeed;
 
 	/**
 	 * Constructor:
@@ -41,8 +44,8 @@ public class Seesaw {
 			float curColor = colorResults[0];
 
 			// correct movement according to the youtube video
-			float lSpeed = curColor * 800 - 250;
-			float rSpeed = 300 - lSpeed;
+			float lSpeed = curColor * mSpeed - diffSpeed;
+			float rSpeed = initSpeed - lSpeed;
 
 			if (lSpeed < 0) {
 				drive.leftBackward(lSpeed);
