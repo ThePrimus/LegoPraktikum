@@ -1,19 +1,16 @@
 package logic;
 
-import lejos.hardware.BrickFinder;
-import lejos.hardware.Button;
-import lejos.hardware.Key;
-import lejos.hardware.KeyListener;
-import lejos.hardware.Keys;
-import lejos.hardware.Sound;
-import lejos.hardware.ev3.EV3;
+
+
+
 import lejos.hardware.lcd.LCD;
 import lejos.hardware.sensor.EV3ColorSensor;
-import lejos.robotics.filter.MedianFilter;
+
 import lejos.robotics.filter.SampleThread;
 import lejos.utility.Delay;
 
-import java.lang.Math;
+
+
 
 /**
  * Lets the robot follow a path (line on ground).
@@ -22,10 +19,19 @@ import java.lang.Math;
  */
 public class LineFollowing {
 	
-	private EV3ColorSensor sensor;
-	private float redMax = 1;
-	// The navigation class.
+	
+	/*
+	 * The color sensor.
+	 */
+	private  EV3ColorSensor sensor;
+	
+	/*
+	 *  The navigation class.
+	 */
 	private Drive drive;
+	
+	
+	private float redMax = 1;
 	private boolean terminate = false;
 	private char lastState = 's';
 	
@@ -54,7 +60,7 @@ public class LineFollowing {
 				if(samples[0] > 0.9)
 				{
 					lastState = 'l';
-					Sound.beep();
+					//Sound.beep();
 					break;
 				}
 					
@@ -73,7 +79,7 @@ public class LineFollowing {
 				if(samples[0] > 0.9)
 				{
 					lastState = 'r';
-					Sound.buzz();
+					//Sound.buzz();
 					break;
 				}
 			}
@@ -91,14 +97,10 @@ public class LineFollowing {
 	 * Executes an algorithm so that the robot follows a silver/white line.
 	 * Idea:
 	 */
-	public void end()
-	{
-		this.terminate = true;
-	}
-	
+
 	public void runt(){
 		LCD.clear();
-		float lastSample = 0;
+		//float lastSample = 0;
 		char state = 'f';
 		//drive.moveForward(drive.maxSpeed()* 0.5f, drive.maxSpeed()* 0.5f);#
 		//EV3 ev3 = (EV3) BrickFinder.getLocal();
@@ -148,7 +150,7 @@ public class LineFollowing {
 						searchLine();
 						break;
 					}
-					lastSample = samples[0];
+					//lastSample = samples[0];
 				
 				} 
 				
@@ -165,7 +167,6 @@ public class LineFollowing {
 		drive.stop();
 	}
 	public void run(){
-		
 		int count = 0;
 		char lastState = 'f';
 		float speed = 100;
@@ -204,5 +205,9 @@ public class LineFollowing {
 		drive.stop();
 		LCD.clear();
 	}
-		
+	
+	
+	public void end() {
+		this.terminate = true;
+	}
 }
