@@ -30,7 +30,9 @@ public class Maze implements Runnable {
 	 * 
 	 * @param drive the drive class for navigation and motor control.
 	 */
-	public Maze(Drive drive,EV3UltrasonicSensor sonicSensor, EV3MediumRegulatedMotor sonicMotor,EV3LargeRegulatedMotor leftMotor, EV3LargeRegulatedMotor rightMotor,EV3TouchSensor touchLeftSensor,EV3TouchSensor touchRightSensor,) {
+	public Maze(Drive drive, EV3UltrasonicSensor sonicSensor, EV3MediumRegulatedMotor sonicMotor,
+					EV3LargeRegulatedMotor leftMotor, EV3LargeRegulatedMotor rightMotor,
+					EV3TouchSensor touchLeftSensor, EV3TouchSensor touchRightSensor) {
 		this.drive = drive;
 		this.sonicMotor = sonicMotor;
 		this.sonicSensor = sonicSensor;
@@ -40,5 +42,10 @@ public class Maze implements Runnable {
 		this.touchSensorRight = touchRightSensor;
 
 	}
-	
-}
+
+
+	@Override
+	public void run() {
+		// TODO Auto-generated method stub
+		
+	}}
