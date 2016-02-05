@@ -249,6 +249,8 @@ public class GUI {
 	private void maze() {
 		Maze maze = new Maze(drive, sonicSensor, sonicMotor, leftMotor,
 				leftMotor, touchLeftSensor, touchLeftSensor);
+
+		// Maze maze = new Maze(drive);
 	}
 
 	/*
@@ -259,8 +261,6 @@ public class GUI {
 		this.lineFollowing = new LineFollowing(drive, colorSensor);
 		lineFollowing.runt();
 
-		// obstacleThread = new Thread(lineFollowing);
-		// obstacleThread.start();
 	}
 
 	/*

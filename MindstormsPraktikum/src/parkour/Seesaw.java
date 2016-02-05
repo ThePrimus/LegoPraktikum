@@ -32,17 +32,25 @@ public class Seesaw {
 		colorProvider = colorSensor.getRedMode();
 	}
 
+	// Idee: An rechter Seite der Linie orrientieren
 	public void run() {
 		while (LineFollowing) {
 			float[] colorResults = new float[colorProvider.sampleSize()];
 			colorProvider.fetchSample(colorResults, 0);
 			float curColor = colorResults[0];
-			if(curColor > 1) {
-				
-			} else if () {
-				
-			} else
+			float lSpeed = curColor * 800 - 250;
+			float rSpeed = 300 - lSpeed;
+			if (lSpeed < 0) {
+				drive.leftBackward(lSpeed);
+			} else {
+				drive.setSpeedLeftMotor(lSpeed);
+			}
 
+			if (rSpeed < 0) {
+				drive.rightBackward(rSpeed);
+			} else {
+				drive.setSpeedRightMotor(rSpeed);
+			}
 		}
 
 	}
