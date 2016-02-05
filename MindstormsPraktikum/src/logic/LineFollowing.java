@@ -109,7 +109,7 @@ public class LineFollowing {
 		//MedianFilter filter = new MedianFilter(sensor.getRedMode(), 100);
 		
 		
-		SampleThread sample = new SampleThread(sensor, 100);
+		SampleThread sample = new SampleThread(sensor, 2);
 		float[] samples = new float[sample.sampleSize()];
 		
 		while(!terminate) {
@@ -186,19 +186,26 @@ public class LineFollowing {
 				LCD.drawString("State: " + String.valueOf(lastState), 0, 1);
 			}*/
 			//Delay.msDelay(100);
-			if(sample[0] > redMax * 0.55 && lastState == 'f') {
-				drive.moveForward(drive.maxSpeed() * 0.6f, 0);
-				lastState = 'r';
-			}
-			if(sample[0] < redMax * 0.45  && lastState == 'f') {
+			if(sample[0] >= redMax * 0.5) {
+				//drive.setSpeedLeftMotor(drive.maxSpeed()*0.5f);
+				//drive.rightB(500);
+				//drive.rightB(drive.maxSpeed()*0.5f);
+				drive.moveForward(drive.maxSpeed() * 0.6f,0);
+				//lastState = 'r';
+			} else if(sample[0] < redMax * 0.4) {
+				//drive.setSpeedRightMotor(drive.maxSpeed() * 0.1f);
+				//drive.leftB(500);
+				//drive.
 				drive.moveForward(0, drive.maxSpeed() * 0.6f);
-				lastState = 'l';
+				//lastState = 'l';
+			} else {
+				drive.moveForward(300, 200);
 			}
-			else if(sample[0] < redMax * 0.55 && sample[0] > redMax * 0.45)
+			/*else if(sample[0] < redMax * 0.55 && sample[0] > redMax * 0.45)
 			{	
 				drive.moveForward(drive.maxSpeed() * 0.4f, drive.maxSpeed() * 0.4f);
 				lastState = 'f';
-			}
+			}*/
 			
 		}
 		

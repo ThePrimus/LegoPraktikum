@@ -251,7 +251,7 @@ public class GUI {
 	 * Initializing the maze mode.
 	 */
 	private void maze() {
-		Maze maze = new Maze(drive);
+		//Maze maze = new Maze(drive);
 	}
 	
 	/*
@@ -260,7 +260,7 @@ public class GUI {
 
 	private void followLine() {
 		this.lineFollowing = new LineFollowing(drive, colorSensor);
-		lineFollowing.runt();
+		lineFollowing.run();
 
 		//obstacleThread = new Thread(lineFollowing);
 		//obstacleThread.start();

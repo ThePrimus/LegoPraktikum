@@ -301,4 +301,15 @@ public class Drive {
 	public float getSpeed() {
 		return (leftMotor.getRotationSpeed() + rightMotor.getRotationSpeed()) / 2.0f;
 	}
+	
+	public void leftB(float speed)
+	{
+		leftMotor.setSpeed(speed);
+		leftMotor.backward();
+	}
+	public void rightB(float speed)
+	{
+		rightMotor.setSpeed(speed);
+		rightMotor.backward();
+	}
 }
