@@ -68,6 +68,7 @@ public class GUI {
 	private Bridge bridge;
 
 	private ChainBridge chainBridge;
+	private LineFollowing lineFollowing;
 	
 	
 	
@@ -92,6 +93,9 @@ public class GUI {
 				
 				if(chainBridge != null) {
 					chainBridge.end();
+				}
+				if(lineFollowing != null) {
+					lineFollowing.end();
 				}
 				
 			}
@@ -246,7 +250,7 @@ public class GUI {
 	 * Initializing the follow line mode.
 	 */
 	private void followLine() {
-		LineFollowing lineFollowing = new LineFollowing(drive, colorSensor);
+		lineFollowing = new LineFollowing(drive, colorSensor);
 		lineFollowing.run();
 		//obstacleThread = new Thread(lineFollowing);
 		//obstacleThread.start();

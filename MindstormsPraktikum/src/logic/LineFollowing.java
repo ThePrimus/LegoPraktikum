@@ -58,7 +58,7 @@ public class LineFollowing {
 		/*EV3 ev3 = (EV3) BrickFinder.getLocal();
 		Keys key = ev3.getKeys();*/
 		
-		drive.moveForward(drive.maxSpeed() * 0.8f, drive.maxSpeed() * 0.8f);
+		drive.moveForward(drive.maxSpeed() * 0.4f, drive.maxSpeed() * 0.4f);
 		LCD.clear();
 		
 		while(!terminate){	
@@ -71,16 +71,16 @@ public class LineFollowing {
 			}*/
 			//Delay.msDelay(100);
 			if(sample[0] > redMax * 0.6 && lastState == 'f') {
-				drive.moveForward(drive.maxSpeed(), 0);
+				drive.moveForward(drive.maxSpeed() *0.6f, 0);
 				lastState = 'r';
 			}
 			if(sample[0] < redMax * 0.4  && lastState == 'f') {
-				drive.moveForward(0, drive.maxSpeed());
+				drive.moveForward(0, drive.maxSpeed()*0.6f);
 				lastState = 'l';
 			}
 			else if(sample[0] < redMax * 0.6 && sample[0] > redMax * 0.4 && lastState != 'f')
 			{	
-				drive.moveForward(drive.maxSpeed() * 0.8f, drive.maxSpeed() * 0.8f);
+				drive.moveForward(drive.maxSpeed() * 0.4f, drive.maxSpeed() * 0.4f);
 				lastState = 'f';
 			}
 			
