@@ -120,6 +120,16 @@ public class GUI {
 					obstacleThread.interrupt();
 				}
 				
+				if(bridge != null) {
+					bridge.end();
+				}
+				
+				if(chainBridge != null) {
+					chainBridge.end();
+				}
+				if(lineFollowing != null) {
+					lineFollowing.end();
+				}
 				// Start the GUI again => main menu should be shown
 				// when the obstacle program has been interrupted
 				startGUI();
@@ -251,7 +261,7 @@ public class GUI {
 	 */
 	private void followLine() {
 		lineFollowing = new LineFollowing(drive, colorSensor);
-		lineFollowing.run();
+		lineFollowing.runt();
 		//obstacleThread = new Thread(lineFollowing);
 		//obstacleThread.start();
 	}
