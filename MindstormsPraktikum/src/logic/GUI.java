@@ -268,7 +268,7 @@ public class GUI {
 	 */
 	private void bridge() {
 		this.bridge = new Bridge(drive, sonicMotor, leftMotor, rightMotor,
-				sonicSensor);
+				sonicSensor, colorSensor);
 		bridge.run();
 	}
 

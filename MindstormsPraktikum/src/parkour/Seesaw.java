@@ -13,9 +13,8 @@ public class Seesaw {
 
 	// The navigation class.
 	private Drive drive;
-	private EV3ColorSensor colorSensor;
 	private boolean LineFollowing = true;
-	SampleProvider colorProvider;
+	private SampleProvider colorProvider;
 
 	/**
 	 * Constructor:
@@ -28,18 +27,23 @@ public class Seesaw {
 	 */
 	public Seesaw(Drive drive, EV3ColorSensor colorSensor) {
 		this.drive = drive;
-		this.colorSensor = colorSensor;
-		colorProvider = colorSensor.getRedMode();
+		this.colorProvider = colorSensor.getRedMode();
 	}
 
-	// Idee: An rechter Seite der Linie orrientieren
+	// Idea:Follow right side of the line
+	// TODO: Adjust values
+	// see : https://www.youtube.com/watch?v=tViA21Y08cU
 	public void run() {
 		while (LineFollowing) {
+			// get color of line
 			float[] colorResults = new float[colorProvider.sampleSize()];
 			colorProvider.fetchSample(colorResults, 0);
 			float curColor = colorResults[0];
+
+			// correct movement according to the youtube video
 			float lSpeed = curColor * 800 - 250;
 			float rSpeed = 300 - lSpeed;
+
 			if (lSpeed < 0) {
 				drive.leftBackward(lSpeed);
 			} else {
@@ -57,6 +61,5 @@ public class Seesaw {
 
 	public void end() {
 		LineFollowing = false;
-
 	}
 }
