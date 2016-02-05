@@ -82,39 +82,47 @@ public class FinalSpurt implements Runnable {
 	public void run() {
 		
 		// Make sure the sonic sensor is facing sideways
-		//sonicMotor.rotateTo(SONIC_POSITION_SIDEWAYS, true);
-		//sonicMotor.waitComplete();
+		sonicMotor.setAcceleration(4000);
+		sonicMotor.rotate(-31);
+		sonicMotor.waitComplete();
+		
+		this.drive.moveForward(drive.maxSpeed() * 0.97f, drive.maxSpeed());
 		
 		boolean programRunning = true;
 		
 		while (programRunning) {
 		
 			// Check the touch sensor while the program is running
-			/*float[] touchSensorResults = new float[touchSensorLeft.sampleSize()];
+			float[] touchSensorResults = new float[touchSensorLeft.sampleSize()];
 			touchSensorLeft.fetchSample(touchSensorResults, 0);
 			
-			if (touchSensorResults[0] == 1) {*/
+			if (touchSensorResults[0] == 1) {
+				// Touch sensor pressed, drive back a bit and turn right
+				drive.moveBackward(drive.maxSpeed() * 0.97f, drive.maxSpeed());
+				Delay.msDelay(1500);
+				drive.turnLeft(80);
+			}
 				
-				float[] sonicSensorResults = new float [sonicSensor.sampleSize()];
-				sonicSensor.fetchSample(sonicSensorResults, 0);
+			float[] sonicSensorResults = new float [sonicSensor.sampleSize()];
+			sonicSensor.fetchSample(sonicSensorResults, 0);
 				
-				if (sonicSensorResults[0] < DISTANCE_TO_CORRECT_MOVEMENT) {
-					// Sonic sensor encounters a needed movement correction
-					drive.turnLeft(20);
-					//drive.stop();
-					//drive.moveForward((int) (drive.maxSpeed() * 0.7), (int) (drive.maxSpeed() * 1.0));
-					//Delay.msDelay(1500);
-					drive.moveForward((int) (drive.maxSpeed() * 0.97), drive.maxSpeed());
-				} else if (sonicSensorResults[0] > DISTANCE_TO_TURN_RIGHT) {
+			if (sonicSensorResults[0] < DISTANCE_TO_CORRECT_MOVEMENT) {
+				// Sonic sensor encounters a needed movement correction
+				drive.turnLeft(20);
+				//drive.stop();
+				//drive.moveForward((int) (drive.maxSpeed() * 0.7), (int) (drive.maxSpeed() * 1.0));
+				//Delay.msDelay(1500);
+				drive.moveForward(drive.maxSpeed() * 0.97f, drive.maxSpeed());
+			} else if (sonicSensorResults[0] > DISTANCE_TO_TURN_RIGHT) {
 					
-					// Sonic sensor measures a high distance, turn right to the next obstacle.
-					drive.turnRight(90);
-					drive.moveForward();
-					Delay.msDelay(1000);
-					drive.stop();
-					programRunning = false;
-				}
-			//}	
+				Delay.msDelay(1500);
+				// Sonic sensor measures a high distance, turn right to the next obstacle.
+				drive.turnRight(70);
+				drive.moveForward();
+				Delay.msDelay(3000);
+				drive.stop();
+				programRunning = false;
+			}
 		}
 	}
 	

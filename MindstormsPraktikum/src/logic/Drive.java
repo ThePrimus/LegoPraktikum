@@ -162,6 +162,29 @@ public class Drive {
 		rightMotor.waitComplete();
 	}
 	
+	public void turnRight(int degree, boolean both) {		
+		float distanceFullCircle = DISTANCE_TIRES * PI;
+		float distanceToMove = distanceFullCircle / 360.0f * degree;
+		
+		float distanceOneRotation = TIRE_DIAMETER * PI;
+		
+		float amountRotations = distanceToMove / distanceOneRotation;
+		int degreesToRotate = (int) (amountRotations * 360.0f);
+		
+		leftMotor.setSpeed(maxSpeed);
+		leftMotor.rotate(degreesToRotate, true);
+		if(both)
+		{
+			rightMotor.setSpeed(maxSpeed);
+			rightMotor.rotate((-1) * degreesToRotate, true);
+		}
+		leftMotor.waitComplete();
+		if(both)
+		{// Wait for completion of turn
+			rightMotor.waitComplete();
+		}
+	}
+	
 	/**
 	 * Turns the robot left by the assigned degree.
 	 * 
@@ -179,6 +202,29 @@ public class Drive {
 		leftMotor.rotate((-1) * degreesToRotate, true);
 		rightMotor.rotate(degreesToRotate, true);
 		leftMotor.waitComplete();		// Wait for completion of turn
+		rightMotor.waitComplete();
+	}
+	
+	public void turnLeft(int degree, boolean both) {
+		float distanceFullCircle = DISTANCE_TIRES * PI;
+		float distanceToMove = distanceFullCircle / 360.0f * degree;
+		
+		float distanceOneRotation = TIRE_DIAMETER * PI;
+		
+		float amountRotations = distanceToMove / distanceOneRotation;
+		int degreesToRotate = (int) (amountRotations * 360.0f);
+		
+		rightMotor.setSpeed(maxSpeed);
+		if(both)
+		{
+			leftMotor.setSpeed(maxSpeed);
+			leftMotor.rotate((-1) * degreesToRotate, true);
+		}
+		rightMotor.rotate(degreesToRotate, true);
+		if(both)
+		{// Wait for completion of turn
+			leftMotor.waitComplete();
+		}// Wait for completion of turn
 		rightMotor.waitComplete();
 	}
 	
