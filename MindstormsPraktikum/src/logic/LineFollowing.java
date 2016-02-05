@@ -52,7 +52,7 @@ public class LineFollowing {
 	public void run(){
 		
 		int count = 0;
-		char lastState = '\0';
+		char lastState = 'f';
 		float speed = 100;
 		float[] sample = new float[sensor.sampleSize()];
 		/*EV3 ev3 = (EV3) BrickFinder.getLocal();
@@ -70,15 +70,15 @@ public class LineFollowing {
 				LCD.drawString("State: " + String.valueOf(lastState), 0, 1);
 			}*/
 			//Delay.msDelay(100);
-			if(sample[0] > redMax * 0.6 && lastState == 'f') {
+			if(sample[0] > redMax * 0.55 && lastState == 'f') {
 				drive.moveForward(drive.maxSpeed() *0.6f, 0);
 				lastState = 'r';
 			}
-			if(sample[0] < redMax * 0.4  && lastState == 'f') {
+			if(sample[0] < redMax * 0.45  && lastState == 'f') {
 				drive.moveForward(0, drive.maxSpeed()*0.6f);
 				lastState = 'l';
 			}
-			else if(sample[0] < redMax * 0.6 && sample[0] > redMax * 0.4 && lastState != 'f')
+			else if(sample[0] < redMax * 0.55 && sample[0] > redMax * 0.45)
 			{	
 				drive.moveForward(drive.maxSpeed() * 0.4f, drive.maxSpeed() * 0.4f);
 				lastState = 'f';
