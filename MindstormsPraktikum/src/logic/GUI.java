@@ -251,7 +251,7 @@ public class GUI {
 	 * Initializing the maze mode.
 	 */
 	private void maze() {
-		Maze maze = new Maze(drive);
+		Maze maze = new Maze(drive, sonicSensor, sonicMotor, leftMotor, leftMotor, touchLeftSensor, touchLeftSensor);
 	}
 	
 	/*
