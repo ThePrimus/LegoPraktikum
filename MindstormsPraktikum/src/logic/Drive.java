@@ -132,6 +132,7 @@ public class Drive {
 		leftMotor.backward();
 		rightMotor.backward();
 	}
+	
 	/**
 	 * Moves the robot backward until "stop" of this class is called.
 	 * Uses the speed that is currently set in this class.
@@ -190,24 +191,6 @@ public class Drive {
 	}
 	
 	/**
-	 * Returns if the right motor is still moving
-	 * @return state of right motor
-	 */
-	public boolean isRightMoving()
-	{
-		return rightMotor.isMoving();
-	}
-	
-	/**
-	 * Returns if the left motor is still moving
-	 * @return state of left motor
-	 */
-	public boolean isLeftMoving()
-	{
-		return leftMotor.isMoving();
-	}
-
-	/**
 	 * Sets the speed for both motors (left and right).
 	 * 
 	 * @param the speed to set for both motors.
@@ -217,6 +200,8 @@ public class Drive {
 		this.speedRight = speed;
 		leftMotor.setSpeed(speed);
 		rightMotor.setSpeed(speed);
+		leftMotor.forward();
+		rightMotor.forward();
 	}
 	
 	/**
@@ -227,6 +212,7 @@ public class Drive {
 	public void setSpeedLeftMotor(float speed) {
 		this.speedLeft = speed;
 		leftMotor.setSpeed(speed);
+		leftMotor.forward();
 	}
 	
 	/**
@@ -237,6 +223,7 @@ public class Drive {
 	public void setSpeedRightMotor(float speed) {
 		this.speedRight = speed;
 		rightMotor.setSpeed(speed);
+		rightMotor.forward();
 	}
 	
 	/**
@@ -252,11 +239,20 @@ public class Drive {
 	}
 	
 	/**
-	 * The maximum speed of both motors.
+	 * Returns the maximum speed of both motors.
 	 * 
 	 * @return the maximum speed of both motors.
 	 */
 	public float maxSpeed() {
 		return this.maxSpeed;
+	}
+	
+	/**
+	 * Returns the average speed of both motors (degree/s).
+	 * 
+	 * @return the average speed of both motors (degree/s).
+	 */
+	public float getSpeed() {
+		return (leftMotor.getRotationSpeed() + rightMotor.getRotationSpeed()) / 2.0f;
 	}
 }
