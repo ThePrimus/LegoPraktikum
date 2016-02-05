@@ -37,6 +37,11 @@ public class Seesaw {
 			float[] colorResults = new float[colorProvider.sampleSize()];
 			colorProvider.fetchSample(colorResults, 0);
 			float curColor = colorResults[0];
+			if(curColor > 1) {
+				
+			} else if () {
+				
+			} else
 
 		}
 
