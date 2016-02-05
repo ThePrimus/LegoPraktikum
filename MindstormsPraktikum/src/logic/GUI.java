@@ -98,10 +98,6 @@ public class GUI {
 					lineFollowing.end();
 				}
 
-				if (lineFollowing != null) {
-					lineFollowing.end();
-				}
-
 				if (seesaw != null) {
 					seesaw.end();
 				}
@@ -131,9 +127,15 @@ public class GUI {
 				if (chainBridge != null) {
 					chainBridge.end();
 				}
+				
 				if (lineFollowing != null) {
 					lineFollowing.end();
 				}
+				
+				if (seesaw != null) {
+					seesaw.end();
+				}
+				
 				// Start the GUI again => main menu should be shown
 				// when the obstacle program has been interrupted
 				startGUI();
@@ -247,13 +249,11 @@ public class GUI {
 	 * Initializing the maze mode.
 	 */
 	private void maze() {
-		Maze maze = new Maze(drive, sonicSensor, sonicMotor, touchLeftSensor,
-				touchLeftSensor);
-		// Maze maze = new Maze(drive);
+		Maze maze = new Maze(drive, sonicSensor, sonicMotor, touchLeftSensor, touchRightSensor);
 	}
 
 	/*
-	 * Initializing the follow line mode. <<<<<<< HEAD
+	 * Initializing the follow line mode.
 	 */
 
 	private void followLine() {

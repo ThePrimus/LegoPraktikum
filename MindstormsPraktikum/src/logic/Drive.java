@@ -59,6 +59,8 @@ public class Drive {
 	 * The acceleration of the right motor.
 	 */
 	private int accelerationRight;
+	
+	
 
 	/**
 	 * Initializes the drive class. On default a speed of 50% is set.
@@ -67,7 +69,7 @@ public class Drive {
 			EV3LargeRegulatedMotor rightMotor) {
 		this.leftMotor = leftMotor;
 		this.rightMotor = rightMotor;
-		maxSpeed = leftMotor.getMaxSpeed();
+		this.maxSpeed = leftMotor.getMaxSpeed();
 
 		speedLeft = leftMotor.getMaxSpeed() / 2;
 		speedRight = rightMotor.getMaxSpeed() / 2;
@@ -146,6 +148,29 @@ public class Drive {
 		leftMotor.backward();
 		rightMotor.backward();
 	}
+	
+	
+	/**
+	 * Moves the left motor backwards with the assigned speed.
+	 * 
+	 * @param speed the speed for the left motor.
+	 */
+	public void leftBackward(float speed) {
+		leftMotor.setSpeed(speed);
+		leftMotor.backward();
+	}
+	
+	
+	/**
+	 * Moves the right motor backwards with the assigned speed.
+	 * 
+	 * @param speed the speed for the right motor.
+	 */
+	public void rightBackward(float speed) {
+		rightMotor.setSpeed(speed);
+		rightMotor.backward();
+	}
+	
 
 	/**
 	 * Turns the robot right by the assigned degree.
@@ -169,6 +194,13 @@ public class Drive {
 		rightMotor.waitComplete();
 	}
 
+	/**
+	 * Turns the robot right by the assigned degree, but allows to define
+	 * if both motors should rotate. Turn happens with maximum speed.
+	 * 
+	 * @param degree how far the robot should turn right (degree between 0 and 360).
+	 * @param both if both motors should rotate.
+	 */
 	public void turnRight(int degree, boolean both) {
 		float distanceFullCircle = DISTANCE_TIRES * PI;
 		float distanceToMove = distanceFullCircle / 360.0f * degree;
@@ -211,6 +243,14 @@ public class Drive {
 		rightMotor.waitComplete();
 	}
 
+	
+	/**
+	 * Turns the robot left by the assigned degree, but allows to define
+	 * if both motors should rotate. Turn happens with maximum speed.
+	 * 
+	 * @param degree how far the robot should turn left (degree between 0 and 360).
+	 * @param both if both motors should rotate.
+	 */
 	public void turnLeft(int degree, boolean both) {
 		float distanceFullCircle = DISTANCE_TIRES * PI;
 		float distanceToMove = distanceFullCircle / 360.0f * degree;
@@ -311,13 +351,4 @@ public class Drive {
 				/ 2.0f;
 	}
 
-
-	public void leftBackward(float speed) {
-		leftMotor.setSpeed(speed);
-		leftMotor.backward();
-	}
-	public void rightBackward(float speed) {
-		rightMotor.setSpeed(speed);
-		rightMotor.backward();
-	}
 }
