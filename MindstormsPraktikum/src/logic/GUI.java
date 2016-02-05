@@ -263,7 +263,7 @@ public class GUI {
 	 * Initializing the chain bridge mode.
 	 */
 	private void chainBridge() {
-		this.chainBridge = new ChainBridge(drive, sonicSensor, sonicMotor);
+		this.chainBridge = new ChainBridge(drive, sonicSensor, sonicMotor, colorSensor);
 		chainBridge.run();
 	}
 	
