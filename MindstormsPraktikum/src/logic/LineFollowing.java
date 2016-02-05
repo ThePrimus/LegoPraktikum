@@ -1,27 +1,29 @@
 package logic;
 
-import lejos.hardware.BrickFinder;
-import lejos.hardware.Button;
-import lejos.hardware.Key;
-import lejos.hardware.KeyListener;
-import lejos.hardware.Keys;
-import lejos.hardware.ev3.EV3;
-import lejos.hardware.lcd.LCD;
 import lejos.hardware.sensor.EV3ColorSensor;
-import lejos.utility.Delay;
-
-import java.lang.Math;
 
 /**
  * Lets the robot follow a path (line on ground).
  * 
  * @author Group 1
  */
-public class LineFollowing implements Runnable {
+public class LineFollowing {
 	
-	private  EV3ColorSensor sensor;
+	private boolean programRunning = true;
 	
-	// The navigation class.
+	/*
+	 *  The minimum color value of a white/silver line.
+	 */
+	private final float THRESHOLD_WHITE = 0.7f;
+	
+	/*
+	 * The color sensor.
+	 */
+	private  EV3ColorSensor colorSensor;
+	
+	/*
+	 *  The navigation class.
+	 */
 	private Drive drive;
 	
 	
@@ -30,11 +32,11 @@ public class LineFollowing implements Runnable {
 	 * 
 	 * @param drive the drive class for navigation and motor control.
 	 */
-	public LineFollowing(Drive drive, EV3ColorSensor sensor) {
+	public LineFollowing(Drive drive, EV3ColorSensor colorSensor) {
 		this.drive = drive;
-		this.sensor = sensor;
+		this.colorSensor = colorSensor;
 		
-		sensor.setCurrentMode("Red");
+		colorSensor.setCurrentMode("Red");
 	}
 	
 
@@ -43,8 +45,13 @@ public class LineFollowing implements Runnable {
 	 * Executes an algorithm so that the robot follows a silver/white line.
 	 * Idea:
 	 */
-	@Override
 	public void run(){
+		
+	}
+
+	
+	public void end() {
+		programRunning = false;
 	}
 		
 }

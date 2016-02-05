@@ -65,9 +65,10 @@ public class GUI {
 	// The class that handles the movement and navigation of the robot.
 	private Drive drive = new Drive(leftMotor, rightMotor);
 
+	// The obstacle programs
 	private Bridge bridge;
-
 	private ChainBridge chainBridge;
+	private LineFollowing lineFollowing;
 	
 	
 	
@@ -79,27 +80,25 @@ public class GUI {
 		
 		LCD.clear();	// Make sure display is clear before the menu is displayed
 
-		
-		
-		
+		// Stop current obstacle program if the left button is pressed
 		Button.LEFT.addKeyListener(new KeyListener() {
-
 			@Override
 			public void keyPressed(Key k) {
-				if(bridge != null) {
+				if (bridge != null) {
 					bridge.end();
 				}
 				
-				if(chainBridge != null) {
+				if (chainBridge != null) {
 					chainBridge.end();
 				}
 				
+				if (lineFollowing != null) {
+					lineFollowing.end();
+				}
 			}
 
 			@Override
 			public void keyReleased(Key k) {
-				// TODO Auto-generated method stub
-				
 			}
 			
 		});
@@ -246,9 +245,8 @@ public class GUI {
 	 * Initializing the follow line mode.
 	 */
 	private void followLine() {
-		LineFollowing lineFollowing = new LineFollowing(drive, colorSensor);
-		obstacleThread = new Thread(lineFollowing);
-		obstacleThread.start();
+		this.lineFollowing = new LineFollowing(drive, colorSensor);
+		lineFollowing.run();
 	}
 	
 	/*
