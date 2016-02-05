@@ -1,36 +1,49 @@
 package parkour;
 
+import lejos.hardware.lcd.LCD;
 import lejos.hardware.motor.EV3MediumRegulatedMotor;
 import lejos.hardware.sensor.EV3UltrasonicSensor;
+import lejos.robotics.SampleProvider;
+import lejos.utility.Delay;
 import logic.Drive;
-
 /**
  * Implements the logic to beat the chain bridge obstacle.
  * 
  * @author Group 1
  */
-public class ChainBridge implements Runnable {
+public class ChainBridge {
 
-	/*
-	 * The minimum distance that defines an abbys.
-	 */
-	private static final float DISTANCE_ABBYS = 0.2f;
-	
+
+	private static final float DISTANCE_TO_GROUND = 0.08f; // in m 
 	/*
 	 * The navigation class.
 	 */
 	private Drive drive;
 	
 	/*
-	 * The ultrasonic distance sensor.
+	 * The distance between the two walls of the final spurt (measured from sonic sensor,
+	 * when robot is at the left wall).
 	 */
-	private EV3UltrasonicSensor sonicSensor;
+	private static final float DISTANCE_TO_TURN_RIGHT = 0.05f;
+
+	private SampleProvider distanceProvider;
+
+	private int standLeftCorrection;
+
+	private int standRightCorrection;
 	
-	/*
-	 * The motor that controls the ultrasonic sensor.
-	 */
+	private final int SONIC_SENSOR_WALL_POS = -30;
+	private final int SONIC_SENSOR_GROUND_POS = -100;
+
+	private int standRight;
+
+	private int standLeft;
 	private EV3MediumRegulatedMotor sonicMotor;
+	private boolean runStartBridge = false;
 	
+	
+
+	public static boolean PROGRAM_STOP = false;
 	
 	/**
 	 * Constructor: 
@@ -39,8 +52,12 @@ public class ChainBridge implements Runnable {
 	 */
 	public ChainBridge(Drive drive, EV3UltrasonicSensor sonicSensor, EV3MediumRegulatedMotor sonicMotor) {
 		this.drive = drive;
-		this.sonicSensor = sonicSensor;
 		this.sonicMotor = sonicMotor;
+		this.distanceProvider = sonicSensor.getDistanceMode();
+		this.standLeftCorrection = (int) (drive.maxSpeed()*0.3);
+		this.standRightCorrection = (int) drive.maxSpeed();
+		this.standLeft = (int) (drive.maxSpeed());
+		this.standRight = (int) (drive.maxSpeed()*0.9);
 	}
 	
 	
@@ -50,29 +67,76 @@ public class ChainBridge implements Runnable {
 	 * Idea: move forward until the bar code is scanned, that informs about the end of the
 	 * obstacle. Correct movement to left if the sonic sensor measures a high distance (abbys detected).
 	 */
-	@Override
 	public void run() {
-		
-		// Make sure the sonic sensor is facing downwards
-		//sonicMotor.rotateTo(SONIC_POSITION_SIDEWAYS, true);
-		//sonicMotor.waitComplete();
-		
-		this.drive.moveForward((int) (drive.maxSpeed() * 0.97), drive.maxSpeed());
-		
-		boolean programRunning = true;
-				
-		while (programRunning) {
-			
-			float[] sonicSensorResults = new float [sonicSensor.sampleSize()];
-			sonicSensor.fetchSample(sonicSensorResults, 0);
-			
-			if (sonicSensorResults[0] < DISTANCE_ABBYS) {
-				// Sonic sensor encounters an abbys, correct movement
-				drive.turnLeft(20);
-				drive.moveForward((int) (drive.maxSpeed() * 0.97), drive.maxSpeed());
-			} /*else if (// TODO: Rolls obstacle finished, when bar code is scanned) {
-			}*/
-		}
+		initSonicMotor();
+		startBridgeRoutine();
+		sonicMotor.rotate(SONIC_SENSOR_GROUND_POS,true);
+		Delay.msDelay(1000);
+		sonicMotor.stop();
+	//	bridgeRoutine();
 	}
 	
+	private void startBridgeRoutine() {
+		runStartBridge  = true;
+		while (runStartBridge) {
+			float [] sonicSensorResults = new float[distanceProvider.sampleSize()];
+			distanceProvider.fetchSample(sonicSensorResults, 0);
+			
+			if (sonicSensorResults[0] > 1) {
+				runStartBridge = false;
+			}
+			
+			if (sonicSensorResults[0] > DISTANCE_TO_TURN_RIGHT) {
+				//drive.moveFor
+				
+			} else {
+				LCD.drawString("LEFT", 0, 0);
+				Delay.msDelay(1000);
+			}
+		}
+		
+	}
+	
+	private void initSonicMotor() {
+		sonicMotor.rotate(SONIC_SENSOR_WALL_POS,true);
+		Delay.msDelay(1000);
+		sonicMotor.stop();
+	//	sonicMotor.rotate(-SONIC_SENSOR_GROUND_POS, true);
+	}
+	
+	private void bridgeRoutine() {
+		PROGRAM_STOP = false;
+		float curPos = 0;
+		
+
+		 drive.setSpeedLeftMotor(standLeft);
+		 drive.setSpeedRightMotor(standRight);
+		int count = 0;
+		while(!PROGRAM_STOP ){
+			count++;
+			if(count > 100000) {
+				PROGRAM_STOP = true;
+			}
+			float [] samples = new float[distanceProvider.sampleSize()];
+			 distanceProvider.fetchSample(samples, 0);
+			 curPos = samples[0];
+			 
+
+			 if(curPos > DISTANCE_TO_GROUND) {
+				 drive.setSpeedLeftMotor(standLeftCorrection);
+				 drive.setSpeedRightMotor(standRightCorrection);
+			 } else {
+				 drive.setSpeedLeftMotor(standLeft);
+				 drive.setSpeedRightMotor(standRight);
+			 }
+		
+		}
+		drive.stop();
+	}
+
+	
+	public void end() {
+		PROGRAM_STOP = true;
+		runStartBridge = true;
+	}
 }
