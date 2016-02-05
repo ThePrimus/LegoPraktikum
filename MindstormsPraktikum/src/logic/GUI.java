@@ -91,6 +91,9 @@ public class GUI {
 				if (chainBridge != null) {
 					chainBridge.end();
 				}
+				if(lineFollowing != null) {
+					lineFollowing.end();
+				}
 				
 				if (lineFollowing != null) {
 					lineFollowing.end();
@@ -247,6 +250,8 @@ public class GUI {
 	private void followLine() {
 		this.lineFollowing = new LineFollowing(drive, colorSensor);
 		lineFollowing.run();
+		//obstacleThread = new Thread(lineFollowing);
+		//obstacleThread.start();
 	}
 	
 	/*
