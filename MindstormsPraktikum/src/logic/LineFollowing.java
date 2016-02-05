@@ -1,16 +1,10 @@
 package logic;
 
-
-
-
 import lejos.hardware.lcd.LCD;
 import lejos.hardware.sensor.EV3ColorSensor;
 
 import lejos.robotics.filter.SampleThread;
 import lejos.utility.Delay;
-
-
-
 
 /**
  * Lets the robot follow a path (line on ground).
@@ -19,11 +13,10 @@ import lejos.utility.Delay;
  */
 public class LineFollowing {
 	
-	
 	/*
 	 * The color sensor.
 	 */
-	private  EV3ColorSensor sensor;
+	private EV3ColorSensor sensor;
 	
 	/*
 	 *  The navigation class.
@@ -97,7 +90,6 @@ public class LineFollowing {
 	 * Executes an algorithm so that the robot follows a silver/white line.
 	 * Idea:
 	 */
-
 	public void runt(){
 		LCD.clear();
 		//float lastSample = 0;
@@ -166,6 +158,8 @@ public class LineFollowing {
 		}
 		drive.stop();
 	}
+	
+	
 	public void run(){
 		int count = 0;
 		char lastState = 'f';

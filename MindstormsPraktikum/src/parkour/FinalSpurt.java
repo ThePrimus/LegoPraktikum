@@ -1,6 +1,5 @@
 package parkour;
 
-import lejos.hardware.motor.EV3LargeRegulatedMotor;
 import lejos.hardware.motor.EV3MediumRegulatedMotor;
 import lejos.hardware.sensor.EV3TouchSensor;
 import lejos.hardware.sensor.EV3UltrasonicSensor;
@@ -26,11 +25,6 @@ public class FinalSpurt implements Runnable {
 	private static final float DISTANCE_TO_CORRECT_MOVEMENT = 0.15f;
 	
 	/*
-	 * The position of the sonic motor, so that the sonic sensor faces sideways.
-	 */
-	private static final int SONIC_POSITION_SIDEWAYS = 50;
-	
-	/*
 	 * The navigation class.
 	 */
 	private Drive drive;
@@ -43,15 +37,12 @@ public class FinalSpurt implements Runnable {
 	/*
 	 * The left touch sensor.
 	 */
-	private EV3TouchSensor touchSensorLeft;
+	private EV3TouchSensor touchSensorRight;
 	
 	/*
 	 * The motor that controls the ultrasonic sensor.
 	 */
 	private EV3MediumRegulatedMotor sonicMotor;
-	
-	private EV3LargeRegulatedMotor leftMotor;
-	private EV3LargeRegulatedMotor rightMotor;
 	
 	
 	
@@ -60,14 +51,12 @@ public class FinalSpurt implements Runnable {
 	 * 
 	 * @param drive the drive class for navigation and motor control.
 	 */
-	public FinalSpurt(Drive drive, EV3UltrasonicSensor sonicSensor, EV3TouchSensor touchLeftSensor,
-						EV3MediumRegulatedMotor sonicMotor, EV3LargeRegulatedMotor leftMotor, EV3LargeRegulatedMotor rightMotor) {
+	public FinalSpurt(Drive drive, EV3UltrasonicSensor sonicSensor, EV3TouchSensor touchRightSensor,
+						EV3MediumRegulatedMotor sonicMotor) {
 		this.drive = drive;
 		this.sonicSensor = sonicSensor;
-		this.touchSensorLeft = touchLeftSensor;
+		this.touchSensorRight = touchRightSensor;
 		this.sonicMotor = sonicMotor;
-		this.leftMotor = leftMotor;
-		this.rightMotor = rightMotor;
 	}
 	
 
@@ -93,8 +82,8 @@ public class FinalSpurt implements Runnable {
 		while (programRunning) {
 		
 			// Check the touch sensor while the program is running
-			float[] touchSensorResults = new float[touchSensorLeft.sampleSize()];
-			touchSensorLeft.fetchSample(touchSensorResults, 0);
+			float[] touchSensorResults = new float[touchSensorRight.sampleSize()];
+			touchSensorRight.fetchSample(touchSensorResults, 0);
 			
 			if (touchSensorResults[0] == 1) {
 				// Touch sensor pressed, drive back a bit and turn right

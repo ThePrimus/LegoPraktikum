@@ -1,10 +1,5 @@
 package parkour;
 
-import java.util.concurrent.Delayed;
-
-import javax.swing.plaf.basic.DefaultMenuLayout;
-
-import lejos.hardware.lcd.LCD;
 import lejos.hardware.motor.EV3MediumRegulatedMotor;
 import lejos.hardware.sensor.EV3ColorSensor;
 import lejos.hardware.sensor.EV3UltrasonicSensor;

@@ -142,6 +142,29 @@ public class Drive {
 		rightMotor.backward();
 	}
 	
+	
+	/**
+	 * Moves the left motor backwards with the assigned speed.
+	 * 
+	 * @param speed the speed for the left motor.
+	 */
+	public void leftB(float speed){
+		leftMotor.setSpeed(speed);
+		leftMotor.backward();
+	}
+	
+	
+	/**
+	 * Moves the right motor backwards with the assigned speed.
+	 * 
+	 * @param speed the speed for the right motor.
+	 */
+	public void rightB(float speed) {
+		rightMotor.setSpeed(speed);
+		rightMotor.backward();
+	}
+	
+	
 	/**
 	 * Turns the robot right by the assigned degree.
 	 * 
@@ -162,6 +185,14 @@ public class Drive {
 		rightMotor.waitComplete();
 	}
 	
+	
+	/**
+	 * Turns the robot right by the assigned degree, but allows to define
+	 * if both motors should rotate. Turn happens with maximum speed.
+	 * 
+	 * @param degree how far the robot should turn right (degree between 0 and 360).
+	 * @param both if both motors should rotate.
+	 */
 	public void turnRight(int degree, boolean both) {		
 		float distanceFullCircle = DISTANCE_TIRES * PI;
 		float distanceToMove = distanceFullCircle / 360.0f * degree;
@@ -205,6 +236,14 @@ public class Drive {
 		rightMotor.waitComplete();
 	}
 	
+	
+	/**
+	 * Turns the robot left by the assigned degree, but allows to define
+	 * if both motors should rotate. Turn happens with maximum speed.
+	 * 
+	 * @param degree how far the robot should turn left (degree between 0 and 360).
+	 * @param both if both motors should rotate.
+	 */
 	public void turnLeft(int degree, boolean both) {
 		float distanceFullCircle = DISTANCE_TIRES * PI;
 		float distanceToMove = distanceFullCircle / 360.0f * degree;
@@ -302,14 +341,4 @@ public class Drive {
 		return (leftMotor.getRotationSpeed() + rightMotor.getRotationSpeed()) / 2.0f;
 	}
 	
-	public void leftB(float speed)
-	{
-		leftMotor.setSpeed(speed);
-		leftMotor.backward();
-	}
-	public void rightB(float speed)
-	{
-		rightMotor.setSpeed(speed);
-		rightMotor.backward();
-	}
 }

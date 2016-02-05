@@ -67,8 +67,8 @@ public class Barcode implements Runnable {
 			
 			// Displaying the current detected bar code
 			LCD.clear();
-			LCD.drawString("Barcode:", 0, 7);
-			LCD.drawInt(barcode, 3, "Barcode:".length(), 7);
+			//LCD.drawString("Barcode:", 0, 7);
+			//LCD.drawInt(barcode, 3, "Barcode:".length(), 7);
 			//System.out.println("Barcode = " + barcode);
 			
 			drive.moveForward(drive.maxSpeed() * 0.3f);		// Start robot movement with 30% speed
