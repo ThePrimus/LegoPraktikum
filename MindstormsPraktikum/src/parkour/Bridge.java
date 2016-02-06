@@ -56,7 +56,7 @@ public class Bridge {
 			// TODO find correct threshold
 			if (curRed > 0.8) {
 				drive.stop();
-				runEnterElevator = true;
+				// TODO Handle start of elevator program
 				break;
 			}
 
@@ -64,7 +64,7 @@ public class Bridge {
 			// TODO find correct threshold
 			if (curGreen > 0.8) {
 				drive.stop();
-				runEnterElevator = true;
+				// TODO Handle start of elevator program
 				break;
 			}
 
@@ -89,14 +89,6 @@ public class Bridge {
 	public void run() {
 		runBridge = true;
 		followBridge();
-		enterElevator();
-	}
-
-	private void enterElevator() {
-		while (runEnterElevator) {
-			// TODO
-		}
-
 	}
 
 	public void end() {
