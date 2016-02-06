@@ -257,6 +257,7 @@ public class GUI {
 	private void maze() {
 		Maze maze = new Maze(drive, sonicSensor, sonicMotor, touchLeftSensor,
 				touchRightSensor);
+		Maze.run();
 	}
 
 	/*
