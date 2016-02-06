@@ -39,13 +39,16 @@ public class LineFollowing {
 		
 		sensor.setCurrentMode("Red");
 	}
-	
+	/**
+	 * Searches the line in a 180 degree range by 5 degree steps.
+	 * If line is found, save from the side from which the line was approached(Left or right turn).
+	 */
 	private void searchLine() {
 		int deg = 0;
 		int inc = 10;
 		float [] samples = new float[sensor.getRedMode().sampleSize()];
 		
-		while(deg < 170) {
+		while(deg < 180) {
 			if(deg < 90) {
 				drive.turnLeft(inc, false);
 				deg += inc;
@@ -88,19 +91,14 @@ public class LineFollowing {
 	
 	/**
 	 * Executes an algorithm so that the robot follows a silver/white line.
-	 * Idea:
+	 * Idea: Stay on line and adjust depending on last adjustment.
+	 * Problem: Parameterization of states and state switching depends on sample fetching frequency
 	 */
 	public void runt(){
 		LCD.clear();
-		//float lastSample = 0;
+
 		char state = 'f';
-		//drive.moveForward(drive.maxSpeed()* 0.5f, drive.maxSpeed()* 0.5f);#
-		//EV3 ev3 = (EV3) BrickFinder.getLocal();
-		//Keys key = ev3.getKeys();
-		
-		//MedianFilter filter = new MedianFilter(sensor.getRedMode(), 100);
-		
-		
+				
 		SampleThread sample = new SampleThread(sensor, 2);
 		float[] samples = new float[sample.sampleSize()];
 		
@@ -153,54 +151,44 @@ public class LineFollowing {
 					drive.moveForward(drive.maxSpeed()* 0.2f, drive.maxSpeed()* 0.2f);
 				}
 				
-				//Delay.msDelay(1000);
 			}
 		}
 		drive.stop();
 	}
 	
-	
+	/**
+	 * Executes an algorithm so that the robot follows a silver/white line.
+	 * Idea: Adjust the whole time to reach a red intensity between 0.5 - 0.4
+	 * ToDo: handling of special cases like 90 degree turns and reflections.
+	 */
 	public void run(){
 		int count = 0;
-		char lastState = 'f';
-		float speed = 100;
 		float[] sample = new float[sensor.sampleSize()];
-		/*EV3 ev3 = (EV3) BrickFinder.getLocal();
-		Keys key = ev3.getKeys();*/
-		
+
 		drive.moveForward(drive.maxSpeed() * 0.4f, drive.maxSpeed() * 0.4f);
 		LCD.clear();
 		
 		while(!terminate){	
-			
+			if(count > 50000) {
+				terminate = true;
+				break;
+			}
 			sensor.fetchSample(sample, 0);
-			/*if(count%100 == 0)
-			{
-				LCD.drawString("Value: " + String.valueOf(sample[0]), 0, 0);
-				LCD.drawString("State: " + String.valueOf(lastState), 0, 1);
-			}*/
-			//Delay.msDelay(100);
+			
 			if(sample[0] >= redMax * 0.5) {
-				//drive.setSpeedLeftMotor(drive.maxSpeed()*0.5f);
-				//drive.rightB(500);
-				//drive.rightB(drive.maxSpeed()*0.5f);
+			
 				drive.moveForward(drive.maxSpeed() * 0.6f,0);
-				//lastState = 'r';
+				drive.rightBackward(drive.maxSpeed() * 0.3f);
+			
 			} else if(sample[0] < redMax * 0.4) {
-				//drive.setSpeedRightMotor(drive.maxSpeed() * 0.1f);
-				//drive.leftB(500);
-				//drive.
+				
 				drive.moveForward(0, drive.maxSpeed() * 0.6f);
-				//lastState = 'l';
+				drive.leftBackward(drive.maxSpeed() * 0.3f);
+	
 			} else {
 				drive.moveForward(300, 200);
 			}
-			/*else if(sample[0] < redMax * 0.55 && sample[0] > redMax * 0.45)
-			{	
-				drive.moveForward(drive.maxSpeed() * 0.4f, drive.maxSpeed() * 0.4f);
-				lastState = 'f';
-			}*/
-			
+			count++;
 		}
 		
 		drive.stop();
