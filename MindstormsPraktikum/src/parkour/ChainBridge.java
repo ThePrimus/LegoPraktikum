@@ -29,6 +29,7 @@ public class ChainBridge {
 
 	private final int SONIC_SENSOR_WALL_POS = -30;
 	private final int SONIC_SENSOR_GROUND_POS = -100;
+	private final int GAP_TIME_DIFF = 4;
 	private EV3MediumRegulatedMotor sonicMotor;
 	private boolean runStartBridge = true;
 	private boolean runColorFollow = true;
@@ -37,6 +38,8 @@ public class ChainBridge {
 	private boolean runBridgeRoutine3 = true;
 	private boolean runEndBridge = true;
 	public static boolean runBridgeRoutine1 = true;
+	
+	private float gapFound = 0;
 
 	/**
 	 * Constructor:
@@ -96,6 +99,27 @@ public class ChainBridge {
 		bridgeRoutine1();
 
 		// can't come up with a good end routine, see bridgeROutine1();
+	}
+	/**
+	 * Detects if the chain bridge ended.
+	 * Idea: Check if a gap was encountered in a given time
+	 * @return
+	 */
+	private boolean detectEndOfBridge() {
+		boolean end = false;
+		float []samples = new float[colorSensor.sampleSize()];
+		float diff = 0;
+		float curTime = 0 ;
+		
+		if(samples[0] < 0.2) {
+			curTime = (float) System.currentTimeMillis();
+			diff = Math.abs(gapFound - curTime);
+			
+			if(diff > GAP_TIME_DIFF) {
+				end = true;
+			}
+		}
+		return end;
 	}
 
 	/*
@@ -166,12 +190,12 @@ public class ChainBridge {
 
 			if (curPos > DISTANCE_TO_WALL) { // move right if robot is to far
 												// from wall
-				drive.moveForward((int) (drive.maxSpeed() * 0.3),
-						(int) (drive.maxSpeed() * 0.2));
+				drive.moveForward((drive.maxSpeed() * 0.3f),
+						(drive.maxSpeed() * 0.2f));
 
 			} else {// move left if if to close to wall
-				drive.moveForward((int) (drive.maxSpeed() * 0.2),
-						(int) (drive.maxSpeed() * 0.3));
+				drive.moveForward((drive.maxSpeed() * 0.2f),
+						(drive.maxSpeed() * 0.3f));
 			}
 		}
 	}
@@ -195,13 +219,13 @@ public class ChainBridge {
 			// see Bridge class, works well for it
 			if (curPos > DISTANCE_TO_GROUND) { // Driving towards abyss therefor
 												// turn left
-				drive.setSpeedLeftMotor((int) (drive.maxSpeed() * 0.3));
-				drive.setSpeedRightMotor((int) (drive.maxSpeed() * 1));
+				drive.setSpeedLeftMotor(drive.maxSpeed() * 0.3f);
+				drive.setSpeedRightMotor(drive.maxSpeed());
 
 			} else {// on the bridge so turn right to follow right side of the
 					// bridge
-				drive.setSpeedLeftMotor((int) (drive.maxSpeed() * 0.3));
-				drive.setSpeedRightMotor((int) (drive.maxSpeed() * 1));
+				drive.setSpeedLeftMotor(drive.maxSpeed() * 0.3f);
+				drive.setSpeedRightMotor(drive.maxSpeed());
 			}
 
 		}
@@ -244,12 +268,12 @@ public class ChainBridge {
 
 			if (curPos > DISTANCE_TO_WALL) { // move right if robot is to far
 												// from wall
-				drive.moveForward((int) (drive.maxSpeed() * 0.3),
-						(int) (drive.maxSpeed() * 0.2));
+				drive.moveForward(drive.maxSpeed() * 0.3f,
+						drive.maxSpeed() * 0.2f);
 
 			} else {// move left if if to close to wall
-				drive.moveForward((int) (drive.maxSpeed() * 0.2),
-						(int) (drive.maxSpeed() * 0.3));
+				drive.moveForward(drive.maxSpeed() * 0.2f,
+						drive.maxSpeed() * 0.3f);
 			}
 		}
 
