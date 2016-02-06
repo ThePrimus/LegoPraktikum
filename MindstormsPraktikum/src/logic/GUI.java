@@ -75,6 +75,8 @@ public class GUI {
 
 	private Seesaw seesaw;
 
+	private EndBoss endboss;
+
 	/**
 	 * Initializes the main menu that enables the user to select a certain
 	 * obstacle mode.
@@ -89,6 +91,10 @@ public class GUI {
 			public void keyPressed(Key k) {
 				if (bridge != null) {
 					bridge.end();
+				}
+
+				if (endboss != null) {
+					endboss.end();
 				}
 
 				if (chainBridge != null) {
@@ -127,15 +133,15 @@ public class GUI {
 				if (chainBridge != null) {
 					chainBridge.end();
 				}
-				
+
 				if (lineFollowing != null) {
 					lineFollowing.end();
 				}
-				
+
 				if (seesaw != null) {
 					seesaw.end();
 				}
-				
+
 				// Start the GUI again => main menu should be shown
 				// when the obstacle program has been interrupted
 				startGUI();
@@ -249,7 +255,8 @@ public class GUI {
 	 * Initializing the maze mode.
 	 */
 	private void maze() {
-		Maze maze = new Maze(drive, sonicSensor, sonicMotor, touchLeftSensor, touchRightSensor);
+		Maze maze = new Maze(drive, sonicSensor, sonicMotor, touchLeftSensor,
+				touchRightSensor);
 	}
 
 	/*
@@ -317,7 +324,9 @@ public class GUI {
 	 * Initializing the final boss mode.
 	 */
 	private void finalBoss() {
-		EndBoss endBoss = new EndBoss(drive);
+		this.endboss = new EndBoss(drive, touchLeftSensor, touchRightSensor,
+				sonicMotor, sonicSensor);
+		endboss.run();
 	}
 
 	/*
