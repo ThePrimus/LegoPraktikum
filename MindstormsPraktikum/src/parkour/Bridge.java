@@ -6,6 +6,7 @@ import lejos.hardware.sensor.EV3ColorSensor;
 import lejos.hardware.sensor.EV3UltrasonicSensor;
 import lejos.robotics.SampleProvider;
 import logic.Drive;
+import logic.GUI;
 
 /**
  * Implements the logic to beat the bridge obstacle.
@@ -84,6 +85,8 @@ public class Bridge {
 			}
 		}
 		drive.stop();
+		GUI.PROGRAM_CHANGED = true;
+		GUI.PROGRAM_STATUS = GUI.PROGRAM_ELEVATOR;
 	}
 
 	public void run() {

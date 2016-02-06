@@ -31,26 +31,42 @@ import parkour.Seesaw;
 public class GUI {
 
 	/*
+	 * If the program should be executed in the race-mode: obstacles/their corresponding
+	 * classes are executed one after another from the selected obstacle in the main menu
+	 * until the end. If false, only the selected obstacle algorithm is executed, then
+	 * the robot stops without switching to the next one.
+	 */
+	public static final boolean RACE_MODE = true;
+	
+	
+	/*
 	 * Thread that executes the solution algorithm for the obstacles.
 	 */
 	private Thread obstacleThread;
 
 	// Current mode/state of the robot
-	public static int PROGRAM_STATUS = -1;
+	public static int PROGRAM_STATUS = -1;			// The id of the currently running obstacle program
 	public static boolean PROGRAM_STOP = false;
+	public static boolean PROGRAM_CHANGED = false;	// If a obstacle program finished completion and the next one
+													// should be loaded
 
-	// Constants for the certain modes/obstacles
-	public static final int PROGRAM_FOLLOW_LINE = 0;
-	public static final int PROGRAM_MAZE = 1;
-	public static final int PROGRAM_BRIDGE = 2;
-	public static final int PROGRAM_CHAIN_BRDIGE = 3;
-	public static final int PROGRAM_ROLLS = 4;
-	public static final int PROGRAM_SEESAW = 5;
-	public static final int PROGRAM_ELEVATOR = 6;
-	public static final int PROGRAM_FINAL_SPURT = 7;
+	// Constant/Id that defines the different obstacles/programs
+	
+	// Ids equal to barcode
+	public static final int PROGRAM_MAZE = 0;
+	public static final int PROGRAM_FINAL_SPURT = 1;
+	public static final int PROGRAM_FOLLOW_LINE = 2;
+	public static final int PROGRAM_BRIDGE = 3;
+	public static final int PROGRAM_SEESAW = 4;
+	public static final int PROGRAM_CHAIN_BRDIGE = 5;
+	public static final int PROGRAM_ROLLS = 6;
+	
+	// Other parkour elements: id not equal to any barcode
 	public static final int PROGRAM_FINAL_BOSS = 8;
-	public static final int PROGRAM_EXIT = 9;
-	public static final int PROGRAM_BARCODE = 10;
+	
+	public static final int PROGRAM_ELEVATOR = 9;
+	public static final int PROGRAM_EXIT = 10;
+	public static final int PROGRAM_BARCODE = 11;
 
 	// All sensors of the robot
 	private EV3LargeRegulatedMotor leftMotor = new EV3LargeRegulatedMotor(
@@ -72,7 +88,7 @@ public class GUI {
 	private Bridge bridge;
 	private ChainBridge chainBridge;
 	private LineFollowing lineFollowing;
-
+	private Maze maze;
 	private Seesaw seesaw;
 
 	private EndBoss endboss;
@@ -255,9 +271,7 @@ public class GUI {
 	 * Initializing the maze mode.
 	 */
 	private void maze() {
-		Maze maze = new Maze(drive, sonicSensor, sonicMotor, touchLeftSensor,
-				touchRightSensor);
-		Maze.run();
+		this.maze = new Maze(drive, sonicSensor, sonicMotor, leftMotor, rightMotor, touchLeftSensor, touchRightSensor);
 	}
 
 	/*
@@ -276,6 +290,14 @@ public class GUI {
 		this.bridge = new Bridge(drive, sonicMotor, leftMotor, rightMotor,
 				sonicSensor, colorSensor);
 		bridge.run();
+		
+		// Change bridge -> elevator
+		if (RACE_MODE && PROGRAM_CHANGED && PROGRAM_STATUS == PROGRAM_ELEVATOR) {
+			PROGRAM_CHANGED = false;
+			LCD.clear();
+			System.out.println("Mode: Elevator");
+			elevator();
+		}
 	}
 
 	/*
@@ -319,6 +341,14 @@ public class GUI {
 				touchLeftSensor, sonicMotor);
 		obstacleThread = new Thread(finalSpurt);
 		obstacleThread.start();
+		
+		// Change final spurt -> final boss
+		if (RACE_MODE && PROGRAM_CHANGED && PROGRAM_STATUS == PROGRAM_FINAL_BOSS) {
+			PROGRAM_CHANGED = false;
+			LCD.clear();
+			System.out.println("Mode: Final Boss");
+			finalBoss();
+		}
 	}
 
 	/*
@@ -334,10 +364,36 @@ public class GUI {
 	 * Start program to read a barcode.
 	 */
 	private void barcode() {
-		Barcode barcode = new Barcode(drive, colorSensor);
+		Barcode barcode = new Barcode(drive, colorSensor, true);
 		obstacleThread = new Thread(barcode);
 		obstacleThread.start();
 	}
+	
+	
+	/**
+	 * Changes the program, because a barcode has been detected.
+	 * 
+	 * @param barcode the barcode that has been detected.
+	 */
+	public void changeProgram(final int barcode) {
+		
+		//ToDO: Cancel currently running program before starting the next one!
+		
+		if (barcode == PROGRAM_FOLLOW_LINE) {
+			followLine();
+		} else if (barcode == PROGRAM_FINAL_SPURT) {
+			finalSpurt();
+		} else if (barcode == PROGRAM_BRIDGE) {
+			bridge();
+		} else if (barcode == PROGRAM_SEESAW) {
+			seesaw();
+		} else if (barcode == PROGRAM_CHAIN_BRDIGE) {
+			chainBridge();
+		} else if (barcode == PROGRAM_ROLLS) {
+			rolls();
+		}
+	}
+	
 
 	/**
 	 * Main method.

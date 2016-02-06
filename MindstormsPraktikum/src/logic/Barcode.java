@@ -13,6 +13,7 @@ public class Barcode implements Runnable {
 	// Sensors and robot control.
 	private Drive drive;
 	private EV3ColorSensor colorSensor;
+	private boolean moveRobot;				// If this class/program should move the robot with 30% speed
 	
 	// The length of a wheel of the robot (in mm).
 	private final float WHEEL_LENGTH = 106.8142f;
@@ -36,9 +37,10 @@ public class Barcode implements Runnable {
 	/**
 	 * Constructor.
 	 */
-	public Barcode(Drive drive, EV3ColorSensor colorSensor) {
+	public Barcode(Drive drive, EV3ColorSensor colorSensor, boolean moveRobot) {
 		this.drive = drive;
 		this.colorSensor = colorSensor;
+		this.moveRobot = moveRobot;
 		
 		colorSensor.setCurrentMode("Red");
 	}
@@ -71,7 +73,10 @@ public class Barcode implements Runnable {
 			//LCD.drawInt(barcode, 3, "Barcode:".length(), 7);
 			//System.out.println("Barcode = " + barcode);
 			
-			drive.moveForward(drive.maxSpeed() * 0.3f);		// Start robot movement with 30% speed
+			// If barcode thread running parallel to obstacle, the obstacle thread handles the movement of the robot
+			if (moveRobot) {
+				drive.moveForward(drive.maxSpeed() * 0.3f);		// Start robot movement with 30% speed
+			}
 			
 				
 			if (currentColorValue > THRESHOLD_WHITE) {
@@ -85,6 +90,8 @@ public class Barcode implements Runnable {
 				}
 			} else {
 				
+				// Robot is on black ground
+				
 				// Calculating the moved distance since the last white line
 				float elapsedTime = System.nanoTime() - startTime;
 				float currentSpeed = drive.getSpeed();
@@ -93,21 +100,21 @@ public class Barcode implements Runnable {
 				
 				//LCD.drawString("Distance", 0, 7);
 				//LCD.drawInttraveledDistanceMM, 3, "Distance:".length(), 7);
-				System.out.println("Distance = " + traveledDistanceMM);
+				//System.out.println("Distance = " + traveledDistanceMM);
 				
-				// Robot is on black ground
 				if (position != BLACK) {
 					// Robot has previously detected a white line
 					position = BLACK;
-				} else if (barcode >= 1 && traveledDistanceMM > WIDTH_BARCODE_ELEMENT) {
-					// Barcode completed and detected
+				} else if (barcode > 1 && traveledDistanceMM > WIDTH_BARCODE_ELEMENT) {
+					// Barcode completed and detected. ToDo: inform about result
 					programRunning = false;
+					System.out.println("Detected barcode = " + barcode);
 				}
 			}
 			
 					
 			// Reset barcode
-			if (barcode >= 7) {
+			if (barcode > 6) {
 				barcode = 0;
 				programRunning = false;
 			}
