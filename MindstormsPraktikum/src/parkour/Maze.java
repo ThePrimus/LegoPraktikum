@@ -84,7 +84,7 @@ public class Maze implements Runnable {
 		
 	    }
 	    
-	    this.goForward(-this.DISTANCE_TO_WALL + eps);
+	    this.goForward(-this.DISTANCE_TO_WALL + eps);        
 	    this.drive.turnLeft(90);
 	    this.drive.forward(this.standSpeed);
 	    
@@ -109,12 +109,12 @@ public class Maze implements Runnable {
 
 		 
 		 if (curDis > this.DISTANCE_TO_WALL) { // sonic sensor measured a higher distance than the width of the path
-		     this.goForward(this.lengthOfCar + this.DISTANCE_TO_WALL);
+		     this.goForward(this.lengthOfCar + this.DISTANCE_TO_WALL-eps);
 		     this.drive.turnRight(90);
-		     this.goForward(eps + this.DISTANCE_TO_WALL);
+		     this.goForward(this.DISTANCE_TO_WALL);
 		     this.drive.forward(this.standSpeed);
 		 } else if (leftTouched == 1 && rightTouched == 1) { 
-		     this.goForward(-this.DISTANCE_TO_WALL);
+		     this.goForward(-this.DISTANCE_TO_WALL+eps);
 		     this.drive.turnLeft(90);
 		     this.drive.forward(this.standSpeed);
 		 } /*else if (// TODO: Maze obstacle finished, when bar code is scanned) {
