@@ -3,6 +3,7 @@ package parkour;
 import lejos.hardware.sensor.EV3ColorSensor;
 import lejos.robotics.SampleProvider;
 import logic.Drive;
+import logic.GUI;
 
 /**
  * Implements the logic to beat the seesaw obstacle.
@@ -59,7 +60,10 @@ public class Seesaw {
 				drive.setSpeedRightMotor(rSpeed);
 			}
 		}
-
+		
+		// ToDo: Move code to correct position: seesaw obstacle finished, inform GUI to start
+		// the search for a barcode
+		//GUI.PROGRAM_FINISHED_START_BARCODE = true;
 	}
 
 	public void end() {

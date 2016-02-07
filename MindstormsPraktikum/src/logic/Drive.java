@@ -20,8 +20,16 @@ public class Drive {
 	 */
 	private final float DISTANCE_TIRES = 130;
 	
+<<<<<<< HEAD
 	// The length of a wheel of the robot (in mm).
 	private final float WHEEL_LENGTH = 106.8142f;
+=======
+	/*
+	 * The ratio between the diameter of the tire and the motor. Because of the gear,
+	 * a full turn of the motor is not equal to a full turn of the actual tire.
+	 */
+	private final float MOTOR_TIRE_RATIO = 1.4f;
+>>>>>>> refs/remotes/origin/master
 
 	/*
 	 * Pi
@@ -115,6 +123,46 @@ public class Drive {
 		leftMotor.forward();
 		rightMotor.forward();
 	}
+	
+	
+	/**
+	 * Moves the robot forward or backward by the assigned distance with the 
+	 * assigned speed.
+	 * 
+	 * @param speed the moving speed of the robot. Needs to be positive.
+	 * @param distance the distance to move (in cm). If positive the robot is moving
+	 * 			forward, if negative the robot is moving backward.
+	 */
+	public void moveDistance(float speed, float distance) {		
+		if (speed > 0.0f) {
+			
+			speedLeft = speed;
+			speedRight = speed;
+			
+			// Calculate the needed number of rotations of the two motors by
+			// the given speed and moving distance
+			float distanceInMM = distance * 10.0f;
+			float numberTurnsOfTire =  distanceInMM / (TIRE_DIAMETER * PI);
+			float numberTurnsOfMotor = numberTurnsOfTire / MOTOR_TIRE_RATIO;
+			float degreesToRotate = numberTurnsOfMotor * 360.0f;
+			
+			stop();		// Stop motors for precise distance movement
+			leftMotor.setSpeed(speed);
+			rightMotor.setSpeed(speed);
+			
+			if (distance > 0.0f) {
+				leftMotor.rotate((int) degreesToRotate, true);
+				rightMotor.rotate((int) degreesToRotate, true);
+			} else if (distance < 0.0f) {
+				leftMotor.rotate((int) ((-1.0f) * degreesToRotate), true);
+				rightMotor.rotate((int) ((-1.0f) * degreesToRotate), true);
+			}
+			
+			leftMotor.waitComplete();
+			rightMotor.waitComplete();
+		}
+	}
+	
 
 	/**
 	 * Moves the robot forward until "stop" of this class is called.
