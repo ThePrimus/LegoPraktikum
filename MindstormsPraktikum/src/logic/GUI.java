@@ -273,7 +273,7 @@ public class GUI {
 	 * Initializing the maze mode.
 	 */
 	private void maze() {
-		this.maze = new Maze(drive, sonicSensor, sonicMotor, leftMotor, rightMotor, 
+		this.maze = new Maze(drive, sonicSensor, sonicMotor,
 								touchLeftSensor, touchRightSensor);
 		
 		// Start search for barcode.
