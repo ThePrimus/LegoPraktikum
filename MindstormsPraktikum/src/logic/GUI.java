@@ -235,7 +235,7 @@ public class GUI {
 				LCD.clear();
 				LCD.drawString("Mode: Barcode", 0, 0);
 				PROGRAM_STATUS = PROGRAM_BARCODE;
-				barcode();
+				barcode(true);
 			}
 
 			PROGRAM_STOP = false;
@@ -281,7 +281,7 @@ public class GUI {
 			PROGRAM_FINISHED_START_BARCODE = false;
 			LCD.clear();
 			System.out.println("Mode: Barcode");
-			barcode();
+			barcode(true);
 		}
 	}
 
@@ -298,7 +298,7 @@ public class GUI {
 			PROGRAM_FINISHED_START_BARCODE = false;
 			LCD.clear();
 			System.out.println("Mode: Barcode");
-			barcode();
+			barcode(true);
 		}
 	}
 
@@ -332,7 +332,7 @@ public class GUI {
 			PROGRAM_FINISHED_START_BARCODE = false;
 			LCD.clear();
 			System.out.println("Mode: Barcode");
-			barcode();
+			barcode(true);
 		}
 	}
 
@@ -349,7 +349,7 @@ public class GUI {
 			PROGRAM_FINISHED_START_BARCODE = false;
 			LCD.clear();
 			System.out.println("Mode: Barcode");
-			barcode();
+			barcode(true);
 		}
 	}
 
@@ -365,7 +365,7 @@ public class GUI {
 			PROGRAM_FINISHED_START_BARCODE = false;
 			LCD.clear();
 			System.out.println("Mode: Barcode");
-			barcode();
+			barcode(true);
 		}
 	}
 
@@ -380,7 +380,7 @@ public class GUI {
 			PROGRAM_FINISHED_START_BARCODE = false;
 			LCD.clear();
 			System.out.println("Mode: Barcode");
-			barcode();
+			barcode(true);
 		}
 	}
 
@@ -415,8 +415,8 @@ public class GUI {
 	 * Start program to read a barcode. If a valid barcode could be found the next
 	 * program will be loaded.
 	 */
-	private void barcode() {
-		barcode = new Barcode(drive, colorSensor, true);
+	private void barcode(boolean moveRobot) {
+		barcode = new Barcode(drive, colorSensor, moveRobot);
 		
 		if (barcode != null) {
 			int foundBarcode = barcode.getBarcode();
