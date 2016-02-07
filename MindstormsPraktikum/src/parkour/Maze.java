@@ -14,7 +14,7 @@ import lejos.hardware.port.MotorPort;
  * 
  * @author Group 1
  */
-public class Maze implements Runnable {
+public class Maze {
 
 	// The navigation class.
 	private Drive drive;
@@ -28,10 +28,10 @@ public class Maze implements Runnable {
 	private SampleProvider rightTouchProvider;
 	private SampleProvider distanceProvider;
 	
-	private final float DISTANCE_TO_WALL = 0.05f;
-	private float standSpeed;
-	private final float lengthOfCar = 0.23f; 
-	private final float eps = 0.005f;
+	private final float DISTANCE_TO_WALL = 5;
+	private float speed;
+	private final float lengthOfCar = 23; 
+	private final float eps = 0.5f;
 	
 
 
@@ -50,74 +50,75 @@ public class Maze implements Runnable {
 		this.drive = drive;
 		this.sonicMotor = sonicMotor;
 		this.sonicSensor = sonicSensor;
-		this.distanceProvider = sonicSensor.getDistanceMode();
-		this.touchSensorLeft = touchLeftSensor;
-		this.touchSensorRight = touchRightSensor;
-		this.leftTouchProvider = touchLeftSensor.getTouchMode();
-		this.rightTouchProvider = touchRightSensor.getTouchMode();
-		this.standSpeed = drive.maxSpeed();
+		distanceProvider = sonicSensor.getDistanceMode();
+		touchSensorLeft = touchLeftSensor;
+		touchSensorRight = touchRightSensor;
+		leftTouchProvider = touchLeftSensor.getTouchMode();
+		rightTouchProvider = touchRightSensor.getTouchMode();
+		speed = drive.maxSpeed();
 	}
 	
-	public void goForward(float distance) { // go forward for a certain distance
+	/*public void goForward(float distance) { // go forward for a certain distance
 	    this.drive.leftMotor.rotate(distance * 2000 / this.TIRE_DIAMETER, true);
 	    this.drive.rightMotor.rotate(distance * 2000 / this.TIRE_DIAMETER, true);
 	    leftMotor.waitComplete();		
 	    rightMotor.waitComplete();
-	}
+	}*/
 	
 	
 	public void PositionAdjust() { // adjust the distance to wall
-	    this.drive.turnRight(90);
-	    this.drive.forward(this.standSpeed);
+	    drive.turnRight(90);
+	    drive.moveForward(speed);
+	    float [] leftSample = new float[leftTouchProvider.sampleSize()];
+	    float [] rightSample = new float[rightTouchProvider.sampleSize()];
+	    int leftTouched = 0;
+	    int rightTouched = 0;
 	    
 	    boolean ProgramRunning = true;
 	    while (ProgramRunning) {
-		
-		float [] samples2 = new float[leftTouchProvider.sampleSize()];
-		leftTouchProvider.fetchSample(samples2, 0);
-		int leftTouched = (int) samples2[0];
-		float [] samples3 = new float[rightTouchProvider.sampleSize()];
-		rightTouchProvider.fetchSample(samples3, 0);
-		int rightTouched = (int) samples3[0];
-		    
-		if (leftTouched == 1 && rightTouched == 1) ProgramRunning = false;
-		
+
+	    	leftTouchProvider.fetchSample(leftSample, 0);
+	    	leftTouched = (int) leftSample[0];
+
+	    	rightTouchProvider.fetchSample(rightSample, 0);
+	    	rightTouched = (int) rightSample[0];
+
+	    	if (leftTouched == 1 && rightTouched == 1) {
+	    		ProgramRunning = false;
+	    	}
 	    }
 	    
-	    this.goForward(-this.DISTANCE_TO_WALL + eps);        
-	    this.drive.turnLeft(90);
-	    this.drive.forward(this.standSpeed);
-	    
+	    drive.moveDistance(speed, -(DISTANCE_TO_WALL + eps));        
+	    drive.turnLeft(90);
+	    drive.moveForward(speed);
 	}
 
 	
 	public void MazeRoutine() {
 	   boolean ProgramRunning = true;
-	   this.PositionAdjust();
+	   float [] curDistance  = new float[distanceProvider.sampleSize()];
+	   float [] leftSample = new float[leftTouchProvider.sampleSize()];
+	   float [] rightSample = new float[rightTouchProvider.sampleSize()];
+	   
+	   PositionAdjust(); //why??
+	   
 	   while (ProgramRunning) {
-
-		float [] samples1 = new float[distanceProvider.sampleSize()];
-		 distanceProvider.fetchSample(samples1, 0);
-		 float curDis = samples1[0];
-		 
-		 float [] samples2 = new float[leftTouchProvider.sampleSize()];
-		 leftTouchProvider.fetchSample(samples2, 0);
-		 int leftTouched = (int) samples2[0];
-		 float [] samples3 = new float[rightTouchProvider.sampleSize()];
-		 rightTouchProvider.fetchSample(samples3, 0);
-		 int rightTouched = (int) samples3[0];
-
-		 
-		 if (curDis > this.DISTANCE_TO_WALL) { // sonic sensor measured a higher distance than the width of the path
-		     this.goForward(this.lengthOfCar + this.DISTANCE_TO_WALL-eps);
-		     this.drive.turnRight(90);
-		     this.goForward(this.DISTANCE_TO_WALL); //curDista
-		     this.drive.forward(this.standSpeed);
-		 } else if (leftTouched == 1 && rightTouched == 1) { 
-		     this.goForward(-this.DISTANCE_TO_WALL+eps);
-		     this.drive.turnLeft(90);
-		     this.drive.forward(this.standSpeed);
-		 } /*else if (// TODO: Maze obstacle finished, when bar code is scanned) {
+		   distanceProvider.fetchSample(curDistance, 0);
+		   leftTouchProvider.fetchSample(leftSample, 0);
+		   rightTouchProvider.fetchSample(rightSample, 0);
+		   int leftTouched = (int) leftSample[0];
+		   int rightTouched = (int) rightSample[0];
+		  
+		   if (curDistance[0] > DISTANCE_TO_WALL) { // sonic sensor measured a higher distance than the width of the path
+			   drive.moveDistance(speed, lengthOfCar + DISTANCE_TO_WALL - eps);
+			   drive.turnRight(90);
+			   drive.moveDistance(speed, DISTANCE_TO_WALL); //curDista
+			   drive.moveForward(speed);
+		   } else if (leftTouched == 1 && rightTouched == 1) { //not for all cases
+			   drive.moveDistance(speed,-(DISTANCE_TO_WALL + eps));
+			   drive.turnLeft(90);
+			  drive.moveForward(speed);
+		   } /*else if (// TODO: Maze obstacle finished, when bar code is scanned) {
 		 }*/
 	   }
 
@@ -132,8 +133,8 @@ public class Maze implements Runnable {
        * than the width of the path. Then turn right and balance the distance and move forward along the right wand.
        * move forward until the bar code is scanned, that informs about the end of the obstacle.
        */
-       @Override
-       public void run() {
-	   this.MazeRoutine();
-       }
+
+	public void run() {
+		MazeRoutine();
+	}
 }
