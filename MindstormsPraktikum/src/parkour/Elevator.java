@@ -22,10 +22,10 @@ public class Elevator {
 	// The navigation class.
 	private Drive drive;
 	private EV3ColorSensor colorSensor;
-	boolean callElevator = true;
-	private boolean waitForElevator = true;
-	private boolean enterElevator = true;
-	private boolean goDown = true;
+	private boolean runCallElevator = true;
+	private boolean runWaitForElevator = true;
+	private boolean runEnterElevator = true;
+	private boolean runGoDown = true;
 	private SensorMode colorProvider;
 	private EV3TouchSensor touchRightSensor;
 	private EV3TouchSensor touchLeftSensor;
@@ -62,24 +62,24 @@ public class Elevator {
 		drive.moveForward(drive.maxSpeed() * 0.3f, drive.maxSpeed() * 0.5f);
 		Delay.msDelay(2000);
 		drive.stop();
-	
+
 		// make a right turn so its perpendicular to the elevator
 		drive.moveForward(drive.maxSpeed() * 0.3f, drive.maxSpeed() * 0.3f);
 		drive.rightBackward(drive.maxSpeed() * 0.3f);
 		Delay.msDelay(2000);
 		drive.stop();
-	
+
 	}
 
 	private void callElevator() {
-	
-		while (callElevator) {
+
+		while (runCallElevator) {
 			// get color
 			float[] colorResults = new float[colorProvider.sampleSize()];
 			colorProvider.fetchSample(colorResults, 0);
 			float curBlue = colorResults[2];
-	
-			// call elevator if blue (ready)
+
+			// call elevator if blue (free)
 			String response;
 			if (curBlue > 0.8) {
 				try {
@@ -96,24 +96,24 @@ public class Elevator {
 	}
 
 	private void waitForElevator() {
-		while (waitForElevator) {
+		while (runWaitForElevator) {
 			// get color
 			float[] colorResults = new float[colorProvider.sampleSize()];
 			colorProvider.fetchSample(colorResults, 0);
 			float curGreen = colorResults[1];
-	
+
 			// Elevator is ready, could also be down with http
 			if (curGreen > 0.8) {
 				break;
 			}
 		}
-	
+
 	}
 
 	private void enterElevator() {
 		drive.moveForward(drive.maxSpeed() * 0.3f, drive.maxSpeed() * 0.3f);
 
-		while (enterElevator) {
+		while (runEnterElevator) {
 			SensorMode leftSensor = touchLeftSensor.getTouchMode();
 			float[] left = new float[leftSensor.sampleSize()];
 			leftSensor.fetchSample(left, 0);
@@ -134,9 +134,9 @@ public class Elevator {
 	private void goDownAndLeaveElevator() {
 		// call elevator
 		String response;
-	
+
 		// keep asking elevator if it's okay to go down
-		while (goDown) {
+		while (runGoDown) {
 			try {
 				response = httpGet("/go_down/");
 				if (response.equals("OK")) {
@@ -148,9 +148,9 @@ public class Elevator {
 		}
 		// wait for 10 seconds until elevator is down
 		Delay.msDelay(10000);
-	
+
 		// TODO Start BarCode
-	
+
 	}
 
 	public static String httpGet(String request) throws IOException {
@@ -176,9 +176,9 @@ public class Elevator {
 	}
 
 	public void end() {
-		callElevator = false;
-		waitForElevator = false;
-		enterElevator = false;
-		goDown = false;
+		runCallElevator = false;
+		runWaitForElevator = false;
+		runEnterElevator = false;
+		runGoDown = false;
 	}
 }

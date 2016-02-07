@@ -55,7 +55,7 @@ public class Rolls implements Runnable {
 	public void run() {
 		
 		// Make sure the sonic sensor is facing sideways
-		sonicMotor.setAcceleration(4000);
+		sonicMotor.setAcceleration(2000);
 		sonicMotor.rotate(-31);
 		sonicMotor.waitComplete();
 		

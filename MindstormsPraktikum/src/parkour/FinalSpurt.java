@@ -20,7 +20,7 @@ public class FinalSpurt implements Runnable {
 	private static final float DISTANCE_TO_TURN_RIGHT = 5.0f;
 	
 	/*
-	 * Distance to the right wall until the robot movement needs to be corrected.
+	 * Distance to the right wall when the robot movement needs to be corrected.
 	 */
 	private static final float DISTANCE_TO_CORRECT_MOVEMENT = 0.15f;
 	
