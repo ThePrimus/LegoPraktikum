@@ -5,6 +5,7 @@ import logic.Drive;
 import lejos.hardware.motor.EV3LargeRegulatedMotor;
 import lejos.hardware.motor.EV3MediumRegulatedMotor;
 import lejos.hardware.sensor.EV3UltrasonicSensor;
+import lejos.robotics.SampleProvider;
 import lejos.hardware.sensor.EV3TouchSensor;
 import lejos.hardware.port.MotorPort;
 
@@ -27,30 +28,29 @@ public class Maze implements Runnable {
 	private SampleProvider rightTouchProvider;
 	private SampleProvider distanceProvider;
 	
-	private final static float DISTANCE_TO_WALL = 0.05f;
-	private final static float standSpeed;
-	private final static float lengthOfCar = 0.23f; 
-	private final static float eps = 0.005f;
+	private final float DISTANCE_TO_WALL = 0.05f;
+	private float standSpeed;
+	private final float lengthOfCar = 0.23f; 
+	private final float eps = 0.005f;
 	
 
 
 	/*
 	 * The diameter of the tire in mm.
 	 */
-	private static final float TIRE_DIAMETER = 34;
+	private final float TIRE_DIAMETER = 34;
 	
 	/**
 	 * Constructor:
 	 * 
 	 * @param drive the drive class for navigation and motor control.
 	 */
-	public Maze(Drive drive,EV3UltrasonicSensor sonicSensor, EV3MediumRegulatedMotor sonicMotor,EV3LargeRegulatedMotor leftMotor, EV3LargeRegulatedMotor rightMotor,EV3TouchSensor touchLeftSensor,EV3TouchSensor touchRightSensor,) {
+	public Maze(Drive drive,EV3UltrasonicSensor sonicSensor, 
+				EV3MediumRegulatedMotor sonicMotor, EV3TouchSensor touchLeftSensor, EV3TouchSensor touchRightSensor) {
 		this.drive = drive;
 		this.sonicMotor = sonicMotor;
 		this.sonicSensor = sonicSensor;
 		this.distanceProvider = sonicSensor.getDistanceMode();
-		this.leftMotor = leftMotor;
-		this.rightMotor = rightMotor;
 		this.touchSensorLeft = touchLeftSensor;
 		this.touchSensorRight = touchRightSensor;
 		this.leftTouchProvider = touchLeftSensor.getTouchMode();
@@ -111,7 +111,7 @@ public class Maze implements Runnable {
 		 if (curDis > this.DISTANCE_TO_WALL) { // sonic sensor measured a higher distance than the width of the path
 		     this.goForward(this.lengthOfCar + this.DISTANCE_TO_WALL-eps);
 		     this.drive.turnRight(90);
-		     this.goForward(this.DISTANCE_TO_WALL);
+		     this.goForward(this.DISTANCE_TO_WALL); //curDista
 		     this.drive.forward(this.standSpeed);
 		 } else if (leftTouched == 1 && rightTouched == 1) { 
 		     this.goForward(-this.DISTANCE_TO_WALL+eps);

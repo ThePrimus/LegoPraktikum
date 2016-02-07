@@ -12,18 +12,21 @@ public class Drive {
 	/*
 	 * The diameter of the tire in mm.
 	 */
-	private static final float TIRE_DIAMETER = 34;
+	private final float TIRE_DIAMETER = 34;
 
 	/*
 	 * The distance between the left and right tire that are mounted on the two
 	 * motors.
 	 */
-	private static final float DISTANCE_TIRES = 130;
+	private final float DISTANCE_TIRES = 130;
+	
+	// The length of a wheel of the robot (in mm).
+	private final float WHEEL_LENGTH = 106.8142f;
 
 	/*
 	 * Pi
 	 */
-	private static final float PI = 3.14159265359f;
+	private final float PI = 3.14159265359f;
 
 	/*
 	 * The left motor of the robot.
@@ -75,6 +78,7 @@ public class Drive {
 		speedRight = rightMotor.getMaxSpeed() / 2;
 	}
 
+	
 	/**
 	 * Moves the robot forward until "stop" of this class is called.
 	 * 
@@ -87,7 +91,7 @@ public class Drive {
 		leftMotor.forward();
 		rightMotor.forward();
 	}
-
+ 
 	/**
 	 * Moves the robot forward until "stop" of this class is called.
 	 * 
