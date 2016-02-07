@@ -65,7 +65,7 @@ public class Barcode {
 		
 		int position = BLACK;	// Robot starts on black ground
 		long startTime = 0;		// Measures the time so that the length of the moved way can be calculated
-		long algorithmStart = System.nanoTime(); 	// Store when the algorithm starts
+		long algorithmStart = System.nanoTime(); 	// Stores when the algorithm starts
 		
 		float currentColorValue = 0;
 		
