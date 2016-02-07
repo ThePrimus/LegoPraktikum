@@ -117,7 +117,8 @@ public class Elevator {
 		drive.moveForward(drive.maxSpeed() * 0.3f, drive.maxSpeed() * 0.3f);
 
 		while (runEnterElevator) {
-			SensorMode leftSensor = touchLeftSensor.getTouchMode();
+			collisionDetection.estimateCollision("Elevator", 2000);
+			/*SensorMode leftSensor = touchLeftSensor.getTouchMode();
 			float[] left = new float[leftSensor.sampleSize()];
 			leftSensor.fetchSample(left, 0);
 
@@ -129,7 +130,7 @@ public class Elevator {
 			if (left[0] == 1 && right[0] == 1) {
 				drive.stop();
 				break;
-			}
+			}*/
 		}
 
 	}

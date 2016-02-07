@@ -49,6 +49,27 @@ public class Collision {
 		}
 		
 	}
+	private void elevatorCollision()
+	{
+		float[] dist = new float[sonicSensor.getDistanceMode().sampleSize()];
+		sonicSensor.getDistanceMode().fetchSample(dist, 0);
+		
+		if((dist[0] - DISTANCE_TO_WALL) > 0.005)
+		{
+			drive.turnRight(5, false);
+		} else {
+			drive.turnLeft(5, false);
+		}
+		if(collision == "Wall")
+		{
+			drive.stop();
+		} else if(collision == "Left Wall") {
+			drive.turnRight(5, false);
+		} else if(collision == "Right Wall") {
+			drive.moveDistance(drive.maxSpeed(), -2);
+			drive.turnLeft(20, false);
+		}
+	}
 	/**
 	 * Estimates the collision object depending on current program
 	 * @param program Current program running
@@ -76,6 +97,7 @@ public class Collision {
 
 			//for Bridge, ChainBridge, Elevator, Rolls, Seesaw
 			//Elevator dürfte nicht vorkommen
+			//TODO: Collision mit einem Sensor Roboter
 			if(leftTouch != 0 && rightTouch != 0) {
 				drive.stop();
 				Delay.msDelay(delay);
@@ -136,32 +158,12 @@ public class Collision {
 				Delay.msDelay(TIME_TO_WAIT);
 			}
 		} else if(program == "Elevator") {
-			float[] dist = new float[sonicSensor.getDistanceMode().sampleSize()];
-			sonicSensor.getDistanceMode().fetchSample(dist, 0);
-			if((dist[0] -  DISTANCE_TO_WALL) > 0.005)
-			{
-				drive.turnRight(5, false);
-			} else
-			{
-				drive.turnLeft(5, false);
-			}
-			if(collision == "Wall")
-			{
-				drive.stop();
-			} else if(collision == "Right Wall") {
-				drive.turnRight(5, false);
-			} else if(collision == "Left Wall") {
-				drive.moveDistance(drive.maxSpeed(), -2);
-				drive.turnLeft(20, false);
-			}
+			elevatorCollision();
 		} else if(program == "Bridge") {
 						
 		} else if(program == "EndBoss") {
 			
-		}
-			
-		
-		
+		}	
 		return collision;
 	}
 }

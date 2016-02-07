@@ -103,6 +103,7 @@ public class Maze {
 		drive.moveForward(speed);
 	}
 
+	//TODO: Sensor Daten wie beim Wand Kollision erst überprüfen(Änderung)
 
 	public void MazeRoutine() {
 		float [] curDistance  = new float[distanceProvider.sampleSize()];
@@ -121,14 +122,14 @@ public class Maze {
 				ProgramRunning = false;
 				break;
 			}
+			collision = collisionDetection.estimateCollision("Maze", 2000);
+			
 			distanceProvider.fetchSample(curDistance, 0);
 			leftTouchProvider.fetchSample(leftSample, 0);
 			rightTouchProvider.fetchSample(rightSample, 0);
 			leftTouched = (int) leftSample[0];
 			rightTouched = (int) rightSample[0];
-			
-			collision = collisionDetection.estimateCollision("Maze", 2000);
-			
+				
 			if (curDistance[0] * 100 > DISTANCE_TO_WALL && curDistance[0] * 100 > TURN_THRESHOLD ) { // sonic sensor measured a higher distance than the width of the path
 				drive.stop();
 				drive.moveDistance(speed, DISTANCE_TO_TURN);
@@ -136,13 +137,12 @@ public class Maze {
 				leftCounter = 0;
 				drive.moveDistance(speed, 2 * DISTANCE_TO_WALL + WALL_WIDTH); //
 				drive.moveForward(speed);
-			} else if (curDistance[0] * 100 > DISTANCE_TO_WALL && curDistance[0] * 100 < TURN_THRESHOLD ) {
+			} else if (curDistance[0] * 100 > DISTANCE_TO_WALL && curDistance[0] * 100 < TURN_THRESHOLD) {
 				drive.stop();
 				//PositionAdjust(); 
 				//adjust on the fly
 				//check speed parameters so that sonic sensor is nearly orthogonal to wall
 				drive.moveForward(speed, speed * 0.6f);
-				
 			} else if (leftTouched == 1 && rightTouched == 1 && leftCounter < 4 && collision == "Wall") { //not for all cases
 				drive.stop();
 				drive.moveDistance(speed,-(DISTANCE_TO_WALL + eps));
