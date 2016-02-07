@@ -8,9 +8,11 @@ import java.net.URL;
 
 import lejos.hardware.sensor.EV3ColorSensor;
 import lejos.hardware.sensor.EV3TouchSensor;
+import lejos.hardware.sensor.EV3UltrasonicSensor;
 import lejos.hardware.sensor.SensorMode;
 import lejos.utility.Delay;
 import logic.Drive;
+import logic.Collision;
 
 /**
  * Implements the logic to beat the elevator obstacle.
@@ -29,6 +31,7 @@ public class Elevator {
 	private SensorMode colorProvider;
 	private EV3TouchSensor touchRightSensor;
 	private EV3TouchSensor touchLeftSensor;
+	private Collision collisionDetection;
 
 	/**
 	 * Constructor:
@@ -41,12 +44,13 @@ public class Elevator {
 	}
 
 	public Elevator(Drive drive, EV3ColorSensor colorSensor,
-			EV3TouchSensor touchLeftSensor, EV3TouchSensor touchRightSensor) {
+			EV3TouchSensor touchLeftSensor, EV3TouchSensor touchRightSensor, EV3UltrasonicSensor sonicSensor) {
 		this.drive = drive;
 		this.colorSensor = colorSensor;
 		this.colorProvider = colorSensor.getRGBMode();
 		this.touchLeftSensor = touchLeftSensor;
 		this.touchRightSensor = touchRightSensor;
+		collisionDetection = new Collision(false, drive, touchLeftSensor, touchRightSensor, sonicSensor);
 	}
 
 	public void run() {
