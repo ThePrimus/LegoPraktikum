@@ -77,6 +77,8 @@ public class GUI {
 
 	private EndBoss endboss;
 
+	private Elevator elevator;
+
 	/**
 	 * Initializes the main menu that enables the user to select a certain
 	 * obstacle mode.
@@ -140,6 +142,10 @@ public class GUI {
 
 				if (seesaw != null) {
 					seesaw.end();
+				}
+
+				if (elevator != null) {
+					elevator.end();
 				}
 
 				// Start the GUI again => main menu should be shown
@@ -307,7 +313,9 @@ public class GUI {
 	 * Initializing the elevator mode.
 	 */
 	private void elevator() {
-		Elevator elevator = new Elevator(drive);
+		this.elevator = new Elevator(drive, colorSensor, touchLeftSensor,
+				touchRightSensor);
+		elevator.run();
 	}
 
 	/*
