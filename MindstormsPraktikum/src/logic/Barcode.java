@@ -8,12 +8,16 @@ import lejos.hardware.sensor.EV3ColorSensor;
  * 
  * @author Group 1
  */
-public class Barcode implements Runnable {
+public class Barcode {
 
 	// Sensors and robot control.
 	private Drive drive;
 	private EV3ColorSensor colorSensor;
-	private boolean moveRobot;				// If this class/program should move the robot with 30% speed
+	private boolean moveRobot;				
+	
+	// It the loop to search for a barcode should run or not. Can be used to terminate
+	// the algorithm.
+	boolean programRunning = true;
 	
 	// The length of a wheel of the robot (in mm).
 	private final float WHEEL_LENGTH = 106.8142f;
@@ -33,9 +37,12 @@ public class Barcode implements Runnable {
 	private final float WIDTH_BARCODE_ELEMENT = 50.0f; 
 	
 	
-	
+		
 	/**
 	 * Constructor.
+	 * 
+	 * @param moveRobot if this class/program should move the robot with 30% speed. Otherwise
+	 * 			the class that called this constructor has to take care about the robot movement!
 	 */
 	public Barcode(Drive drive, EV3ColorSensor colorSensor, boolean moveRobot) {
 		this.drive = drive;
@@ -51,13 +58,11 @@ public class Barcode implements Runnable {
 	 * movement direction of the robot. Between a line to follow and the beginning of the barcode
 	 * are 5cm of black ground. 
 	 */
-	@Override
 	public void run() {
 		
 		int position = BLACK;	// Robot starts on black ground
 		long startTime = 0;		// Measures the time so that the length of the moved way can be calculated
 		
-		boolean programRunning = true;
 		float currentColorValue = 0;
 		
 		while (programRunning) {
@@ -106,7 +111,8 @@ public class Barcode implements Runnable {
 					// Robot has previously detected a white line
 					position = BLACK;
 				} else if (barcode > 1 && traveledDistanceMM > WIDTH_BARCODE_ELEMENT) {
-					// Barcode completed and detected. ToDo: inform about result
+					// Barcode completed and detected. Other classes can use Barcode.getBarcode() to
+					// get the result
 					programRunning = false;
 					System.out.println("Detected barcode = " + barcode);
 				}
@@ -114,11 +120,33 @@ public class Barcode implements Runnable {
 			
 					
 			// Reset barcode
-			if (barcode > 6) {
+			/*if (barcode > 6) {
 				barcode = 0;
 				programRunning = false;
-			}
+			}*/
 		}	
 	}
 	
+	/**
+	 * Ends this algorithm that searches for the barcode.
+	 */
+	public void end() {
+		programRunning = false;
+	}
+	
+	
+	/**
+	 * Returns the found barcode if a valid one could be found.
+	 * A valid barcode consists of at least two lines and has not more
+	 * than six lines. If no valid barcode could be found -1 is returned.
+	 * 
+	 * @return the valid barcode, -1 otherwise.
+	 */
+	public int getBarcode() {
+		if (barcode > 1 && barcode < 7) {
+			return barcode;
+		} else {
+			return -1;
+		}
+	}
 }

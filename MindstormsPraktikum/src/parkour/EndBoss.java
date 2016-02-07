@@ -12,8 +12,8 @@ import logic.Drive;
  * @author Group 1
  */
 public class EndBoss {
-
-	// The navigation class.
+	
+	// The classes that control the robot and the sensors.
 	private Drive drive;
 	private EV3MediumRegulatedMotor sonicMotor;
 	private SampleProvider distanceProvider;
@@ -22,15 +22,8 @@ public class EndBoss {
 
 	/**
 	 * Constructor:
-	 * 
-	 * @param drive
-	 *            the drive class for navigation and motor control.
 	 */
-	public EndBoss(Drive drive) {
-		this.drive = drive;
-	}
-
-	public EndBoss(Drive drive2, EV3TouchSensor touchLeftSensor,
+	public EndBoss(Drive drive, EV3TouchSensor touchLeftSensor,
 			EV3TouchSensor touchRightSensor, EV3MediumRegulatedMotor sonicMotor,
 			EV3UltrasonicSensor sonicSensor) {
 		this.drive = drive;
@@ -40,12 +33,8 @@ public class EndBoss {
 		this.touchRightSensor = touchRightSensor;
 	}
 
-	public void end() {
-		// TODO Auto-generated method stub
 
-	}
-
-	/*
+	/**
 	 * Idea: Drive forward if touch sensor detects something, stop, drive
 	 * backwards, make a right turn to drive to right side, follow it. If it
 	 * again touches something, stop, go backwards, drive a curve. if it touches
@@ -53,6 +42,14 @@ public class EndBoss {
 	 */
 	public void run() {
 
+	}
+	
+	
+	/**
+	 * Ends this obstacle program.
+	 */
+	public void end() {
+		
 	}
 
 }

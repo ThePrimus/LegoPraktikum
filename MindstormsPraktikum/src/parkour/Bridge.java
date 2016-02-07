@@ -85,6 +85,8 @@ public class Bridge {
 			}
 		}
 		drive.stop();
+		
+		// Activate elevator program
 		GUI.PROGRAM_CHANGED = true;
 		GUI.PROGRAM_STATUS = GUI.PROGRAM_ELEVATOR;
 	}
