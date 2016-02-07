@@ -20,16 +20,15 @@ public class Drive {
 	 */
 	private final float DISTANCE_TIRES = 130;
 	
-<<<<<<< HEAD
 	// The length of a wheel of the robot (in mm).
 	private final float WHEEL_LENGTH = 106.8142f;
-=======
+
 	/*
 	 * The ratio between the diameter of the tire and the motor. Because of the gear,
 	 * a full turn of the motor is not equal to a full turn of the actual tire.
 	 */
 	private final float MOTOR_TIRE_RATIO = 1.4f;
->>>>>>> refs/remotes/origin/master
+
 
 	/*
 	 * Pi
