@@ -20,16 +20,20 @@ public class Drive {
 	 */
 	private final float DISTANCE_TIRES = 130;
 	
+	// The length of a wheel of the robot (in mm).
+	private final float WHEEL_LENGTH = 106.8142f;
+
 	/*
 	 * The ratio between the diameter of the tire and the motor. Because of the gear,
 	 * a full turn of the motor is not equal to a full turn of the actual tire.
 	 */
 	private final float MOTOR_TIRE_RATIO = 1.4f;
 
+
 	/*
 	 * Pi
 	 */
-	private static final float PI = 3.14159265359f;
+	private final float PI = 3.14159265359f;
 
 	/*
 	 * The left motor of the robot.
@@ -81,6 +85,7 @@ public class Drive {
 		speedRight = rightMotor.getMaxSpeed() / 2;
 	}
 
+	
 	/**
 	 * Moves the robot forward until "stop" of this class is called.
 	 * 
@@ -93,7 +98,7 @@ public class Drive {
 		leftMotor.forward();
 		rightMotor.forward();
 	}
-
+ 
 	/**
 	 * Moves the robot forward until "stop" of this class is called.
 	 * 
