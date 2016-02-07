@@ -417,9 +417,11 @@ public class GUI {
 	 */
 	private void barcode(boolean moveRobot) {
 		barcode = new Barcode(drive, colorSensor, moveRobot);
+		barcode.run();
 		
 		if (barcode != null) {
 			int foundBarcode = barcode.getBarcode();
+			System.out.println("GUI: barcode = " + foundBarcode);
 			
 			if (foundBarcode != -1) {
 				// Change the current program if a valid barcode has been found

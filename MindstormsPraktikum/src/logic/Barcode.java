@@ -18,10 +18,7 @@ public class Barcode {
 	// It the loop to search for a barcode should run or not. Can be used to terminate
 	// the algorithm.
 	boolean programRunning = true;
-	
-	// The length of a wheel of the robot (in mm).
-	private final float WHEEL_LENGTH = 106.8142f;
-	
+		
 	// The detected barcode = id of obstacle
 	private int barcode = 0;
 	
@@ -29,12 +26,18 @@ public class Barcode {
 	private final int BLACK = 0;
 	private final int WHITE = 1;
 	
+	// The length of a wheel of the robot (in mm).
+	private final float WHEEL_LENGTH = 106.8142f;
+	
 	// The minimum color value of a white/silver element of the barcode.
 	private final float THRESHOLD_WHITE = 0.7f;
 	
 	// The width of an element pair of the barcode (in millimeter: one white line 
 	// (= 25mm), one black ground (= 25mm)).
 	private final float WIDTH_BARCODE_ELEMENT = 50.0f; 
+	
+	// The maximum time that the barcode algorithm has time to search for a barccode (in seconds).
+	private final float MAXIMUM_ALGORITHM_TIME = 12.0f;
 	
 	
 		
@@ -62,6 +65,7 @@ public class Barcode {
 		
 		int position = BLACK;	// Robot starts on black ground
 		long startTime = 0;		// Measures the time so that the length of the moved way can be calculated
+		long algorithmStart = System.nanoTime(); 	// Store when the algorithm starts
 		
 		float currentColorValue = 0;
 		
@@ -98,7 +102,7 @@ public class Barcode {
 				// Robot is on black ground
 				
 				// Calculating the moved distance since the last white line
-				float elapsedTime = System.nanoTime() - startTime;
+				long elapsedTime = System.nanoTime() - startTime;
 				float currentSpeed = drive.getSpeed();
 				float traveledDistanceDegree = currentSpeed * (elapsedTime / 1000000000.0f);	
 				float traveledDistanceMM = traveledDistanceDegree / 360.0f * WHEEL_LENGTH;
@@ -117,13 +121,14 @@ public class Barcode {
 					System.out.println("Detected barcode = " + barcode);
 				}
 			}
-			
-					
-			// Reset barcode
-			/*if (barcode > 6) {
+
+			// Check if search for barcode is running for a long time or a not valid barcode
+			// has been found. If so stop the loop.
+			if (((System.nanoTime() - algorithmStart) / 1000000000.0f) > MAXIMUM_ALGORITHM_TIME
+					|| barcode > 6) {
 				barcode = 0;
 				programRunning = false;
-			}*/
+			}
 		}	
 	}
 	
