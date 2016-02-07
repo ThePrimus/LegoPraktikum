@@ -50,8 +50,8 @@ public class Elevator {
 	}
 
 	public void run() {
-		initPosition();
 		callElevator();
+		initPosition();
 		waitForElevator();
 		enterElevator();
 		goDownAndLeaveElevator();
@@ -90,7 +90,6 @@ public class Elevator {
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
-				break;
 			}
 		}
 	}
