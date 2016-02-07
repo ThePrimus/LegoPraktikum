@@ -11,24 +11,42 @@ public class Collision {
 	private Drive drive;
 	private EV3TouchSensor leftSensor;
 	private EV3TouchSensor rightSensor;
+	private EV3UltrasonicSensor sonicSensor;
 	private float speed;
 	private String collision;
 	private boolean terminateCollisionEstimation;
+	private boolean destructionMode;
 	
-	Collision(Drive drive, EV3TouchSensor leftSensor, EV3TouchSensor rightSensor, EV3MediumRegulatedMotor sonicMotor, EV3UltrasonicSensor sonicSensor) {
+	private final int TIME_TO_WAIT = 2000;
+	private final int TIME_TO_DESTRUCT = 2000;
+	private final float DISTANCE_TO_WALL = 0.01f;
+	
+	public Collision(boolean destructionMode, Drive drive, EV3TouchSensor leftSensor, EV3TouchSensor rightSensor, EV3UltrasonicSensor sonicSensor) {
 		this.drive = drive;
 		this.leftSensor = leftSensor;
 		this.rightSensor = rightSensor;
+		this.sonicSensor = sonicSensor;
 		speed = drive.maxSpeed();
-		collision = "";
+		collision = "none";
 		terminateCollisionEstimation = false;
+		this.destructionMode = destructionMode;
 	}
 
+	public void end()
+	{
+		terminateCollisionEstimation = true;
+	}
 	/**
 	 * Kills other robots
 	 * @param programm Current program running
 	 */
-	public void killThemAll(String programm) {
+	public void killThemAll(String program) {
+		
+		if(program == "")
+		{
+			drive.moveForward(drive.maxSpeed());
+			Delay.msDelay(TIME_TO_DESTRUCT);
+		}
 		
 	}
 	/**
@@ -45,6 +63,9 @@ public class Collision {
 		int leftTouch = 0;
 		int rightTouch = 0;
 		int touchCount = 0;
+		boolean leftTouched = false;
+		boolean rightTouched = false;
+		collision = "none";
 		
 		while(!terminateCollisionEstimation)
 		{
@@ -62,19 +83,85 @@ public class Collision {
 				if(touchCount == 2)
 				{
 					collision = "Wall";
+					break;
 				}
-			}
-			else if (touchCount == 2){
+			} else if(leftTouch != 0) {
+				leftTouched = true;
+				drive.stop();
+				Delay.msDelay(delay);
+				if(!rightTouched)
+				{
+					touchCount++;
+				}
+				else
+				{
+					rightTouched = false;
+				}
+				if(touchCount == 2)
+				{
+					collision = "Left Wall";
+					break;
+				}
+			} else if(rightTouch != 0) {
+				rightTouched = true;
+				drive.stop();
+				Delay.msDelay(delay);
+				if(!leftTouched)
+				{
+					touchCount++;
+				}
+				else
+				{
+					leftTouched = false;
+				}
+				if(touchCount == 2)
+				{
+					collision = "Right Wall";
+					break;
+				} 
+			} else if (touchCount < 2 && touchCount != 0){
 				touchCount = 0;
 				collision = "Robot";
+				break;
 			}
-			if((program == "Bridge" || program == "ChainBridge" || program == "LineFollowing" ||
-			    program == "Rolls" || program == "Seesaw") ) {
 				
-			}
 		}
-
-
+		if((program == "ChainBridge" || program == "LineFollowing" ||
+				program == "Rolls" || program == "Seesaw" || program == "Maze") && collision == "Robot") {
+			if(destructionMode)
+			{
+				killThemAll("");
+			} else {
+				drive.stop();
+				Delay.msDelay(TIME_TO_WAIT);
+			}
+		} else if(program == "Elevator") {
+			float[] dist = new float[sonicSensor.getDistanceMode().sampleSize()];
+			sonicSensor.getDistanceMode().fetchSample(dist, 0);
+			if((dist[0] -  DISTANCE_TO_WALL) > 0.005)
+			{
+				drive.turnRight(5, false);
+			} else
+			{
+				drive.turnLeft(5, false);
+			}
+			if(collision == "Wall")
+			{
+				drive.stop();
+			} else if(collision == "Right Wall") {
+				drive.turnRight(5, false);
+			} else if(collision == "Left Wall") {
+				drive.moveDistance(drive.maxSpeed(), -2);
+				drive.turnLeft(20, false);
+			}
+		} else if(program == "Bridge") {
+						
+		} else if(program == "EndBoss") {
+			
+		}
+			
+		
+		
 		return collision;
 	}
 }
