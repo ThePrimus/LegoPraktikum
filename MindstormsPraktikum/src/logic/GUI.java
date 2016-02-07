@@ -255,6 +255,9 @@ public class GUI {
 		if (lineFollowing != null) {
 			lineFollowing.end();
 		}
+		if (maze != null) {
+			maze.end();
+		}
 		if (bridge != null) {
 			bridge.end();
 		}
@@ -279,6 +282,8 @@ public class GUI {
 
 		this.maze = new Maze(drive, sonicSensor, sonicMotor, touchLeftSensor,
 				touchRightSensor);
+		maze.run();
+		
 		// Start search for barcode.
 		if (RACE_MODE && PROGRAM_FINISHED_START_BARCODE) {
 			PROGRAM_FINISHED_START_BARCODE = false;
