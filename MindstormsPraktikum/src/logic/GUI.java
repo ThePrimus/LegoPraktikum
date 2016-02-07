@@ -31,32 +31,34 @@ import parkour.Seesaw;
 public class GUI {
 
 	/*
-	 * If the program should be executed in the race-mode: obstacles/their corresponding
-	 * classes are executed one after another from the selected obstacle in the main menu
-	 * until the end. If false, only the selected obstacle algorithm is executed, then
-	 * the robot stops without switching to the next one.
+	 * If the program should be executed in the race-mode: obstacles/their
+	 * corresponding classes are executed one after another from the selected
+	 * obstacle in the main menu until the end. If false, only the selected
+	 * obstacle algorithm is executed, then the robot stops without switching to
+	 * the next one.
 	 */
 	public static final boolean RACE_MODE = true;
-	
-	
+
 	/*
 	 * Thread that executes the solution algorithm for the obstacles.
 	 */
 	private Thread obstacleThread;
 
 	// Current mode/state of the robot
-	public static int PROGRAM_STATUS = -1;			// The id of the currently running obstacle program
+	public static int PROGRAM_STATUS = -1; // The id of the currently running
+											// obstacle program
 	public static boolean PROGRAM_STOP = false;
-	
-	// If an obstacle program finished completion and the next one should be loaded.
-	public static boolean PROGRAM_CHANGED = false;	
-	
-	// If an obstacle program finished completion and the search for a barcode should be started.
-	public static boolean PROGRAM_FINISHED_START_BARCODE = false; 	
-	
+
+	// If an obstacle program finished completion and the next one should be
+	// loaded.
+	public static boolean PROGRAM_CHANGED = false;
+
+	// If an obstacle program finished completion and the search for a barcode
+	// should be started.
+	public static boolean PROGRAM_FINISHED_START_BARCODE = false;
 
 	// Constant/Id that defines the different obstacles/programs
-	
+
 	// Ids equal to barcode
 	public static final int PROGRAM_MAZE = 0;
 	public static final int PROGRAM_FINAL_SPURT = 1;
@@ -65,10 +67,10 @@ public class GUI {
 	public static final int PROGRAM_SEESAW = 4;
 	public static final int PROGRAM_CHAIN_BRDIGE = 5;
 	public static final int PROGRAM_ROLLS = 6;
-	
+
 	// Other parkour elements: id not equal to any barcode
 	public static final int PROGRAM_FINAL_BOSS = 8;
-	
+
 	public static final int PROGRAM_ELEVATOR = 9;
 	public static final int PROGRAM_EXIT = 10;
 	public static final int PROGRAM_BARCODE = 11;
@@ -97,7 +99,8 @@ public class GUI {
 	private ChainBridge chainBridge;
 	private Seesaw seesaw;
 	private EndBoss endboss;
-	
+
+	private Elevator elevator;
 
 	/**
 	 * Initializes the main menu that enables the user to select a certain
@@ -126,13 +129,12 @@ public class GUI {
 			public void keyPressed(Key k) {
 				PROGRAM_STOP = true;
 				drive.stop();
-				
+
 				if (obstacleThread != null) {
 					obstacleThread.interrupt();
 				}
-				
+
 				endAllPrograms();
-				
 
 				// Start the GUI again => main menu should be shown
 				// when the obstacle program has been interrupted
@@ -242,8 +244,7 @@ public class GUI {
 			PROGRAM_STATUS = -1;
 		}
 	}
-	
-	
+
 	/*
 	 * Terminates all programs that might currently run.
 	 */
@@ -266,16 +267,18 @@ public class GUI {
 		if (endboss != null) {
 			endboss.end();
 		}
+		if (elevator != null) {
+			elevator.end();
+		}
 	}
-	
 
 	/*
 	 * Initializing the maze mode.
 	 */
 	private void maze() {
-		this.maze = new Maze(drive, sonicSensor, sonicMotor,
-								touchLeftSensor, touchRightSensor);
-		
+
+		this.maze = new Maze(drive, sonicSensor, sonicMotor, touchLeftSensor,
+				touchRightSensor);
 		// Start search for barcode.
 		if (RACE_MODE && PROGRAM_FINISHED_START_BARCODE) {
 			PROGRAM_FINISHED_START_BARCODE = false;
@@ -292,7 +295,7 @@ public class GUI {
 	private void followLine() {
 		this.lineFollowing = new LineFollowing(drive, colorSensor);
 		lineFollowing.run();
-		
+
 		// Start search for barcode.
 		if (RACE_MODE && PROGRAM_FINISHED_START_BARCODE) {
 			PROGRAM_FINISHED_START_BARCODE = false;
@@ -309,9 +312,10 @@ public class GUI {
 		this.bridge = new Bridge(drive, sonicMotor, leftMotor, rightMotor,
 				sonicSensor, colorSensor);
 		bridge.run();
-		
+
 		// Change bridge -> elevator
-		if (RACE_MODE && PROGRAM_CHANGED && PROGRAM_STATUS == PROGRAM_ELEVATOR) {
+		if (RACE_MODE && PROGRAM_CHANGED
+				&& PROGRAM_STATUS == PROGRAM_ELEVATOR) {
 			PROGRAM_CHANGED = false;
 			LCD.clear();
 			System.out.println("Mode: Elevator");
@@ -326,7 +330,7 @@ public class GUI {
 		this.chainBridge = new ChainBridge(drive, sonicSensor, sonicMotor,
 				colorSensor);
 		chainBridge.run();
-		
+
 		// Start search for barcode.
 		if (RACE_MODE && PROGRAM_FINISHED_START_BARCODE) {
 			PROGRAM_FINISHED_START_BARCODE = false;
@@ -343,7 +347,7 @@ public class GUI {
 		Rolls rolls = new Rolls(drive, sonicSensor, sonicMotor);
 		obstacleThread = new Thread(rolls);
 		obstacleThread.start();
-		
+
 		// Start search for barcode.
 		if (RACE_MODE && PROGRAM_FINISHED_START_BARCODE) {
 			PROGRAM_FINISHED_START_BARCODE = false;
@@ -359,7 +363,7 @@ public class GUI {
 	private void seesaw() {
 		this.seesaw = new Seesaw(drive, colorSensor);
 		seesaw.run();
-		
+
 		// Start search for barcode.
 		if (RACE_MODE && PROGRAM_FINISHED_START_BARCODE) {
 			PROGRAM_FINISHED_START_BARCODE = false;
@@ -373,8 +377,10 @@ public class GUI {
 	 * Initializing the elevator mode.
 	 */
 	private void elevator() {
-		Elevator elevator = new Elevator(drive);
-		
+		this.elevator = new Elevator(drive, colorSensor, touchLeftSensor,
+				touchRightSensor);
+		elevator.run();
+
 		// Start search for barcode.
 		if (RACE_MODE && PROGRAM_FINISHED_START_BARCODE) {
 			PROGRAM_FINISHED_START_BARCODE = false;
@@ -392,9 +398,10 @@ public class GUI {
 				touchLeftSensor, sonicMotor);
 		obstacleThread = new Thread(finalSpurt);
 		obstacleThread.start();
-		
+
 		// Change final spurt -> final boss
-		if (RACE_MODE && PROGRAM_CHANGED && PROGRAM_STATUS == PROGRAM_FINAL_BOSS) {
+		if (RACE_MODE && PROGRAM_CHANGED
+				&& PROGRAM_STATUS == PROGRAM_FINAL_BOSS) {
 			PROGRAM_CHANGED = false;
 			LCD.clear();
 			System.out.println("Mode: Final Boss");
@@ -412,34 +419,33 @@ public class GUI {
 	}
 
 	/*
-	 * Start program to read a barcode. If a valid barcode could be found the next
-	 * program will be loaded.
+	 * Start program to read a barcode. If a valid barcode could be found the
+	 * next program will be loaded.
 	 */
 	private void barcode(boolean moveRobot) {
 		barcode = new Barcode(drive, colorSensor, moveRobot);
 		barcode.run();
-		
+
 		if (barcode != null) {
 			int foundBarcode = barcode.getBarcode();
 			System.out.println("GUI: barcode = " + foundBarcode);
-			
+
 			if (foundBarcode != -1) {
 				// Change the current program if a valid barcode has been found
 				changeProgram(foundBarcode);
 			}
 		}
 	}
-	
-	
+
 	/*
 	 * Changes the program, because a barcode has been detected.
 	 * 
 	 * @param barcode the barcode that has been detected.
 	 */
 	private void changeProgram(final int barcode) {
-		
-		//ToDO: Cancel currently running program before starting the next one!
-		
+
+		// ToDO: Cancel currently running program before starting the next one!
+
 		if (RACE_MODE) {
 			if (barcode == PROGRAM_FOLLOW_LINE) {
 				followLine();
@@ -456,7 +462,6 @@ public class GUI {
 			}
 		}
 	}
-	
 
 	/**
 	 * Main method.

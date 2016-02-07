@@ -52,12 +52,14 @@ public class Bridge {
 			colorProvider.fetchSample(colorResults, 0);
 			float curRed = colorResults[0];
 			float curGreen = colorResults[1];
+			float curBlue = colorResults[2];
 
 			// exit if reached lift which shows color red
 			// TODO find correct threshold
 			if (curRed > 0.8) {
 				drive.stop();
 				// TODO Handle start of elevator program
+				// MOVE SONIC MOTOR TO INITAL POS
 				break;
 			}
 
@@ -66,6 +68,16 @@ public class Bridge {
 			if (curGreen > 0.8) {
 				drive.stop();
 				// TODO Handle start of elevator program
+				// MOVE SONIC MOTOR TO INITAL POS
+				break;
+			}
+
+			// exit if reached lift which shows color blue
+			// TODO find correct threshold
+			if (curBlue > 0.8) {
+				drive.stop();
+				// TODO Handle start of elevator program
+				// MOVE SONIC MOTOR TO INITAL POS
 				break;
 			}
 
