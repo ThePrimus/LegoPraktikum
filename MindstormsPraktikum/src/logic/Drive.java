@@ -27,7 +27,7 @@ public class Drive {
 	 * The ratio between the diameter of the tire and the motor. Because of the gear,
 	 * a full turn of the motor is not equal to a full turn of the actual tire.
 	 */
-	private final float MOTOR_TIRE_RATIO = 1.4f;
+	private final float MOTOR_TIRE_RATIO = 1.6f;
 
 
 	/*

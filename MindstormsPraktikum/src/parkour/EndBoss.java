@@ -16,7 +16,7 @@ import music.MusicPlay;
 public class EndBoss {
 	
 	// The maximum time that the algorithm has time to reach the end wall (in seconds).
-	private final float MAXIMUM_ALGORITHM_TIME = 20.0f;
+	private final float MAXIMUM_ALGORITHM_TIME = 50.0f;
 	
 	/*
 	 * Distance to the right wall when the robot movement needs to be corrected.
@@ -91,8 +91,9 @@ public class EndBoss {
 			if (touchSensorResultsLeft[0] == 1 || touchSensorResultsRight[0] == 1) {
 				// Touch sensor pressed, drive back a bit and turn right
 				drive.moveBackward(drive.maxSpeed() * 0.98f, drive.maxSpeed());
-				Delay.msDelay(2000);
+				Delay.msDelay(1000);
 				drive.turnRight(50);
+				drive.moveForward(drive.maxSpeed() * 0.98f, drive.maxSpeed());
 			}
 				
 			// Check the sonic sensor to keep a minimum distance to the right wall.
