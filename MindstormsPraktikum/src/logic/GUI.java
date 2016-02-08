@@ -61,12 +61,12 @@ public class GUI {
 
 	// Ids equal to barcode
 	public static final int PROGRAM_MAZE = 0;
-	public static final int PROGRAM_FINAL_SPURT = 1;
+	public static final int PROGRAM_ROLLS = 1;
 	public static final int PROGRAM_FOLLOW_LINE = 2;
 	public static final int PROGRAM_BRIDGE = 3;
 	public static final int PROGRAM_SEESAW = 4;
 	public static final int PROGRAM_CHAIN_BRDIGE = 5;
-	public static final int PROGRAM_ROLLS = 6;
+	public static final int PROGRAM_FINAL_SPURT = 6;
 
 	// Other parkour elements: id not equal to any barcode
 	public static final int PROGRAM_FINAL_BOSS = 8;
@@ -96,11 +96,13 @@ public class GUI {
 	private LineFollowing lineFollowing;
 	private Maze maze;
 	private Bridge bridge;
-	private ChainBridge chainBridge;
+	private Elevator elevator;
 	private Seesaw seesaw;
+	private ChainBridge chainBridge;
+	private Rolls rolls;
+	private FinalSpurt finalSpurt;
 	private EndBoss endboss;
 
-	private Elevator elevator;
 
 	/**
 	 * Initializes the main menu that enables the user to select a certain
@@ -267,6 +269,12 @@ public class GUI {
 		if (chainBridge != null) {
 			chainBridge.end();
 		}
+		if (rolls != null) {
+			rolls.end();
+		}
+		if (finalSpurt != null) {
+			finalSpurt.end();
+		}
 		if (endboss != null) {
 			endboss.end();
 		}
@@ -349,9 +357,8 @@ public class GUI {
 	 * Initializing the roll mode.
 	 */
 	private void rolls() {
-		Rolls rolls = new Rolls(drive, sonicSensor, sonicMotor);
-		obstacleThread = new Thread(rolls);
-		obstacleThread.start();
+		this.rolls = new Rolls(drive, sonicSensor, sonicMotor, colorSensor);
+		rolls.run();
 
 		// Start search for barcode.
 		if (RACE_MODE && PROGRAM_FINISHED_START_BARCODE) {
@@ -399,10 +406,9 @@ public class GUI {
 	 * Initializing the final spurt.
 	 */
 	private void finalSpurt() {
-		FinalSpurt finalSpurt = new FinalSpurt(drive, sonicSensor,
-				touchLeftSensor, sonicMotor);
-		obstacleThread = new Thread(finalSpurt);
-		obstacleThread.start();
+		FinalSpurt finalSpurt = new FinalSpurt(drive, sonicSensor, touchLeftSensor, 
+												touchRightSensor, sonicMotor);
+		finalSpurt.run();
 
 		// Change final spurt -> final boss
 		if (RACE_MODE && PROGRAM_CHANGED
@@ -433,7 +439,8 @@ public class GUI {
 
 		if (barcode != null) {
 			int foundBarcode = barcode.getBarcode();
-			System.out.println("GUI: barcode = " + foundBarcode);
+			LCD.clear();
+			//System.out.println("Barcode: " + foundBarcode);
 
 			if (foundBarcode != -1) {
 				// Change the current program if a valid barcode has been found
@@ -444,13 +451,11 @@ public class GUI {
 
 	/*
 	 * Changes the program, because a barcode has been detected.
+	 * Make sure the previous program is ended/canceled properly before 
 	 * 
 	 * @param barcode the barcode that has been detected.
 	 */
 	private void changeProgram(final int barcode) {
-
-		// ToDO: Cancel currently running program before starting the next one!
-
 		if (RACE_MODE) {
 			if (barcode == PROGRAM_FOLLOW_LINE) {
 				followLine();

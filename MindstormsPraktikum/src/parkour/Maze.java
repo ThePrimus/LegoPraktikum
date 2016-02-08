@@ -1,7 +1,7 @@
 package parkour;
 
 import logic.Drive;
-
+import lejos.hardware.lcd.LCD;
 import lejos.hardware.motor.EV3LargeRegulatedMotor;
 import lejos.hardware.motor.EV3MediumRegulatedMotor;
 import lejos.hardware.sensor.EV3UltrasonicSensor;
@@ -17,14 +17,22 @@ import logic.Collision;
  */
 public class Maze {
 
+	/*
+	 * The left touch sensor.
+	 */
+	private EV3TouchSensor touchSensorLeft;
+	
+	/*
+	 * The right touch sensor.
+	 */
+	private EV3TouchSensor touchSensorRight;
+	
 	// The navigation class.
 	private Drive drive;
 	private EV3UltrasonicSensor sonicSensor;
 	private EV3MediumRegulatedMotor sonicMotor;
 	private EV3LargeRegulatedMotor leftMotor;
 	private EV3LargeRegulatedMotor rightMotor;
-	private SampleProvider leftTouchProvider;
-	private SampleProvider rightTouchProvider;
 	private SampleProvider distanceProvider;
 	private int leftCounter = 0;
 
@@ -52,12 +60,15 @@ public class Maze {
 	 */
 	public Maze(Drive drive,EV3UltrasonicSensor sonicSensor, 
 			EV3MediumRegulatedMotor sonicMotor, EV3TouchSensor touchLeftSensor, EV3TouchSensor touchRightSensor) {
+		
+		// USE TOUCH SENSORS: leftTouchProvider and rightTouchProvier don't give valid samples!
+		this.touchSensorLeft = touchLeftSensor;
+		this.touchSensorRight = touchRightSensor;
+		
 		this.drive = drive;
 		this.sonicMotor = sonicMotor;
 		this.sonicSensor = sonicSensor;
 		distanceProvider = sonicSensor.getDistanceMode();
-		leftTouchProvider = touchLeftSensor.getTouchMode();
-		rightTouchProvider = touchRightSensor.getTouchMode();
 		speed = drive.maxSpeed();
 		ProgramRunning = true;
 		collisionDetection = new Collision(false, drive, touchLeftSensor, touchRightSensor, sonicSensor);
@@ -76,8 +87,8 @@ public class Maze {
 		drive.turnRight(90);
 		leftCounter = 0;
 		drive.moveForward(speed);
-		float [] leftSample = new float[leftTouchProvider.sampleSize()];
-		float [] rightSample = new float[rightTouchProvider.sampleSize()];
+		float [] leftSample = new float[touchSensorLeft.sampleSize()];
+		float [] rightSample = new float[touchSensorRight.sampleSize()];
 		int leftTouched = 0;
 		int rightTouched = 0;
 
@@ -87,10 +98,10 @@ public class Maze {
 				ProgramRunning = false;
 				break;
 			}
-			leftTouchProvider.fetchSample(leftSample, 0);
+			touchSensorLeft.fetchSample(leftSample, 0);
 			leftTouched = (int) leftSample[0];
 
-			rightTouchProvider.fetchSample(rightSample, 0);
+			touchSensorRight.fetchSample(rightSample, 0);
 			rightTouched = (int) rightSample[0];
 
 			if (leftTouched == 1 && rightTouched == 1) {
@@ -108,9 +119,10 @@ public class Maze {
 
 	public void MazeRoutine() {
 		float [] curDistance  = new float[distanceProvider.sampleSize()];
-		float [] leftSample = new float[leftTouchProvider.sampleSize()];
-		float [] rightSample = new float[rightTouchProvider.sampleSize()];
-		MedianFilter filter = new MedianFilter(distanceProvider, 20);
+
+		float [] leftSample = new float[touchSensorLeft.sampleSize()];
+		float [] rightSample = new float[touchSensorRight.sampleSize()];
+
 		int leftTouched = 0;
 		int rightTouched = 0;
 		int touchCount = 0;
@@ -129,10 +141,11 @@ public class Maze {
 				break;
 			}
 			collision = collisionDetection.estimateCollision("Maze", 2000);
-			
-			filter.fetchSample(curDistance, 0);
-			leftTouchProvider.fetchSample(leftSample, 0);
-			rightTouchProvider.fetchSample(rightSample, 0);
+
+			distanceProvider.fetchSample(curDistance, 0);
+			touchSensorLeft.fetchSample(leftSample, 0);
+			touchSensorRight.fetchSample(rightSample, 0);
+
 			leftTouched = (int) leftSample[0];
 			rightTouched = (int) rightSample[0];
 				
@@ -178,6 +191,61 @@ public class Maze {
 	{
 		ProgramRunning = false;
 	}
+	
+	
+	
+	public void test() {
+		
+		LCD.clear();
+		System.out.println("Maze started");
+		// Make sure the sonic sensor is facing sideways
+		/*sonicMotor.setAcceleration(4000);
+		sonicMotor.rotate(-31);
+		sonicMotor.waitComplete();*/
+				
+		SampleProvider distanceProvider = sonicSensor.getDistanceMode();
+				
+		long algorithmStart = System.nanoTime(); 	// Stores when the algorithm starts
+				
+		this.drive.moveForward(drive.maxSpeed() * 0.4f, drive.maxSpeed() * 0.3f);
+				
+		while (ProgramRunning) {
+				
+			// Check the touch sensor while the program is running
+			// Check the two touch sensors while the program is running
+			float[] touchSensorResultsLeft = new float[touchSensorLeft.sampleSize()];
+			touchSensorLeft.fetchSample(touchSensorResultsLeft, 0);
+			
+			float[] touchSensorResultsRight = new float[touchSensorRight.sampleSize()];
+			touchSensorRight.fetchSample(touchSensorResultsRight, 0);
+					
+			if (touchSensorResultsLeft[0] == 1 && touchSensorResultsRight[0] == 1) {
+				// Touch sensor pressed, drive back a bit and turn right
+				drive.moveDistance(400, -15);
+				drive.turnLeft(70);
+			}
+						
+			float[] sonicSensorResults = new float [distanceProvider.sampleSize()];
+			distanceProvider.fetchSample(sonicSensorResults, 0);
+						
+			if (sonicSensorResults[0] < 0.15) {
+				// Sonic sensor encounters a needed movement correction
+				//drive.turnLeft(7);
+				drive.moveForward(drive.maxSpeed() * 0.3f, drive.maxSpeed() * 0.4f);
+			} else {
+				drive.moveForward(drive.maxSpeed() * 0.5f, drive.maxSpeed() * 0.3f);
+			}
+			
+			// Terminate program automatically after 240seconds
+			if (((System.nanoTime() - algorithmStart) / 1000000000.0f) > 240.0f) {
+				System.out.println("Maze finished");
+				end();
+			}
+		}
+	}
+	
+	
+	
 
 	/**
 	 * Solution for the maze obstacle.
@@ -188,6 +256,7 @@ public class Maze {
 	 */
 
 	public void run() {
-		MazeRoutine();
+		//MazeRoutine();
+		test();
 	}
 }

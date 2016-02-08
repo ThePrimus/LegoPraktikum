@@ -19,9 +19,6 @@ public class Drive {
 	 * motors.
 	 */
 	private final float DISTANCE_TIRES = 130;
-	
-	// The length of a wheel of the robot (in mm).
-	private final float WHEEL_LENGTH = 106.8142f;
 
 	/*
 	 * The ratio between the diameter of the tire and the motor. Because of the gear,
@@ -149,12 +146,9 @@ public class Drive {
 			leftMotor.setSpeed(speed);
 			rightMotor.setSpeed(speed);
 			
-			if (distance > 0.0f) {
+			if (distance > 0.0f || distance < 0.0f) {
 				leftMotor.rotate((int) degreesToRotate, true);
 				rightMotor.rotate((int) degreesToRotate, true);
-			} else if (distance < 0.0f) {
-				leftMotor.rotate((int) ((-1.0f) * degreesToRotate), true);
-				rightMotor.rotate((int) ((-1.0f) * degreesToRotate), true);
 			}
 			
 			leftMotor.waitComplete();
@@ -164,7 +158,7 @@ public class Drive {
 	
 
 	/**
-	 * Moves the robot forward until "stop" of this class is called.
+	 * Moves the robot backward until "stop" of this class is called.
 	 * 
 	 * @param speed
 	 *            the speed of the movement.
@@ -202,7 +196,7 @@ public class Drive {
 	
 	
 	/**
-	 * Moves the left motor backwards with the assigned speed.
+	 * Moves the left motor backward with the assigned speed.
 	 * 
 	 * @param speed the speed for the left motor.
 	 */
@@ -213,7 +207,7 @@ public class Drive {
 	
 	
 	/**
-	 * Moves the right motor backwards with the assigned speed.
+	 * Moves the right motor backward with the assigned speed.
 	 * 
 	 * @param speed the speed for the right motor.
 	 */

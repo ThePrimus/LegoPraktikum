@@ -16,7 +16,7 @@ import music.MusicPlay;
 public class EndBoss {
 	
 	// The maximum time that the algorithm has time to reach the end wall (in seconds).
-	private final float MAXIMUM_ALGORITHM_TIME = 20.0f;
+	private final float MAXIMUM_ALGORITHM_TIME = 50.0f;
 	
 	/*
 	 * Distance to the right wall when the robot movement needs to be corrected.
@@ -75,9 +75,9 @@ public class EndBoss {
 		
 		// Start moving forward and begin playing music
 		this.drive.moveForward(drive.maxSpeed() * 0.98f, drive.maxSpeed());
-		gameOfThrones = new MusicPlay();
-		Thread musicThread = new Thread(gameOfThrones);
-		musicThread.start();
+		//gameOfThrones = new MusicPlay();
+		//Thread musicThread = new Thread(gameOfThrones);
+		//musicThread.start();
 		
 		while (programRunning) {
 		
@@ -91,8 +91,9 @@ public class EndBoss {
 			if (touchSensorResultsLeft[0] == 1 || touchSensorResultsRight[0] == 1) {
 				// Touch sensor pressed, drive back a bit and turn right
 				drive.moveBackward(drive.maxSpeed() * 0.98f, drive.maxSpeed());
-				Delay.msDelay(2000);
+				Delay.msDelay(1000);
 				drive.turnRight(50);
+				drive.moveForward(drive.maxSpeed() * 0.98f, drive.maxSpeed());
 			}
 				
 			// Check the sonic sensor to keep a minimum distance to the right wall.
@@ -102,7 +103,7 @@ public class EndBoss {
 				
 			if (sonicSensorResults[0] < DISTANCE_TO_CORRECT_MOVEMENT) {
 				// Sonic sensor encounters a needed movement correction
-				drive.turnLeft(30);
+				drive.turnLeft(45);
 				drive.moveForward(drive.maxSpeed() * 0.98f, drive.maxSpeed());
 			} 
 			
@@ -120,7 +121,11 @@ public class EndBoss {
 	 */
 	public void end() {
 		drive.stop();
-		gameOfThrones.end();
+		
+		if (gameOfThrones != null) {
+			gameOfThrones.end();
+		}
+		
 		programRunning = false;
 	}
 
