@@ -125,7 +125,6 @@ public class FinalSpurt {
 				
 			if (sonicSensorResults[0] < DISTANCE_TO_CORRECT_LEFT) {
 				// Sonic sensor encounters a needed movement correction
-				//drive.turnLeft(7);
 				drive.moveForward(drive.maxSpeed() * 0.85f, drive.maxSpeed() * 1.0f);
 			} else if (sonicSensorResults[0] > DISTANCE_TO_CORRECT_RIGHT) {
 				drive.moveForward(drive.maxSpeed() * 1.0f, drive.maxSpeed() * 0.85f);
