@@ -123,17 +123,59 @@ public class Drive {
 	
 	/**
 	 * Moves the robot forward or backward by the assigned distance with the 
+	 * assigned speed. An individual speed for both motors can be defined.
+	 * Attention: If a different moving speed for the two motors is set,
+	 * the robot will move on a curve.
+	 * 
+	 * @param speedLeft the moving speed of the left motor. Needs to be positive.
+	 * @param speedRoght the moving speed of the right motor. Needs to be positive.
+	 * @param distance the distance to move (in cm). If positive the robot is moving
+	 * 			forward, if negative the robot is moving backward.
+	 */
+	public void moveDistance(float speedLeft, float speedRight, float distance) {
+
+		if (speedLeft > 0.0f && speedRight > 0.0f) {
+			
+			this.speedLeft = speedLeft;
+			this.speedRight = speedRight;
+			
+			// Calculate the needed number of rotations of the two motors by
+			// the given speed and moving distance
+			float distanceInMM = distance * 10.0f;
+			float numberTurnsOfTire =  distanceInMM / (TIRE_DIAMETER * PI);
+			float numberTurnsOfMotor = numberTurnsOfTire / MOTOR_TIRE_RATIO;
+			float degreesToRotate = numberTurnsOfMotor * 360.0f;
+			
+			stop();		// Stop motors for precise distance movement
+			leftMotor.setSpeed(speedLeft);
+			rightMotor.setSpeed(speedRight);
+			
+			if (distance > 0.0f || distance < 0.0f) {
+				leftMotor.rotate((int) degreesToRotate, true);
+				rightMotor.rotate((int) degreesToRotate, true);
+			} 
+			
+			leftMotor.waitComplete();
+			rightMotor.waitComplete();
+		}
+	}
+	
+	
+	
+	/**
+	 * Moves the robot forward or backward by the assigned distance with the 
 	 * assigned speed.
 	 * 
 	 * @param speed the moving speed of the robot. Needs to be positive.
 	 * @param distance the distance to move (in cm). If positive the robot is moving
 	 * 			forward, if negative the robot is moving backward.
 	 */
-	public void moveDistance(float speed, float distance) {		
+	public void moveDistance(float speed, float distance) {
+
 		if (speed > 0.0f) {
 			
-			speedLeft = speed;
-			speedRight = speed;
+			this.speedLeft = speed;
+			this.speedRight = speed;
 			
 			// Calculate the needed number of rotations of the two motors by
 			// the given speed and moving distance
@@ -155,7 +197,6 @@ public class Drive {
 			rightMotor.waitComplete();
 		}
 	}
-	
 
 	/**
 	 * Moves the robot backward until "stop" of this class is called.

@@ -28,6 +28,7 @@ public class Seesaw {
 	
 	private int deg = 0;
 
+
 	/**
 	 * Constructor:
 	 * 

@@ -2,7 +2,7 @@ package logic;
 
 import lejos.hardware.lcd.LCD;
 import lejos.hardware.sensor.EV3ColorSensor;
-
+import lejos.robotics.filter.MedianFilter;
 import lejos.robotics.filter.SampleThread;
 import lejos.utility.Delay;
 
@@ -167,26 +167,30 @@ public class LineFollowing {
 
 		drive.moveForward(drive.maxSpeed() * 0.4f, drive.maxSpeed() * 0.4f);
 		LCD.clear();
+		MedianFilter filter = new MedianFilter(sensor, 10);
+		
 		
 		while(!terminate){	
 			if(count > 20000) {
 				terminate = true;
 				break;
 			}
-			sensor.fetchSample(sample, 0);
+			//sensor.fetchSample(sample, 0);
+			filter.fetchSample(sample, 0);
+			
 			
 			if(sample[0] >= redMax * 0.5) {
 			
-				drive.moveForward(drive.maxSpeed() * 0.6f,0);
-				drive.rightBackward(drive.maxSpeed() * 0.3f);
+				drive.moveForward(drive.maxSpeed() * 0.6f,drive.maxSpeed() * 0.1f);
+				//drive.rightBackward(drive.maxSpeed() * 0.1f);
 			
 			} else if(sample[0] < redMax * 0.4) {
 				
-				drive.moveForward(0, drive.maxSpeed() * 0.6f);
-				drive.leftBackward(drive.maxSpeed() * 0.3f);
+				drive.moveForward(drive.maxSpeed() * 0.1f, drive.maxSpeed() * 0.6f);
+			//	drive.leftBackward(drive.maxSpeed() * 0.1f);
 	
 			} else {
-				drive.moveForward(300, 200);
+				drive.moveForward(300, 100);
 			}
 			count++;
 		}

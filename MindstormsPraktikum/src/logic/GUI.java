@@ -38,6 +38,9 @@ public class GUI {
 	 * the next one.
 	 */
 	public static final boolean RACE_MODE = false;
+	
+	// The id of the currently running obstacle program. -1 if non is running.
+	public static int PROGRAM_STATUS = -1;
 
 	/*
 	 * Thread that executes the solution algorithm for the obstacles.
@@ -45,7 +48,7 @@ public class GUI {
 	private Thread obstacleThread;
 
 	// Current mode/state of the robot
-	public static int PROGRAM_STATUS = -1; // The id of the currently running
+	// The id of the currently running
 											// obstacle program
 	public static boolean PROGRAM_STOP = false;
 
@@ -390,7 +393,7 @@ public class GUI {
 	 */
 	private void elevator() {
 		this.elevator = new Elevator(drive, colorSensor, touchLeftSensor,
-				touchRightSensor, sonicSensor);
+				touchRightSensor, sonicSensor, sonicMotor);
 		elevator.run();
 
 		// Start search for barcode.

@@ -194,10 +194,13 @@ public class Maze {
 	
 	
 	
-	public void test() {
+	/**
+	 * Idea: Drive along right walls and turn left if both touch sensors are pressed
+	 * to always follow the right walls until the end of the maze.
+	 */
+	public void mazeAlternateRoutine() {
 		
 		LCD.clear();
-		System.out.println("Maze started");
 		// Make sure the sonic sensor is facing sideways
 		/*sonicMotor.setAcceleration(4000);
 		sonicMotor.rotate(-31);
@@ -211,7 +214,6 @@ public class Maze {
 				
 		while (ProgramRunning) {
 				
-			// Check the touch sensor while the program is running
 			// Check the two touch sensors while the program is running
 			float[] touchSensorResultsLeft = new float[touchSensorLeft.sampleSize()];
 			touchSensorLeft.fetchSample(touchSensorResultsLeft, 0);
@@ -220,7 +222,7 @@ public class Maze {
 			touchSensorRight.fetchSample(touchSensorResultsRight, 0);
 					
 			if (touchSensorResultsLeft[0] == 1 && touchSensorResultsRight[0] == 1) {
-				// Touch sensor pressed, drive back a bit and turn right
+				// Touch sensors pressed, drive back a bit and turn left
 				drive.moveDistance(400, -15);
 				drive.turnLeft(70);
 			}
@@ -228,17 +230,20 @@ public class Maze {
 			float[] sonicSensorResults = new float [distanceProvider.sampleSize()];
 			distanceProvider.fetchSample(sonicSensorResults, 0);
 						
+			// Sonic sensor encounters a needed movement correction
 			if (sonicSensorResults[0] < 0.15) {
-				// Sonic sensor encounters a needed movement correction
-				//drive.turnLeft(7);
 				drive.moveForward(drive.maxSpeed() * 0.3f, drive.maxSpeed() * 0.4f);
 			} else {
-				drive.moveForward(drive.maxSpeed() * 0.5f, drive.maxSpeed() * 0.3f);
+				// ToDo: Might be possible to increase the left motor speed to make
+				// closer turns. Also maybe increase overall speed
+				drive.moveForward(drive.maxSpeed() * 0.6f, drive.maxSpeed() * 0.3f);
 			}
+			
+			// ToDo: Stop algorithm if the color sensor detects the white/silver line of the 
+			// barcode
 			
 			// Terminate program automatically after 240seconds
 			if (((System.nanoTime() - algorithmStart) / 1000000000.0f) > 240.0f) {
-				System.out.println("Maze finished");
 				end();
 			}
 		}
@@ -257,6 +262,6 @@ public class Maze {
 
 	public void run() {
 		//MazeRoutine();
-		test();
+		mazeAlternateRoutine();
 	}
 }

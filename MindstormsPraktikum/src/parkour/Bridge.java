@@ -15,13 +15,18 @@ import logic.GUI;
  */
 public class Bridge {
 
-	private static final float ABYSS_THRESHOLD = 0.15f; // in m
+	private static final float ABYSS_THRESHOLD = 0.10f; // in m
 	// The navigation class.
 	private Drive drive;
 	private SampleProvider distanceProvider;
+	
+
+	private final int SONIC_SENSOR_WALL_POS = -30;
+	private final int SONIC_SENSOR_GROUND_POS = -90;
 
 	private SampleProvider colorProvider;
 	private boolean runEnterElevator = false;
+	private EV3MediumRegulatedMotor sonicMotor;
 
 	public static boolean runBridge = true;
 
@@ -40,44 +45,26 @@ public class Bridge {
 			EV3UltrasonicSensor sonicSensor, EV3ColorSensor colorSensor) {
 		this.drive = drive;
 		this.distanceProvider = sonicSensor.getDistanceMode();
-		this.colorProvider = colorSensor.getRGBMode();
+		this.colorProvider = colorSensor.getRedMode();
+		this.sonicMotor = sonicMotor;
 	}
 
 	private void followBridge() {
 		float curPos = 0;
-		while (!runBridge) {
+		drive.moveDistance(300, 290, 30);
+		
+		while (runBridge) {
 
 			// get color
 			float[] colorResults = new float[colorProvider.sampleSize()];
 			colorProvider.fetchSample(colorResults, 0);
-			float curRed = colorResults[0];
-			float curGreen = colorResults[1];
-			float curBlue = colorResults[2];
+			float curColor = colorResults[0];
 
 			// exit if reached lift which shows color red
 			// TODO find correct threshold
-			if (curRed > 0.8) {
+			if (curColor > 0.5) {
 				drive.stop();
-				// TODO Handle start of elevator program
-				// MOVE SONIC MOTOR TO INITAL POS
-				break;
-			}
-
-			// exit if reached lift which shows color green
-			// TODO find correct threshold
-			if (curGreen > 0.8) {
-				drive.stop();
-				// TODO Handle start of elevator program
-				// MOVE SONIC MOTOR TO INITAL POS
-				break;
-			}
-
-			// exit if reached lift which shows color blue
-			// TODO find correct threshold
-			if (curBlue > 0.8) {
-				drive.stop();
-				// TODO Handle start of elevator program
-				// MOVE SONIC MOTOR TO INITAL POS
+				runBridge = false;
 				break;
 			}
 
@@ -93,18 +80,21 @@ public class Bridge {
 			} else { // on the bridge so turn right to follow right side of the
 						// bridge
 				drive.setSpeedLeftMotor(drive.maxSpeed());
-				drive.setSpeedRightMotor(drive.maxSpeed() * 0.8f);
+				drive.setSpeedRightMotor(drive.maxSpeed() * 0.6f);
 			}
 		}
-		drive.stop();
-		
 		// Activate elevator program
 		GUI.PROGRAM_CHANGED = true;
-		GUI.PROGRAM_STATUS = GUI.PROGRAM_ELEVATOR;
+	  	GUI.PROGRAM_STATUS = GUI.PROGRAM_ELEVATOR;
 	}
 
 	public void run() {
-		runBridge = true;
+		sonicMotor.setAcceleration(100);
+		sonicMotor.rotate(SONIC_SENSOR_WALL_POS + SONIC_SENSOR_GROUND_POS, true);
+		sonicMotor.waitComplete(); // short wait to make sure that it's in the right
+							// position
+		
+	
 		followBridge();
 	}
 

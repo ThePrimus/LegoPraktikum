@@ -6,6 +6,7 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
+import lejos.hardware.motor.EV3MediumRegulatedMotor;
 import lejos.hardware.sensor.EV3ColorSensor;
 import lejos.hardware.sensor.EV3TouchSensor;
 import lejos.hardware.sensor.EV3UltrasonicSensor;
@@ -33,6 +34,11 @@ public class Elevator {
 	private EV3TouchSensor touchLeftSensor;
 	private Collision collisionDetection;
 
+
+	private final int SONIC_SENSOR_WALL_POS = -30;
+	private final int SONIC_SENSOR_GROUND_POS = -90;
+	private EV3MediumRegulatedMotor sonicMotor;
+	
 	/**
 	 * Constructor:
 	 * 
@@ -44,34 +50,58 @@ public class Elevator {
 	}
 
 	public Elevator(Drive drive, EV3ColorSensor colorSensor,
-			EV3TouchSensor touchLeftSensor, EV3TouchSensor touchRightSensor, EV3UltrasonicSensor sonicSensor) {
+			EV3TouchSensor touchLeftSensor, EV3TouchSensor touchRightSensor, EV3UltrasonicSensor sonicSensor, EV3MediumRegulatedMotor sonicMotor) {
 		this.drive = drive;
 		this.colorSensor = colorSensor;
 		this.colorProvider = colorSensor.getRGBMode();
 		this.touchLeftSensor = touchLeftSensor;
+		this.sonicMotor = sonicMotor;
 		this.touchRightSensor = touchRightSensor;
-		collisionDetection = new Collision(false, drive, touchLeftSensor, touchRightSensor, sonicSensor);
+		this.collisionDetection = new Collision(false, drive, touchLeftSensor, touchRightSensor, sonicSensor);
 	}
 
 	public void run() {
-		callElevator();
+	//	callElevator();
 		initPosition();
-		waitForElevator();
-		enterElevator();
-		goDownAndLeaveElevator();
+	//	waitForElevator();
+	//	enterElevator();
+	//	goDownAndLeaveElevator();
 	}
 
 	private void initPosition() {
-		// drive left, so that the robot is in front of the elevator
-		drive.moveForward(drive.maxSpeed() * 0.3f, drive.maxSpeed() * 0.5f);
-		Delay.msDelay(2000);
-		drive.stop();
-
 		// make a right turn so its perpendicular to the elevator
-		drive.moveForward(drive.maxSpeed() * 0.3f, drive.maxSpeed() * 0.3f);
-		drive.rightBackward(drive.maxSpeed() * 0.3f);
-		Delay.msDelay(2000);
+		drive.turnRight(45, false);
 		drive.stop();
+		sonicMotor.rotate(-SONIC_SENSOR_GROUND_POS, true);
+		
+		drive.moveDistance(300, 25);
+		
+		////
+		drive.moveForward(300,250);
+		while(runEnterElevator){
+			
+			float[] sampleL = new float[touchLeftSensor.sampleSize()]; 
+			touchLeftSensor.fetchSample(sampleL, 0);
+			
+			float[] sampleR = new float[touchRightSensor.sampleSize()];
+			touchRightSensor.fetchSample(sampleR, 0);
+			if(sampleL[0]==1 && sampleR[0]==1) {
+				drive.stop();
+				break;
+			} else if (sampleL[0]==1 && sampleR[0] == 0) {
+				drive.moveDistance(300, -5);
+				drive.moveForward(300,250);
+			}
+			else if (sampleL[0]==1 && sampleR[0] == 0) {
+				drive.moveDistance(300, -5);
+				drive.moveForward(250,300);
+			}
+			
+			
+		}
+		
+		//collisionDetection.estimateCollision("Elevator", 2000);
+		//drive.turnRight(20, false);
 
 	}
 
