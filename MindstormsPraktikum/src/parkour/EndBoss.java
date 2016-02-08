@@ -75,9 +75,9 @@ public class EndBoss {
 		
 		// Start moving forward and begin playing music
 		this.drive.moveForward(drive.maxSpeed() * 0.98f, drive.maxSpeed());
-		gameOfThrones = new MusicPlay();
-		Thread musicThread = new Thread(gameOfThrones);
-		musicThread.start();
+		//gameOfThrones = new MusicPlay();
+		//Thread musicThread = new Thread(gameOfThrones);
+		//musicThread.start();
 		
 		while (programRunning) {
 		
@@ -102,7 +102,7 @@ public class EndBoss {
 				
 			if (sonicSensorResults[0] < DISTANCE_TO_CORRECT_MOVEMENT) {
 				// Sonic sensor encounters a needed movement correction
-				drive.turnLeft(30);
+				drive.turnLeft(45);
 				drive.moveForward(drive.maxSpeed() * 0.98f, drive.maxSpeed());
 			} 
 			
@@ -120,7 +120,11 @@ public class EndBoss {
 	 */
 	public void end() {
 		drive.stop();
-		gameOfThrones.end();
+		
+		if (gameOfThrones != null) {
+			gameOfThrones.end();
+		}
+		
 		programRunning = false;
 	}
 
