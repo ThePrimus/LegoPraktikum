@@ -3,7 +3,7 @@ package parkour;
 import lejos.hardware.motor.EV3MediumRegulatedMotor;
 import lejos.hardware.sensor.EV3TouchSensor;
 import lejos.hardware.sensor.EV3UltrasonicSensor;
-import lejos.utility.Delay;
+import lejos.robotics.SampleProvider;
 import logic.Drive;
 
 /**
@@ -11,7 +11,7 @@ import logic.Drive;
  * 
  * @author Group 1
  */
-public class FinalSpurt implements Runnable {
+public class FinalSpurt {
 	
 	/*
 	 * The distance between the two walls of the final spurt (measured from sonic sensor,
@@ -20,9 +20,26 @@ public class FinalSpurt implements Runnable {
 	private static final float DISTANCE_TO_TURN_RIGHT = 5.0f;
 	
 	/*
-	 * Distance to the right wall when the robot movement needs to be corrected.
+	 * Distance to the right wall when the robot movement needs to be corrected to the left.
 	 */
-	private static final float DISTANCE_TO_CORRECT_MOVEMENT = 0.15f;
+	private static final float DISTANCE_TO_CORRECT_LEFT = 0.15f;
+	
+	/*
+	 * Distance to the right wall when the robot movement needs to be corrected to the right.
+	 */
+	private static final float DISTANCE_TO_CORRECT_RIGHT = 0.20f;
+	
+	/*
+	 *  The maximum time that the barcode algorithm has time to search for a barccode (in seconds).
+	 */
+	private static final float MAXIMUM_TIME_TO_ENDBOSS = 30.0f;
+	
+	/*
+	 * If the program is running. 
+	 */
+	boolean programRunning = true;
+	
+	
 	
 	/*
 	 * The navigation class.
@@ -36,6 +53,11 @@ public class FinalSpurt implements Runnable {
 	
 	/*
 	 * The left touch sensor.
+	 */
+	private EV3TouchSensor touchSensorLeft;
+	
+	/*
+	 * The right touch sensor.
 	 */
 	private EV3TouchSensor touchSensorRight;
 	
@@ -51,10 +73,12 @@ public class FinalSpurt implements Runnable {
 	 * 
 	 * @param drive the drive class for navigation and motor control.
 	 */
-	public FinalSpurt(Drive drive, EV3UltrasonicSensor sonicSensor, EV3TouchSensor touchRightSensor,
+	public FinalSpurt(Drive drive, EV3UltrasonicSensor sonicSensor, EV3TouchSensor touchLeftSensor, 
+						EV3TouchSensor touchRightSensor,
 						EV3MediumRegulatedMotor sonicMotor) {
 		this.drive = drive;
 		this.sonicSensor = sonicSensor;
+		this.touchSensorLeft = touchLeftSensor;
 		this.touchSensorRight = touchRightSensor;
 		this.sonicMotor = sonicMotor;
 	}
@@ -67,52 +91,58 @@ public class FinalSpurt implements Runnable {
 	 * the sonic sensor measures a higher distance than the width of the path. Then
 	 * turn right to the next obstacle.
 	 */
-	@Override
 	public void run() {
 		
 		// Make sure the sonic sensor is facing sideways
-		sonicMotor.setAcceleration(4000);
+		/*sonicMotor.setAcceleration(4000);
 		sonicMotor.rotate(-31);
-		sonicMotor.waitComplete();
+		sonicMotor.waitComplete();*/
+		
+		SampleProvider distanceProvider = sonicSensor.getDistanceMode();
+		
+		long algorithmStart = System.nanoTime(); 	// Stores when the algorithm starts
 		
 		this.drive.moveForward(drive.maxSpeed() * 0.97f, drive.maxSpeed());
-		
-		boolean programRunning = true;
 		
 		while (programRunning) {
 		
 			// Check the touch sensor while the program is running
-			float[] touchSensorResults = new float[touchSensorRight.sampleSize()];
-			touchSensorRight.fetchSample(touchSensorResults, 0);
+			// Check the two touch sensors while the program is running
+			float[] touchSensorResultsLeft = new float[touchSensorLeft.sampleSize()];
+			touchSensorLeft.fetchSample(touchSensorResultsLeft, 0);
 			
-			if (touchSensorResults[0] == 1) {
+			float[] touchSensorResultsRight = new float[touchSensorRight.sampleSize()];
+			touchSensorRight.fetchSample(touchSensorResultsRight, 0);
+			
+			if (touchSensorResultsLeft[0] == 1 && touchSensorResultsRight[0] == 1) {
 				// Touch sensor pressed, drive back a bit and turn right
-				drive.moveBackward(drive.maxSpeed() * 0.97f, drive.maxSpeed());
-				Delay.msDelay(1500);
-				drive.turnLeft(80);
+				drive.moveDistance(400, -15);
+				drive.turnRight(70);
 			}
 				
-			float[] sonicSensorResults = new float [sonicSensor.sampleSize()];
-			sonicSensor.fetchSample(sonicSensorResults, 0);
+			float[] sonicSensorResults = new float [distanceProvider.sampleSize()];
+			distanceProvider.fetchSample(sonicSensorResults, 0);
 				
-			if (sonicSensorResults[0] < DISTANCE_TO_CORRECT_MOVEMENT) {
+			if (sonicSensorResults[0] < DISTANCE_TO_CORRECT_LEFT) {
 				// Sonic sensor encounters a needed movement correction
-				drive.turnLeft(20);
-				//drive.stop();
-				//drive.moveForward((int) (drive.maxSpeed() * 0.7), (int) (drive.maxSpeed() * 1.0));
-				//Delay.msDelay(1500);
-				drive.moveForward(drive.maxSpeed() * 0.97f, drive.maxSpeed());
-			} else if (sonicSensorResults[0] > DISTANCE_TO_TURN_RIGHT) {
-					
-				Delay.msDelay(1500);
-				// Sonic sensor measures a high distance, turn right to the next obstacle.
-				drive.turnRight(70);
-				drive.moveForward();
-				Delay.msDelay(3000);
-				drive.stop();
-				programRunning = false;
+				//drive.turnLeft(7);
+				drive.moveForward(drive.maxSpeed() * 0.85f, drive.maxSpeed() * 1.0f);
+			} else if (sonicSensorResults[0] > DISTANCE_TO_CORRECT_RIGHT) {
+				drive.moveForward(drive.maxSpeed() * 1.0f, drive.maxSpeed() * 0.85f);
+			}
+			
+			if (((System.nanoTime() - algorithmStart) / 1000000000.0f) > MAXIMUM_TIME_TO_ENDBOSS) {
+				end();
 			}
 		}
 	}
 	
+	
+	/**
+	 * Ends the algorithm.
+	 */
+	public void end() {
+		drive.stop();
+		programRunning = false;
+	}
 }

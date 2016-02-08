@@ -23,7 +23,12 @@ public class Rolls {
 	/*
 	 * Distance to the right wall until the robot movement needs to be corrected.
 	 */
-	private static final float DISTANCE_TO_CORRECT_MOVEMENT = 0.10f;
+	private static final float DISTANCE_TO_TURN_LEFT = 0.07f;
+	
+	/*
+	 * Distance to the right wall until the robot movement needs to be corrected.
+	 */
+	private static final float DISTANCE_TO_TURN_RIGHT = 0.09f;
 	
 	// It the loop to solve the obstacle should run or not. Can be used to terminate
 	// the algorithm.
@@ -73,7 +78,6 @@ public class Rolls {
 	 */
 	public void run() {
 		
-		long algorithmStart = System.nanoTime(); 	// Stores when the algorithm starts
 		float currentColorValue = 0;
 		
 		// Make sure the sonic sensor is facing sideways
@@ -81,18 +85,20 @@ public class Rolls {
 		sonicMotor.rotate(-31);
 		sonicMotor.waitComplete();*/
 		
-		this.drive.moveForward((int) (drive.maxSpeed() * 0.97), drive.maxSpeed());
+		this.drive.moveForward(drive.maxSpeed() * 0.5f, drive.maxSpeed() * 0.5f);
 		
 		while (programRunning) {
 			
 			float[] sonicSensorResults = new float [sonicSensor.sampleSize()];
 			sonicSensor.fetchSample(sonicSensorResults, 0);
 				
-			if (sonicSensorResults[0] < DISTANCE_TO_CORRECT_MOVEMENT) {
+			if (sonicSensorResults[0] < DISTANCE_TO_TURN_LEFT) {
 				// Sonic sensor encounters a needed movement correction
-				drive.turnLeft(7);
-				drive.moveForward((int) (drive.maxSpeed() * 0.97), drive.maxSpeed());
-			} 
+				//drive.turnLeft(7);
+				drive.moveForward(drive.maxSpeed() * 0.5f, drive.maxSpeed() * 0.7f);
+			} else if (sonicSensorResults[0] > DISTANCE_TO_TURN_RIGHT) {
+				drive.moveForward(drive.maxSpeed() * 0.7f, drive.maxSpeed() * 0.5f);
+			}
 			
 			// Getting the current color value from the sensor
 			float[] sample = new float[this.colorSensor.sampleSize()];
@@ -102,15 +108,14 @@ public class Rolls {
 			if (currentColorValue > THRESHOLD_WHITE) {
 				Sound.beep();
 				
-				// White/silver line detected => rolls obstacle finished, start barcode.
-				end();
+				// White/silver line detected => rolls obstacle finished, move a few cm back,
+				// because distance rolls obstacle to barcode is very short. Then switch to barcode
+				// to scan it.
+				drive.stop();
+				drive.moveDistance(300, -15);
+				programRunning = false;
 				GUI.PROGRAM_FINISHED_START_BARCODE = true;
 			}
-			
-			/*if (((System.nanoTime() - algorithmStart) / 1000000000.0f) > MAXIMUM_ALGORITHM_TIME) {
-				end();
-				GUI.PROGRAM_FINISHED_START_BARCODE = true;
-			}*/
 		}
 	}
 	
