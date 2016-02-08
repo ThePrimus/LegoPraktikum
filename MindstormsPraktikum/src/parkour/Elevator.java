@@ -1,10 +1,6 @@
 package parkour;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.URL;
 
 import connection.ComModule;
 import connection.Communication;
@@ -171,28 +167,6 @@ public class Elevator {
 		Delay.msDelay(10000);
 		GUI.PROGRAM_FINISHED_START_BARCODE = true;
 
-	}
-
-	public static String httpGet(String request) throws IOException {
-		URL url = new URL("192.168.0.5" + request);
-		HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-
-		if (conn.getResponseCode() != 200) {
-			throw new IOException(conn.getResponseMessage());
-		}
-
-		// Buffer the result into a string
-		BufferedReader rd = new BufferedReader(
-				new InputStreamReader(conn.getInputStream()));
-		StringBuilder sb = new StringBuilder();
-		String line;
-		while ((line = rd.readLine()) != null) {
-			sb.append(line);
-		}
-		rd.close();
-
-		conn.disconnect();
-		return sb.toString();
 	}
 
 	public void end() {
