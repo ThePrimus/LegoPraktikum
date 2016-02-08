@@ -106,7 +106,6 @@ public class FinalSpurt {
 		
 		while (programRunning) {
 		
-			// Check the touch sensor while the program is running
 			// Check the two touch sensors while the program is running
 			float[] touchSensorResultsLeft = new float[touchSensorLeft.sampleSize()];
 			touchSensorLeft.fetchSample(touchSensorResultsLeft, 0);
@@ -115,16 +114,16 @@ public class FinalSpurt {
 			touchSensorRight.fetchSample(touchSensorResultsRight, 0);
 			
 			if (touchSensorResultsLeft[0] == 1 && touchSensorResultsRight[0] == 1) {
-				// Touch sensor pressed, drive back a bit and turn right
+				// Touch sensors pressed, drive back a bit and turn right
 				drive.moveDistance(400, -15);
 				drive.turnRight(70);
 			}
 				
 			float[] sonicSensorResults = new float [distanceProvider.sampleSize()];
 			distanceProvider.fetchSample(sonicSensorResults, 0);
-				
+			
+			// Sonic sensor encounters a needed movement correction
 			if (sonicSensorResults[0] < DISTANCE_TO_CORRECT_LEFT) {
-				// Sonic sensor encounters a needed movement correction
 				drive.moveForward(drive.maxSpeed() * 0.85f, drive.maxSpeed() * 1.0f);
 			} else if (sonicSensorResults[0] > DISTANCE_TO_CORRECT_RIGHT) {
 				drive.moveForward(drive.maxSpeed() * 1.0f, drive.maxSpeed() * 0.85f);
