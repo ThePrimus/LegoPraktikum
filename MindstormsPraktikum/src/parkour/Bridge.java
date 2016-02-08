@@ -47,7 +47,7 @@ public class Bridge {
 			EV3UltrasonicSensor sonicSensor, EV3ColorSensor colorSensor) {
 		this.drive = drive;
 		this.distanceProvider = sonicSensor.getDistanceMode();
-		this.colorProvider = colorSensor.getRGBMode();
+		this.colorProvider = colorSensor.getRedMode();
 		this.sonicMotor = sonicMotor;
 	}
 
@@ -60,35 +60,13 @@ public class Bridge {
 			// get color
 			float[] colorResults = new float[colorProvider.sampleSize()];
 			colorProvider.fetchSample(colorResults, 0);
-			float curRed = colorResults[0];
-			float curGreen = colorResults[1];
-			float curBlue = colorResults[2];
-		//	LCD.drawString(curRed + " " + curGreen + " " + curBlue, 0, 3);
+			float curColor = colorResults[0];
 
 			// exit if reached lift which shows color red
 			// TODO find correct threshold
-			if (curRed > 0.8) {
+			if (curColor > 0.3) {
 				drive.stop();
-				// TODO Handle start of elevator program
-				// MOVE SONIC MOTOR TO INITAL POS
-				break;
-			}
-
-			// exit if reached lift which shows color green
-			// TODO find correct threshold
-			if (curGreen > 0.03) {
-				drive.stop();
-				// TODO Handle start of elevator program
-				// MOVE SONIC MOTOR TO INITAL POS
-				break;
-			}
-
-			// exit if reached lift which shows color blue
-			// TODO find correct threshold
-			if (curBlue > 0.8) {
-				drive.stop();
-				// TODO Handle start of elevator program
-				// MOVE SONIC MOTOR TO INITAL POS
+				runBridge = false;
 				break;
 			}
 
@@ -107,8 +85,6 @@ public class Bridge {
 				drive.setSpeedRightMotor(drive.maxSpeed() * 0.6f);
 			}
 		}
-		drive.stop();
-		
 		// Activate elevator program
 	//	GUI.PROGRAM_CHANGED = true;
 	//  	GUI.PROGRAM_STATUS = GUI.PROGRAM_ELEVATOR;
