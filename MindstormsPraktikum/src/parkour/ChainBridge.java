@@ -88,13 +88,13 @@ public class ChainBridge {
 	private void idea1() {
 		sonicMotor.setAcceleration(1000);
 		sonicMotor.rotate(SONIC_SENSOR_WALL_POS, true);
-		Delay.msDelay(500); // short wait to make sure that it's in the right
+		sonicMotor.waitComplete(); // short wait to make sure that it's in the right
 							// position
 		startBridgeRoutine();
 
 		sonicMotor.setAcceleration(1000);
 		sonicMotor.rotate(SONIC_SENSOR_GROUND_POS, true);
-		Delay.msDelay(500); // short wait to make sure that it's in the right
+		sonicMotor.waitComplete(); // short wait to make sure that it's in the right
 							// position
 		bridgeRoutine1();
 
