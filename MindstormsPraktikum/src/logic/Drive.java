@@ -132,7 +132,49 @@ public class Drive {
 	 * @param distance the distance to move (in cm). If positive the robot is moving
 	 * 			forward, if negative the robot is moving backward.
 	 */
-	public void moveDistance(float speed, float distance) {		
+	public void moveDistance(float speed,float rSpeed, float distance) {
+
+		if (speed > 0.0f) {
+			
+			speedLeft = speed;
+			speedRight = rSpeed;
+			
+			// Calculate the needed number of rotations of the two motors by
+			// the given speed and moving distance
+			float distanceInMM = distance * 10.0f;
+			float numberTurnsOfTire =  distanceInMM / (TIRE_DIAMETER * PI);
+			float numberTurnsOfMotor = numberTurnsOfTire / MOTOR_TIRE_RATIO;
+			float degreesToRotate = numberTurnsOfMotor * 360.0f;
+			
+			stop();		// Stop motors for precise distance movement
+			leftMotor.setSpeed(speed);
+			rightMotor.setSpeed(speedRight);
+			
+			if (distance > 0.0f) {
+				leftMotor.rotate((int) degreesToRotate, true);
+				rightMotor.rotate((int) degreesToRotate, true);
+			} else if (distance < 0.0f) {
+				leftMotor.rotate((int) (degreesToRotate), true);
+				rightMotor.rotate((int) (degreesToRotate), true);
+			}
+			
+			leftMotor.waitComplete();
+			rightMotor.waitComplete();
+		}
+	}
+	
+	
+	
+	/**
+	 * Moves the robot forward or backward by the assigned distance with the 
+	 * assigned speed.
+	 * 
+	 * @param speed the moving speed of the robot. Needs to be positive.
+	 * @param distance the distance to move (in cm). If positive the robot is moving
+	 * 			forward, if negative the robot is moving backward.
+	 */
+	public void moveDistance(float speed, float distance) {
+
 		if (speed > 0.0f) {
 			
 			speedLeft = speed;
@@ -153,15 +195,14 @@ public class Drive {
 				leftMotor.rotate((int) degreesToRotate, true);
 				rightMotor.rotate((int) degreesToRotate, true);
 			} else if (distance < 0.0f) {
-				leftMotor.rotate((int) ((-1.0f) * degreesToRotate), true);
-				rightMotor.rotate((int) ((-1.0f) * degreesToRotate), true);
+				leftMotor.rotate((int) (degreesToRotate), true);
+				rightMotor.rotate((int) (degreesToRotate), true);
 			}
 			
 			leftMotor.waitComplete();
 			rightMotor.waitComplete();
 		}
 	}
-	
 
 	/**
 	 * Moves the robot forward until "stop" of this class is called.

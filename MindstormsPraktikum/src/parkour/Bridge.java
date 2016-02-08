@@ -1,10 +1,12 @@
 package parkour;
 
+import lejos.hardware.lcd.LCD;
 import lejos.hardware.motor.EV3LargeRegulatedMotor;
 import lejos.hardware.motor.EV3MediumRegulatedMotor;
 import lejos.hardware.sensor.EV3ColorSensor;
 import lejos.hardware.sensor.EV3UltrasonicSensor;
 import lejos.robotics.SampleProvider;
+import lejos.utility.Delay;
 import logic.Drive;
 import logic.GUI;
 
@@ -15,13 +17,18 @@ import logic.GUI;
  */
 public class Bridge {
 
-	private static final float ABYSS_THRESHOLD = 0.15f; // in m
+	private static final float ABYSS_THRESHOLD = 0.10f; // in m
 	// The navigation class.
 	private Drive drive;
 	private SampleProvider distanceProvider;
+	
+
+	private final int SONIC_SENSOR_WALL_POS = -30;
+	private final int SONIC_SENSOR_GROUND_POS = -90;
 
 	private SampleProvider colorProvider;
 	private boolean runEnterElevator = false;
+	private EV3MediumRegulatedMotor sonicMotor;
 
 	public static boolean runBridge = true;
 
@@ -41,11 +48,14 @@ public class Bridge {
 		this.drive = drive;
 		this.distanceProvider = sonicSensor.getDistanceMode();
 		this.colorProvider = colorSensor.getRGBMode();
+		this.sonicMotor = sonicMotor;
 	}
 
 	private void followBridge() {
 		float curPos = 0;
-		while (!runBridge) {
+		drive.moveDistance(300, 290, 30);
+		
+		while (runBridge) {
 
 			// get color
 			float[] colorResults = new float[colorProvider.sampleSize()];
@@ -53,6 +63,7 @@ public class Bridge {
 			float curRed = colorResults[0];
 			float curGreen = colorResults[1];
 			float curBlue = colorResults[2];
+		//	LCD.drawString(curRed + " " + curGreen + " " + curBlue, 0, 3);
 
 			// exit if reached lift which shows color red
 			// TODO find correct threshold
@@ -65,7 +76,7 @@ public class Bridge {
 
 			// exit if reached lift which shows color green
 			// TODO find correct threshold
-			if (curGreen > 0.8) {
+			if (curGreen > 0.03) {
 				drive.stop();
 				// TODO Handle start of elevator program
 				// MOVE SONIC MOTOR TO INITAL POS
@@ -93,18 +104,28 @@ public class Bridge {
 			} else { // on the bridge so turn right to follow right side of the
 						// bridge
 				drive.setSpeedLeftMotor(drive.maxSpeed());
-				drive.setSpeedRightMotor(drive.maxSpeed() * 0.8f);
+				drive.setSpeedRightMotor(drive.maxSpeed() * 0.6f);
 			}
 		}
 		drive.stop();
 		
 		// Activate elevator program
-		GUI.PROGRAM_CHANGED = true;
-		GUI.PROGRAM_STATUS = GUI.PROGRAM_ELEVATOR;
+	//	GUI.PROGRAM_CHANGED = true;
+	//  	GUI.PROGRAM_STATUS = GUI.PROGRAM_ELEVATOR;
 	}
 
 	public void run() {
-		runBridge = true;
+		sonicMotor.setAcceleration(1000);
+		sonicMotor.rotate(SONIC_SENSOR_WALL_POS, true);
+		sonicMotor.waitComplete(); // short wait to make sure that it's in the right
+							// position
+
+		sonicMotor.setAcceleration(1000);
+		sonicMotor.rotate(SONIC_SENSOR_GROUND_POS, true);
+		sonicMotor.waitComplete(); // short wait to make sure that it's in the right
+							// position
+		
+	
 		followBridge();
 	}
 

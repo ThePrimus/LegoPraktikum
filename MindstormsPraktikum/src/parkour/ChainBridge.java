@@ -1,10 +1,18 @@
 package parkour;
 
+import lejos.hardware.BrickFinder;
+import lejos.hardware.Key;
+import lejos.hardware.Keys;
+import lejos.hardware.Sound;
+import lejos.hardware.ev3.EV3;
+import lejos.hardware.lcd.LCD;
 import lejos.hardware.motor.EV3MediumRegulatedMotor;
 import lejos.hardware.sensor.EV3ColorSensor;
 import lejos.hardware.sensor.EV3UltrasonicSensor;
+import lejos.hardware.sensor.SensorMode;
 import lejos.robotics.SampleProvider;
 import lejos.utility.Delay;
+import lejos.utility.SensorSelectorException;
 import logic.Drive;
 /**
  * Implements the logic to beat the chain bridge obstacle.
@@ -40,6 +48,7 @@ public class ChainBridge {
 	public static boolean runBridgeRoutine1 = true;
 	
 	private float gapFound = 0;
+	private SensorMode colorProvider;
 
 	/**
 	 * Constructor:
@@ -53,6 +62,7 @@ public class ChainBridge {
 		this.sonicMotor = sonicMotor;
 		this.distanceProvider = sonicSensor.getDistanceMode();
 		this.colorSensor = sensor;
+		this.colorProvider = sensor.getRedMode();
 	}
 
 	/**
@@ -67,15 +77,132 @@ public class ChainBridge {
 		// Grundsätzlich müsste anfangs noch ein kurzer Linefollow, der beendet
 		// sobald vllt die Wand
 		// erkannt wird oder die Linie zu ende ist
-		linefollowing(); // <- war mein kurzer Test am vormittag
+	//	linefollowing(); // <- war mein kurzer Test am vormittag
 
-		idea1();
+	//	idea1();
 
-		idea2();
+	// idea2();
 
 		idea3();
 
 		// TODO: Missing: move sonic sensor back to initial position
+	}
+
+	/*
+	 * Klappe Sensor auf waagrechte Höhe, folge dann der Wand in einem
+	 * bestimmten Abstand bis die Wand nicht mehr erkannt wird. Klappe dann den
+	 * Sensor schräg zum Boden/Wand, damit er einen Abstand zur übrigen Wand als
+	 * auch (hoffentlich zum Abgrund der Brücke erkennt) Folgt dann nach auch am
+	 * Ende weiterhin der Wand bis er am ende (falls keine wand mehr da ist)
+	 * entweder darüber es erkennt stehen zu bleiben oder beim Anfang des
+	 * Barcodes (ersteres ist sicher fehleranfälliger)
+	 */
+	private void idea3() {
+		sonicMotor.setAcceleration(1000);
+		sonicMotor.rotate(SONIC_SENSOR_WALL_POS - 2, true);
+		sonicMotor.waitComplete(); // short wait to make
+							// sure that it's in the
+							// right position
+		startBridgeRoutine();
+	
+		sonicMotor.setAcceleration(1000);
+	
+		int correctPosition = 40; // 45° to position and wall
+	
+	//	sonicMotor.rotate(SONIC_SENSOR_GROUND_POS + correctPosition, true);
+	//	sonicMotor.waitComplete(); // short wait to make sure that it's in the right
+							// position
+		bridgeRoutine3();
+	}
+
+	private void startBridgeRoutine() {
+		while (runStartBridge) {
+			// get current distance
+			float[] sonicSensorResults = new float[distanceProvider
+					.sampleSize()];
+			distanceProvider.fetchSample(sonicSensorResults, 0);
+			float curPos = sonicSensorResults[0];
+	
+			// wall can't be detected therefore it's lower then the sensor
+			if (curPos > 0.2) {
+				drive.stop();
+				break;
+			} else if (curPos > 0.10) { // move right if robot is to far
+												// from wall
+				drive.moveForward((drive.maxSpeed() * 0.3f),
+						(drive.maxSpeed() * 0.2f));
+	
+			} else {// move left if if to close to wall
+				drive.moveForward((drive.maxSpeed() * 0.2f),
+						(drive.maxSpeed() * 0.3f));
+			}
+		}
+	}
+
+	private void bridgeRoutine3() {
+		// It should follow remaining wall and the chainbridge
+		// I hope it will follow also the start of the end part of the wall
+		// should be tested
+		
+		drive.setAcceleration(1000);
+		//drive.moveForward(300,302);
+		drive.moveForward(700, 830);
+		Delay.msDelay(1000);
+		runBridgeRoutine3 = true;
+		runColorFollow = true;
+		
+		while(runColorFollow){
+			
+			float[] sonicSensorResults = new float[distanceProvider
+			                   					.sampleSize()];
+			distanceProvider.fetchSample(sonicSensorResults, 0);
+			                   			float curPos = sonicSensorResults[0];
+	
+			  // wall can't be detected therefore it's lower then the sensor
+			    if (curPos < 0.2) {
+			   	//	drive.stop();
+			    	runColorFollow = false;
+			       	break;
+				}
+		}
+	
+		while (runBridgeRoutine3) {
+			float[] colorResults = new float[colorProvider.sampleSize()];
+			colorProvider.fetchSample(colorResults, 0);
+			float curColor = colorResults[0];
+			
+			
+			
+			// get current distance
+			float[] sonicSensorResults = new float[distanceProvider
+					.sampleSize()];
+			distanceProvider.fetchSample(sonicSensorResults, 0);
+			float curPos = sonicSensorResults[0];
+			
+			if(curColor > 0.9) {
+				Sound.beep();
+				drive.stop();
+				break;
+			}
+	
+			// wall can't be detected therefore it's lower then the sensor
+		//	if (curPos > 0.2) {
+		//		drive.stop();
+		//		break;
+		//	} else 
+			if (curPos > 0.12) { // move right if robot is to far
+												// from wall
+				drive.moveForward((drive.maxSpeed() * 0.3f),
+						(drive.maxSpeed() * 0.2f));
+	
+			} else {// move left if if to close to wall
+				drive.moveForward((drive.maxSpeed() * 0.2f),
+						(drive.maxSpeed() * 0.3f));
+			}
+		}
+		
+		drive.moveDistance(300, -7);
+	
 	}
 
 	/*
@@ -146,60 +273,6 @@ public class ChainBridge {
 
 	}
 
-	/*
-	 * Klappe Sensor auf waagrechte Höhe, folge dann der Wand in einem
-	 * bestimmten Abstand bis die Wand nicht mehr erkannt wird. Klappe dann den
-	 * Sensor schräg zum Boden/Wand, damit er einen Abstand zur übrigen Wand als
-	 * auch (hoffentlich zum Abgrund der Brücke erkennt) Folgt dann nach auch am
-	 * Ende weiterhin der Wand bis er am ende (falls keine wand mehr da ist)
-	 * entweder darüber es erkennt stehen zu bleiben oder beim Anfang des
-	 * Barcodes (ersteres ist sicher fehleranfälliger)
-	 */
-	private void idea3() {
-		sonicMotor.setAcceleration(1000);
-		sonicMotor.rotate(SONIC_SENSOR_WALL_POS, true);
-		Delay.msDelay(500); // short wait to make
-							// sure that it's in the
-							// right position
-		startBridgeRoutine();
-
-		sonicMotor.setAcceleration(1000);
-
-		int correctPosition = 45; // 45° to position and wall
-
-		sonicMotor.rotate(SONIC_SENSOR_GROUND_POS + correctPosition, true);
-		Delay.msDelay(500); // short wait to make sure that it's in the right
-							// position
-		bridgeRoutine3();
-	}
-
-	private void startBridgeRoutine() {
-		while (runStartBridge) {
-			// get current distance
-			float[] sonicSensorResults = new float[distanceProvider
-					.sampleSize()];
-			distanceProvider.fetchSample(sonicSensorResults, 0);
-			float curPos = sonicSensorResults[0];
-
-			// wall can't be detected therefore it's lower then the sensor
-			if (curPos > 0.8) {
-				drive.stop();
-				Delay.msDelay(3000);
-				break;
-			}
-
-			if (curPos > DISTANCE_TO_WALL) { // move right if robot is to far
-												// from wall
-				drive.moveForward((drive.maxSpeed() * 0.3f),
-						(drive.maxSpeed() * 0.2f));
-
-			} else {// move left if if to close to wall
-				drive.moveForward((drive.maxSpeed() * 0.2f),
-						(drive.maxSpeed() * 0.3f));
-			}
-		}
-	}
-
 	private void bridgeRoutine1() {
 		// move for a given time forward to make sure its on the chain bridge
 		// prevents it drives towards the remaining wall
@@ -252,33 +325,6 @@ public class ChainBridge {
 
 	}
 
-	private void bridgeRoutine3() {
-		// It should follow remaining wall and the chainbridge
-		// I hope it will follow also the start of the end part of the wall
-		// should be tested
-
-		while (runBridgeRoutine3) {
-			// get current distance
-			float[] sonicSensorResults = new float[distanceProvider
-					.sampleSize()];
-			distanceProvider.fetchSample(sonicSensorResults, 0);
-			float curPos = sonicSensorResults[0];
-
-			// Detect end via light sensor
-
-			if (curPos > DISTANCE_TO_WALL) { // move right if robot is to far
-												// from wall
-				drive.moveForward(drive.maxSpeed() * 0.3f,
-						drive.maxSpeed() * 0.2f);
-
-			} else {// move left if if to close to wall
-				drive.moveForward(drive.maxSpeed() * 0.2f,
-						drive.maxSpeed() * 0.3f);
-			}
-		}
-
-	}
-
 	private void endBridgeRoutine() {
 		while (runEndBridge) {
 			// get current position
@@ -318,15 +364,18 @@ public class ChainBridge {
 
 			if (curPos < 0.3) {
 				drive.stop();
-				runColorFollow = false;
+			//	runColorFollow = false;
 			}
 
-			if (curColor > 0.5) {
-				drive.moveForward((float) (drive.maxSpeed() * 0.3),
-						(float) (drive.maxSpeed() * 0));
+			if (curColor > 0.15) {
+				drive.moveForward(drive.maxSpeed() * 0.7f,
+						drive.maxSpeed() * 0.1f);
+			} else  if (curColor < 0.1){
+				drive.moveForward(drive.maxSpeed() * 0.1f,
+						drive.maxSpeed() * 0.5f);
 			} else {
-				drive.moveForward((float) (drive.maxSpeed() * 0),
-						(float) (drive.maxSpeed() * 0.3));
+				drive.moveForward(drive.maxSpeed() * 0.3f,
+						drive.maxSpeed() * 0.1f);
 			}
 
 		}

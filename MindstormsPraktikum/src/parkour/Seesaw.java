@@ -17,7 +17,7 @@ public class Seesaw {
 	private boolean LineFollowing = true;
 	private SampleProvider colorProvider;
 	private final float mSpeed = 800;
-	private final float diffSpeed = 250;
+	private final float diffSpeed = 100; // 250
 	private final float initSpeed = mSpeed - 2 * diffSpeed;
 
 	/**
