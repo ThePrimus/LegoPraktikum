@@ -96,11 +96,12 @@ public class GUI {
 	private LineFollowing lineFollowing;
 	private Maze maze;
 	private Bridge bridge;
-	private ChainBridge chainBridge;
+	private Elevator elevator;
 	private Seesaw seesaw;
+	private ChainBridge chainBridge;
+	private Rolls rolls;
 	private EndBoss endboss;
 
-	private Elevator elevator;
 
 	/**
 	 * Initializes the main menu that enables the user to select a certain
@@ -267,6 +268,9 @@ public class GUI {
 		if (chainBridge != null) {
 			chainBridge.end();
 		}
+		if (rolls != null) {
+			rolls.end();
+		}
 		if (endboss != null) {
 			endboss.end();
 		}
@@ -349,9 +353,8 @@ public class GUI {
 	 * Initializing the roll mode.
 	 */
 	private void rolls() {
-		Rolls rolls = new Rolls(drive, sonicSensor, sonicMotor);
-		obstacleThread = new Thread(rolls);
-		obstacleThread.start();
+		this.rolls = new Rolls(drive, sonicSensor, sonicMotor, colorSensor);
+		rolls.run();
 
 		// Start search for barcode.
 		if (RACE_MODE && PROGRAM_FINISHED_START_BARCODE) {
@@ -433,7 +436,8 @@ public class GUI {
 
 		if (barcode != null) {
 			int foundBarcode = barcode.getBarcode();
-			System.out.println("GUI: barcode = " + foundBarcode);
+			LCD.clear();
+			//System.out.println("Barcode: " + foundBarcode);
 
 			if (foundBarcode != -1) {
 				// Change the current program if a valid barcode has been found
@@ -444,13 +448,11 @@ public class GUI {
 
 	/*
 	 * Changes the program, because a barcode has been detected.
+	 * Make sure the previous program is ended/canceled properly before 
 	 * 
 	 * @param barcode the barcode that has been detected.
 	 */
 	private void changeProgram(final int barcode) {
-
-		// ToDO: Cancel currently running program before starting the next one!
-
 		if (RACE_MODE) {
 			if (barcode == PROGRAM_FOLLOW_LINE) {
 				followLine();

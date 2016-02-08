@@ -1,5 +1,6 @@
 package logic;
 
+import lejos.hardware.Sound;
 import lejos.hardware.lcd.LCD;
 import lejos.hardware.sensor.EV3ColorSensor;
 
@@ -34,10 +35,10 @@ public class Barcode {
 	
 	// The width of an element pair of the barcode (in millimeter: one white line 
 	// (= 25mm), one black ground (= 25mm)).
-	private final float WIDTH_BARCODE_ELEMENT = 50.0f; 
+	private final float WIDTH_BARCODE_ELEMENT = 40.0f; 
 	
 	// The maximum time that the barcode algorithm has time to search for a barccode (in seconds).
-	private final float MAXIMUM_ALGORITHM_TIME = 12.0f;
+	private final float MAXIMUM_ALGORITHM_TIME = 10.0f;
 	
 	
 		
@@ -78,8 +79,8 @@ public class Barcode {
 			
 			// Displaying the current detected bar code
 			LCD.clear();
-			//LCD.drawString("Barcode:", 0, 7);
-			//LCD.drawInt(barcode, 3, "Barcode:".length(), 7);
+			LCD.drawString("Barcode:", 0, 7);
+			LCD.drawInt(barcode, 3, "Barcode:".length(), 7);
 			//System.out.println("Barcode = " + barcode);
 			
 			// If barcode thread running parallel to obstacle, the obstacle thread handles the movement of the robot
@@ -89,7 +90,6 @@ public class Barcode {
 			
 				
 			if (currentColorValue > THRESHOLD_WHITE) {
-				
 				// Robot is on a white/silver line
 				if (position == BLACK) {
 					// Robot was previously on a black line/ground
