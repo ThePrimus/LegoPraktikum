@@ -6,14 +6,17 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
+import connection.ComModule;
+import connection.Communication;
 import lejos.hardware.motor.EV3MediumRegulatedMotor;
 import lejos.hardware.sensor.EV3ColorSensor;
 import lejos.hardware.sensor.EV3TouchSensor;
 import lejos.hardware.sensor.EV3UltrasonicSensor;
 import lejos.hardware.sensor.SensorMode;
 import lejos.utility.Delay;
-import logic.Drive;
 import logic.Collision;
+import logic.Drive;
+import logic.GUI;
 
 /**
  * Implements the logic to beat the elevator obstacle.
@@ -27,6 +30,7 @@ public class Elevator {
 	private EV3ColorSensor colorSensor;
 	private boolean runCallElevator = true;
 	private boolean runWaitForElevator = true;
+	private boolean runWaitForFree = true;
 	private boolean runEnterElevator = true;
 	private boolean runGoDown = true;
 	private SensorMode colorProvider;
@@ -34,11 +38,11 @@ public class Elevator {
 	private EV3TouchSensor touchLeftSensor;
 	private Collision collisionDetection;
 
-
 	private final int SONIC_SENSOR_WALL_POS = -30;
 	private final int SONIC_SENSOR_GROUND_POS = -90;
 	private EV3MediumRegulatedMotor sonicMotor;
-	
+	private ComModule communication;
+
 	/**
 	 * Constructor:
 	 * 
@@ -50,80 +54,60 @@ public class Elevator {
 	}
 
 	public Elevator(Drive drive, EV3ColorSensor colorSensor,
-			EV3TouchSensor touchLeftSensor, EV3TouchSensor touchRightSensor, EV3UltrasonicSensor sonicSensor, EV3MediumRegulatedMotor sonicMotor) {
+			EV3TouchSensor touchLeftSensor, EV3TouchSensor touchRightSensor,
+			EV3UltrasonicSensor sonicSensor,
+			EV3MediumRegulatedMotor sonicMotor) {
 		this.drive = drive;
 		this.colorSensor = colorSensor;
-		this.colorProvider = colorSensor.getRGBMode();
+		this.colorProvider = colorSensor.getAmbientMode();
 		this.touchLeftSensor = touchLeftSensor;
 		this.sonicMotor = sonicMotor;
 		this.touchRightSensor = touchRightSensor;
-		this.collisionDetection = new Collision(false, drive, touchLeftSensor, touchRightSensor, sonicSensor);
+		this.collisionDetection = new Collision(false, drive, touchLeftSensor,
+				touchRightSensor, sonicSensor);
+		this.communication = Communication.getModule();
 	}
 
 	public void run() {
-	//	callElevator();
+		callElevator();
 		initPosition();
-	//	waitForElevator();
-	//	enterElevator();
-	//	goDownAndLeaveElevator();
+		waitForElevator();
+		enterElevator();
+		goDownAndLeaveElevator();
 	}
 
 	private void initPosition() {
-		// make a right turn so its perpendicular to the elevator
 		drive.turnRight(45, false);
 		drive.stop();
 		sonicMotor.rotate(-SONIC_SENSOR_GROUND_POS, true);
-		
-		drive.moveDistance(300, 25);
-		
-		////
-		drive.moveForward(300,250);
-		while(runEnterElevator){
-			
-			float[] sampleL = new float[touchLeftSensor.sampleSize()]; 
-			touchLeftSensor.fetchSample(sampleL, 0);
-			
-			float[] sampleR = new float[touchRightSensor.sampleSize()];
-			touchRightSensor.fetchSample(sampleR, 0);
-			if(sampleL[0]==1 && sampleR[0]==1) {
-				drive.stop();
-				break;
-			} else if (sampleL[0]==1 && sampleR[0] == 0) {
-				drive.moveDistance(300, -5);
-				drive.moveForward(300,250);
-			}
-			else if (sampleL[0]==1 && sampleR[0] == 0) {
-				drive.moveDistance(300, -5);
-				drive.moveForward(250,300);
-			}
-			
-			
-		}
-		
-		//collisionDetection.estimateCollision("Elevator", 2000);
-		//drive.turnRight(20, false);
-
 	}
 
 	private void callElevator() {
 
-		while (runCallElevator) {
-			// get color
-			float[] colorResults = new float[colorProvider.sampleSize()];
-			colorProvider.fetchSample(colorResults, 0);
-			float curBlue = colorResults[2];
+		// check if free
+		boolean isFree = false;
+		while (runWaitForFree) {
+			try {
+				isFree = communication.requestStatus();
+			} catch (IOException e1) {
+				e1.printStackTrace();
+			}
+			if (isFree) {
+				break;
+			}
+		}
 
-			// call elevator if blue (free)
-			String response;
-			if (curBlue > 0.8) {
-				try {
-					response = httpGet("/go_up/");
-					if (response.equals("OK")) {
-						break;
-					}
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
+		// is free then call for it
+
+		boolean isOk = false;
+		while (runCallElevator) {
+			try {
+				isOk = communication.requestElevator();
+			} catch (IOException e1) {
+				e1.printStackTrace();
+			}
+			if (isOk) {
+				break;
 			}
 		}
 	}
@@ -133,10 +117,10 @@ public class Elevator {
 			// get color
 			float[] colorResults = new float[colorProvider.sampleSize()];
 			colorProvider.fetchSample(colorResults, 0);
-			float curGreen = colorResults[1];
+			float curColor = colorResults[0];
 
 			// Elevator is ready, could also be down with http
-			if (curGreen > 0.8) {
+			if (curColor > 0.2) {
 				break;
 			}
 		}
@@ -144,46 +128,48 @@ public class Elevator {
 	}
 
 	private void enterElevator() {
-		drive.moveForward(drive.maxSpeed() * 0.3f, drive.maxSpeed() * 0.3f);
+		drive.moveDistance(300, 25);
 
+		////
+		drive.moveForward(300, 250);
 		while (runEnterElevator) {
-			collisionDetection.estimateCollision("Elevator", 2000);
-			/*SensorMode leftSensor = touchLeftSensor.getTouchMode();
-			float[] left = new float[leftSensor.sampleSize()];
-			leftSensor.fetchSample(left, 0);
+			float[] sampleL = new float[touchLeftSensor.sampleSize()];
+			touchLeftSensor.fetchSample(sampleL, 0);
 
-			SensorMode rightSensor = touchLeftSensor.getTouchMode();
-			float[] right = new float[rightSensor.sampleSize()];
-			leftSensor.fetchSample(right, 0);
-
-			// if both sensors are pressed then robot is inside the elevator
-			if (left[0] == 1 && right[0] == 1) {
+			float[] sampleR = new float[touchRightSensor.sampleSize()];
+			touchRightSensor.fetchSample(sampleR, 0);
+			if (sampleL[0] == 1 && sampleR[0] == 1) {
 				drive.stop();
 				break;
-			}*/
-		}
+			} else if (sampleL[0] == 1 && sampleR[0] == 0) {
+				drive.moveDistance(300, -5);
+				drive.moveForward(300, 250);
+			} else if (sampleL[0] == 1 && sampleR[0] == 0) {
+				drive.moveDistance(300, -5);
+				drive.moveForward(250, 300);
+			}
 
+		}
 	}
 
 	private void goDownAndLeaveElevator() {
-		// call elevator
-		String response;
 
 		// keep asking elevator if it's okay to go down
+		boolean isOk = false;
 		while (runGoDown) {
 			try {
-				response = httpGet("/go_down/");
-				if (response.equals("OK")) {
-					break;
-				}
-			} catch (IOException e) {
-				e.printStackTrace();
+				isOk = communication.moveElevatorDown();
+			} catch (IOException e1) {
+				e1.printStackTrace();
+			}
+
+			if (isOk) {
+				break;
 			}
 		}
 		// wait for 10 seconds until elevator is down
 		Delay.msDelay(10000);
-
-		// TODO Start BarCode
+		GUI.PROGRAM_FINISHED_START_BARCODE = true;
 
 	}
 
@@ -213,6 +199,7 @@ public class Elevator {
 		runCallElevator = false;
 		runWaitForElevator = false;
 		runEnterElevator = false;
+		runWaitForFree = false;
 		runGoDown = false;
 	}
 }
