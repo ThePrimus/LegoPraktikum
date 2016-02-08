@@ -26,7 +26,6 @@ public class Drive {
 	 */
 	private final float MOTOR_TIRE_RATIO = 1.6f;
 
-
 	/*
 	 * Pi
 	 */
