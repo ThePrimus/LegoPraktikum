@@ -1,5 +1,6 @@
 package logic;
 
+import lejos.hardware.lcd.LCD;
 import lejos.hardware.motor.EV3MediumRegulatedMotor;
 import lejos.hardware.sensor.EV3TouchSensor;
 import lejos.hardware.sensor.EV3UltrasonicSensor;
@@ -51,6 +52,9 @@ public class Collision {
 	}
 	private void elevatorCollision()
 	{
+		LCD.clear();
+		LCD.drawString(collision, 0, 5);
+		Delay.msDelay(4000);
 		float[] dist = new float[sonicSensor.getDistanceMode().sampleSize()];
 		sonicSensor.getDistanceMode().fetchSample(dist, 0);
 		
@@ -90,8 +94,8 @@ public class Collision {
 		
 		while(!terminateCollisionEstimation)
 		{
-			leftSensor.getTouchMode().fetchSample(leftSample, 0);
-			leftSensor.getTouchMode().fetchSample(leftSample, 0);
+			leftSensor.fetchSample(leftSample, 0);
+			rightSensor.fetchSample(rightSample, 0);
 			leftTouch = (int) leftSample[0];
 			rightTouch = (int) rightSample[0];
 

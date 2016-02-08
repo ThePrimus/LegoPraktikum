@@ -386,7 +386,7 @@ public class GUI {
 	 */
 	private void elevator() {
 		this.elevator = new Elevator(drive, colorSensor, touchLeftSensor,
-				touchRightSensor, sonicSensor);
+				touchRightSensor, sonicSensor, sonicMotor);
 		elevator.run();
 
 		// Start search for barcode.

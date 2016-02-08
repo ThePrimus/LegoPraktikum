@@ -64,7 +64,7 @@ public class Bridge {
 
 			// exit if reached lift which shows color red
 			// TODO find correct threshold
-			if (curColor > 0.3) {
+			if (curColor > 0.5) {
 				drive.stop();
 				runBridge = false;
 				break;
@@ -86,18 +86,13 @@ public class Bridge {
 			}
 		}
 		// Activate elevator program
-	//	GUI.PROGRAM_CHANGED = true;
-	//  	GUI.PROGRAM_STATUS = GUI.PROGRAM_ELEVATOR;
+		GUI.PROGRAM_CHANGED = true;
+	  	GUI.PROGRAM_STATUS = GUI.PROGRAM_ELEVATOR;
 	}
 
 	public void run() {
-		sonicMotor.setAcceleration(1000);
-		sonicMotor.rotate(SONIC_SENSOR_WALL_POS, true);
-		sonicMotor.waitComplete(); // short wait to make sure that it's in the right
-							// position
-
-		sonicMotor.setAcceleration(1000);
-		sonicMotor.rotate(SONIC_SENSOR_GROUND_POS, true);
+		sonicMotor.setAcceleration(100);
+		sonicMotor.rotate(SONIC_SENSOR_WALL_POS + SONIC_SENSOR_GROUND_POS, true);
 		sonicMotor.waitComplete(); // short wait to make sure that it's in the right
 							// position
 		
