@@ -61,12 +61,12 @@ public class GUI {
 
 	// Ids equal to barcode
 	public static final int PROGRAM_MAZE = 0;
-	public static final int PROGRAM_FINAL_SPURT = 1;
+	public static final int PROGRAM_ROLLS = 1;
 	public static final int PROGRAM_FOLLOW_LINE = 2;
 	public static final int PROGRAM_BRIDGE = 3;
 	public static final int PROGRAM_SEESAW = 4;
 	public static final int PROGRAM_CHAIN_BRDIGE = 5;
-	public static final int PROGRAM_ROLLS = 6;
+	public static final int PROGRAM_FINAL_SPURT = 6;
 
 	// Other parkour elements: id not equal to any barcode
 	public static final int PROGRAM_FINAL_BOSS = 8;
@@ -100,6 +100,7 @@ public class GUI {
 	private Seesaw seesaw;
 	private ChainBridge chainBridge;
 	private Rolls rolls;
+	private FinalSpurt finalSpurt;
 	private EndBoss endboss;
 
 
@@ -271,6 +272,9 @@ public class GUI {
 		if (rolls != null) {
 			rolls.end();
 		}
+		if (finalSpurt != null) {
+			finalSpurt.end();
+		}
 		if (endboss != null) {
 			endboss.end();
 		}
@@ -402,10 +406,9 @@ public class GUI {
 	 * Initializing the final spurt.
 	 */
 	private void finalSpurt() {
-		FinalSpurt finalSpurt = new FinalSpurt(drive, sonicSensor,
-				touchLeftSensor, sonicMotor);
-		obstacleThread = new Thread(finalSpurt);
-		obstacleThread.start();
+		FinalSpurt finalSpurt = new FinalSpurt(drive, sonicSensor, touchLeftSensor, 
+												touchRightSensor, sonicMotor);
+		finalSpurt.run();
 
 		// Change final spurt -> final boss
 		if (RACE_MODE && PROGRAM_CHANGED

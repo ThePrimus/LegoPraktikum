@@ -171,7 +171,7 @@ public class LineFollowing {
 		
 		
 		while(!terminate){	
-			if(count > 50000) {
+			if(count > 20000) {
 				terminate = true;
 				break;
 			}

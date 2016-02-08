@@ -35,7 +35,7 @@ public class Barcode {
 	
 	// The width of an element pair of the barcode (in millimeter: one white line 
 	// (= 25mm), one black ground (= 25mm)).
-	private final float WIDTH_BARCODE_ELEMENT = 40.0f; 
+	private final float WIDTH_BARCODE_ELEMENT = 50.0f; 
 	
 	// The maximum time that the barcode algorithm has time to search for a barccode (in seconds).
 	private final float MAXIMUM_ALGORITHM_TIME = 10.0f;
@@ -79,8 +79,8 @@ public class Barcode {
 			
 			// Displaying the current detected bar code
 			LCD.clear();
-			LCD.drawString("Barcode:", 0, 7);
-			LCD.drawInt(barcode, 3, "Barcode:".length(), 7);
+			LCD.drawString("Barcode:", 0, 1);
+			LCD.drawInt(barcode, 2, "Barcode:".length(), 1);
 			//System.out.println("Barcode = " + barcode);
 			
 			// If barcode thread running parallel to obstacle, the obstacle thread handles the movement of the robot
@@ -114,7 +114,7 @@ public class Barcode {
 				if (position != BLACK) {
 					// Robot has previously detected a white line
 					position = BLACK;
-				} else if (barcode > 1 && traveledDistanceMM > WIDTH_BARCODE_ELEMENT) {
+				} else if (barcode >= 1 && traveledDistanceMM > WIDTH_BARCODE_ELEMENT) {
 					// Barcode completed and detected. Other classes can use Barcode.getBarcode() to
 					// get the result
 					programRunning = false;
@@ -127,6 +127,7 @@ public class Barcode {
 			if (((System.nanoTime() - algorithmStart) / 1000000000.0f) > MAXIMUM_ALGORITHM_TIME
 					|| barcode > 6) {
 				barcode = 0;
+				drive.stop();
 				programRunning = false;
 			}
 		}	
@@ -136,6 +137,7 @@ public class Barcode {
 	 * Ends this algorithm that searches for the barcode.
 	 */
 	public void end() {
+		drive.stop();
 		programRunning = false;
 	}
 	
@@ -148,7 +150,7 @@ public class Barcode {
 	 * @return the valid barcode, -1 otherwise.
 	 */
 	public int getBarcode() {
-		if (barcode > 1 && barcode < 7) {
+		if (barcode >= 1 && barcode <= 6) {
 			return barcode;
 		} else {
 			return -1;
