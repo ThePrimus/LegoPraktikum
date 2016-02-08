@@ -31,8 +31,6 @@ public class Maze {
 	private Drive drive;
 	private EV3UltrasonicSensor sonicSensor;
 	private EV3MediumRegulatedMotor sonicMotor;
-	private EV3LargeRegulatedMotor leftMotor;
-	private EV3LargeRegulatedMotor rightMotor;
 	private SampleProvider distanceProvider;
 	private int leftCounter = 0;
 
@@ -41,37 +39,30 @@ public class Maze {
 	private final float DISTANCE_TO_TURN = 2;
 	private final float TURN_THRESHOLD = 40;
 	private float speed;
-	private final float lengthOfCar = 23; 
 	private final float eps = 0.5f;
 
-	private boolean ProgramRunning;
-	
 	private Collision collisionDetection;
+	
+	
+	private boolean ProgramRunning;
 
-	/*
-	 * The diameter of the tire in mm.
-	 */
-	private final float TIRE_DIAMETER = 34;
-
+	
+	
 	/**
 	 * Constructor:
-	 * 
-	 * @param drive the drive class for navigation and motor control.
 	 */
-	public Maze(Drive drive,EV3UltrasonicSensor sonicSensor, 
-			EV3MediumRegulatedMotor sonicMotor, EV3TouchSensor touchLeftSensor, EV3TouchSensor touchRightSensor) {
-		
-		// USE TOUCH SENSORS: leftTouchProvider and rightTouchProvier don't give valid samples!
+	public Maze(Drive drive,EV3UltrasonicSensor sonicSensor, EV3MediumRegulatedMotor sonicMotor, 
+					EV3TouchSensor touchLeftSensor, EV3TouchSensor touchRightSensor) {
 		this.touchSensorLeft = touchLeftSensor;
 		this.touchSensorRight = touchRightSensor;
 		
 		this.drive = drive;
 		this.sonicMotor = sonicMotor;
 		this.sonicSensor = sonicSensor;
-		distanceProvider = sonicSensor.getDistanceMode();
-		speed = drive.maxSpeed();
-		ProgramRunning = true;
-		collisionDetection = new Collision(false, drive, touchLeftSensor, touchRightSensor, sonicSensor);
+		this.distanceProvider = sonicSensor.getDistanceMode();
+		this.speed = drive.maxSpeed();
+		this.ProgramRunning = true;
+		this.collisionDetection = new Collision(false, drive, touchLeftSensor, touchRightSensor, sonicSensor);
 	}
 
 	/*public void goForward(float distance) { // go forward for a certain distance
@@ -187,8 +178,12 @@ public class Maze {
 
 	}
 
-	public void end()
-	{
+	
+	/**
+	 * Ends the maze obstacle algorithm.
+	 */
+	public void end() {
+		drive.stop();
 		ProgramRunning = false;
 	}
 	
