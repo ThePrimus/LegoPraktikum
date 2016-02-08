@@ -1,5 +1,6 @@
 package logic;
 
+import lejos.hardware.lcd.LCD;
 import lejos.hardware.motor.EV3MediumRegulatedMotor;
 import lejos.hardware.sensor.EV3TouchSensor;
 import lejos.hardware.sensor.EV3UltrasonicSensor;
@@ -51,6 +52,9 @@ public class Collision {
 	}
 	private void elevatorCollision()
 	{
+		LCD.clear();
+		LCD.drawString("Collision: " + collision, 0, 4);
+		Delay.msDelay(3000);
 		float[] dist = new float[sonicSensor.getDistanceMode().sampleSize()];
 		sonicSensor.getDistanceMode().fetchSample(dist, 0);
 		
@@ -87,11 +91,12 @@ public class Collision {
 		boolean leftTouched = false;
 		boolean rightTouched = false;
 		collision = "none";
+		int run = 0;
 		
-		while(!terminateCollisionEstimation)
+		while(run < 3)
 		{
-			leftSensor.getTouchMode().fetchSample(leftSample, 0);
-			leftSensor.getTouchMode().fetchSample(leftSample, 0);
+			leftSensor.fetchSample(leftSample, 0);
+			leftSensor.fetchSample(leftSample, 0);
 			leftTouch = (int) leftSample[0];
 			rightTouch = (int) rightSample[0];
 
@@ -146,6 +151,7 @@ public class Collision {
 				collision = "Robot";
 				break;
 			}
+			run++;
 				
 		}
 		if((program == "ChainBridge" || program == "LineFollowing" ||

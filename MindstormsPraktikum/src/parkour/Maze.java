@@ -6,6 +6,7 @@ import lejos.hardware.motor.EV3LargeRegulatedMotor;
 import lejos.hardware.motor.EV3MediumRegulatedMotor;
 import lejos.hardware.sensor.EV3UltrasonicSensor;
 import lejos.robotics.SampleProvider;
+import lejos.robotics.filter.MedianFilter;
 import lejos.hardware.sensor.EV3TouchSensor;
 import logic.Collision;
 
@@ -28,9 +29,9 @@ public class Maze {
 	private int leftCounter = 0;
 
 	private final float DISTANCE_TO_WALL = 5;
-	private final float WALL_WIDTH = 5;
+	private final float WALL_WIDTH = 6;
 	private final float DISTANCE_TO_TURN = 2;
-	private final float TURN_THRESHOLD = 20;
+	private final float TURN_THRESHOLD = 40;
 	private float speed;
 	private final float lengthOfCar = 23; 
 	private final float eps = 0.5f;
@@ -109,12 +110,17 @@ public class Maze {
 		float [] curDistance  = new float[distanceProvider.sampleSize()];
 		float [] leftSample = new float[leftTouchProvider.sampleSize()];
 		float [] rightSample = new float[rightTouchProvider.sampleSize()];
+		MedianFilter filter = new MedianFilter(distanceProvider, 20);
 		int leftTouched = 0;
 		int rightTouched = 0;
 		int touchCount = 0;
 		String collision = "";
+		
+		sonicMotor.setAcceleration(4000);
+		sonicMotor.rotate(-31);
+		sonicMotor.waitComplete();
 
-		PositionAdjust(); //why?? if you want to set distance to wall do it while driving
+		//PositionAdjust(); //why?? if you want to set distance to wall do it while driving
 
 		while (ProgramRunning) {
 			if(!ProgramRunning)
@@ -124,36 +130,41 @@ public class Maze {
 			}
 			collision = collisionDetection.estimateCollision("Maze", 2000);
 			
-			distanceProvider.fetchSample(curDistance, 0);
+			filter.fetchSample(curDistance, 0);
 			leftTouchProvider.fetchSample(leftSample, 0);
 			rightTouchProvider.fetchSample(rightSample, 0);
 			leftTouched = (int) leftSample[0];
 			rightTouched = (int) rightSample[0];
 				
 			if (curDistance[0] * 100 > DISTANCE_TO_WALL && curDistance[0] * 100 > TURN_THRESHOLD ) { // sonic sensor measured a higher distance than the width of the path
-				drive.stop();
+				System.out.println("Turn Distance:" + String.valueOf(curDistance[0] * 100));
+				//drive.stop();
 				drive.moveDistance(speed, DISTANCE_TO_TURN);
 				drive.turnRight(90);
 				leftCounter = 0;
 				drive.moveDistance(speed, 2 * DISTANCE_TO_WALL + WALL_WIDTH); //
 				drive.moveForward(speed);
 			} else if (curDistance[0] * 100 > DISTANCE_TO_WALL && curDistance[0] * 100 < TURN_THRESHOLD) {
-				drive.stop();
+				System.out.println("No Turn Adjust" + String.valueOf(curDistance[0] * 100));
+				//drive.stop();
 				//PositionAdjust(); 
 				//adjust on the fly
 				//check speed parameters so that sonic sensor is nearly orthogonal to wall
-				drive.moveForward(speed, speed * 0.6f);
+				drive.moveForward(speed, speed * 0.9f);
 			} else if (leftTouched == 1 && rightTouched == 1 && leftCounter < 4 && collision == "Wall") { //not for all cases
-				drive.stop();
+				System.out.println("Wall");
+				//drive.stop();
 				drive.moveDistance(speed,-(DISTANCE_TO_WALL + eps));
 				drive.turnLeft(90);
 				drive.moveForward(speed);
 				leftCounter++;
 			} else if(curDistance[0] * 100 < DISTANCE_TO_WALL) {
+				System.out.println("Adjust" + String.valueOf(curDistance[0] * 100));
 				//check speed parameters so that sonic sensor is nearly orthogonal to wall
-				drive.moveForward(speed * 0.6f, speed);
+				drive.moveForward(speed * 0.9f, speed);
 			}
-			else if((curDistance[0] * 100 - DISTANCE_TO_WALL) < 0.5) {
+			else if(Math.abs((curDistance[0] * 100 - DISTANCE_TO_WALL)) < 0.5) {
+				System.out.println("Forward" + String.valueOf(curDistance[0] * 100));
 				drive.moveForward(speed, speed);
 			}
 			/*else if (// TODO: Maze obstacle finished, when bar code is scanned) {

@@ -37,7 +37,7 @@ public class GUI {
 	 * obstacle algorithm is executed, then the robot stops without switching to
 	 * the next one.
 	 */
-	public static final boolean RACE_MODE = true;
+	public static final boolean RACE_MODE = false;
 
 	/*
 	 * Thread that executes the solution algorithm for the obstacles.
@@ -127,18 +127,18 @@ public class GUI {
 		Button.ESCAPE.addKeyListener(new KeyListener() {
 			@Override
 			public void keyPressed(Key k) {
-				PROGRAM_STOP = true;
+				//PROGRAM_STOP = true;
 				drive.stop();
 
-				if (obstacleThread != null) {
+				/*if (obstacleThread != null) {
 					obstacleThread.interrupt();
-				}
+				}*/
 
 				endAllPrograms();
 
 				// Start the GUI again => main menu should be shown
 				// when the obstacle program has been interrupted
-				startGUI();
+				//startGUI();
 			}
 
 			@Override
