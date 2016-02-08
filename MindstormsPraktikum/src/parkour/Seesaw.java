@@ -5,6 +5,7 @@ import lejos.hardware.lcd.LCD;
 import lejos.hardware.sensor.EV3ColorSensor;
 import lejos.robotics.SampleProvider;
 import lejos.robotics.filter.MeanFilter;
+import lejos.robotics.filter.SampleThread;
 import lejos.utility.Delay;
 import logic.Drive;
 import logic.GUI;
@@ -21,7 +22,7 @@ public class Seesaw {
 	private boolean LineFollowing = true;
 	private SampleProvider colorProvider;
 	private float mSpeed;
-	private final float diffSpeed = 200;
+	private final float diffSpeed = 140; //140 oder 100 mit emplified
 	private float initSpeed; //= mSpeed - 2 * diffSpeed;
 	private long timestamp = 0;
 	
@@ -39,15 +40,19 @@ public class Seesaw {
 	public Seesaw(Drive drive, EV3ColorSensor colorSensor) {
 		this.drive = drive;
 		this.colorProvider = colorSensor.getRedMode();
-		mSpeed = 600;
+		
+		
+		mSpeed = 600; //600 oder 500
 		initSpeed = mSpeed - 2 * diffSpeed;
 	}
 	
 	private boolean lineFound()
 	{
+		
 		boolean found = false;
 		float[] sample = new float[colorProvider.sampleSize()];
 		drive.turnRight(45);
+		
 		//drive.setSpeed(drive.maxSpeed());
 		
 		//while(deg < 90) {
@@ -90,27 +95,38 @@ public class Seesaw {
 	public void run() {
 		float counter = 0;
 		float search = 0;
+		float lastSample = 0;
 		//MeanFilter filter = new MeanFilter(colorProvider, 10);
+		//SampleThread thread = new SampleThread(colorProvider, 5);
 		float[] colorResults = new float[colorProvider.sampleSize()];
 		while (LineFollowing) {
+			//if(thread.isNewSampleAvailable()) {
 			// get color of line
 			if(!LineFollowing) {
 				drive.stop();
 				LineFollowing = false;
 				break;
 			}
-			if(counter > 20000) {
+			if(counter > 500000) {
 				LineFollowing = false;
 				drive.stop();
 				break;
 			}
 			
 			colorProvider.fetchSample(colorResults, 0);
-			float curColor = colorResults[0];
+			float curColor = colorResults[0] * 1.25f;
 
 			// correct movement according to the youtube video
 			float lSpeed = curColor * mSpeed - diffSpeed;
 			float rSpeed = initSpeed - lSpeed;
+			
+			/*if(Math.abs(lastSample - curColor) > 0.5) {
+				drive.stop();
+				Sound.buzz();
+				//drive.moveDistance(800, -2);
+				//drive.turnRight(40, false);
+				
+			}*/
 
 			if (lSpeed < 0) {
 				drive.leftBackward(lSpeed);
@@ -122,7 +138,7 @@ public class Seesaw {
 			if (rSpeed < 0) {
 				drive.rightBackward(rSpeed);
 			} else {
-				if(timestamp == 0)
+				/*if(timestamp == 0)
 				{
 					timestamp = System.currentTimeMillis();
 					//Sound.beep();
@@ -142,15 +158,21 @@ public class Seesaw {
 						LCD.drawString("Looking for Line...", 0, 1);
 						search++;
 					}
-				}
+				}*/
 				drive.setSpeedRightMotor(rSpeed);
 			}
+			
+			//LCD.drawString("Dif: " + String.valueOf(Math.abs(lastSample - curColor)), 0, 2);
+			//LCD.drawString("Left: " + String.valueOf(lSpeed), 0, 3);
+			//LCD.drawString( "Right: " + String.valueOf(lSpeed), 0, 2);
 			counter++;
-			LCD.drawString("Timestamp: " + String.valueOf(timestamp), 0, 2);
-			LCD.drawString("Dif: " + String.valueOf(timestamp - System.currentTimeMillis()), 0, 4);
+			lastSample = curColor;
+			//LCD.drawString("Timestamp: " + String.valueOf(timestamp), 0, 2);
+			//LCD.drawString("Dif: " + String.valueOf(timestamp - System.currentTimeMillis()), 0, 4);
 			/*System.out.println();
 			System.out.println("Dif: " + String.valueOf(timestamp - System.currentTimeMillis()));*/
 		}
+		//}
 		
 		//Delay.msDelay(1000);
 		//searchLine();

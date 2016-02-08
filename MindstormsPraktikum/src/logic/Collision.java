@@ -83,8 +83,8 @@ public class Collision {
 	 */
 	public String estimateCollision(String program, int delay) {
 		
-		float [] leftSample = new float[leftSensor.getTouchMode().sampleSize()];
-		float [] rightSample= new float[rightSensor.getTouchMode().sampleSize()];
+		float [] leftSample = new float[leftSensor.sampleSize()];
+		float [] rightSample= new float[rightSensor.sampleSize()];
 		int leftTouch = 0;
 		int rightTouch = 0;
 		int touchCount = 0;
@@ -93,13 +93,14 @@ public class Collision {
 		collision = "none";
 		int run = 0;
 		
-		while(run < 3)
+		while(run < 4)
 		{
 			leftSensor.fetchSample(leftSample, 0);
 			leftSensor.fetchSample(leftSample, 0);
 			leftTouch = (int) leftSample[0];
 			rightTouch = (int) rightSample[0];
-
+			LCD.drawString("Left: " + String.valueOf(leftTouch), 0, 2);
+			LCD.drawString("right: " + String.valueOf(rightSample), 0, 3);
 			//for Bridge, ChainBridge, Elevator, Rolls, Seesaw
 			//Elevator dürfte nicht vorkommen
 			//TODO: Collision mit einem Sensor Roboter
