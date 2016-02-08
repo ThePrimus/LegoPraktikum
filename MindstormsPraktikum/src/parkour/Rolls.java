@@ -16,9 +16,6 @@ public class Rolls {
 	
 	// The minimum color value of a white/silver element of the barcode.
 	private final float THRESHOLD_WHITE = 0.7f;
-		
-	// The maximum time that the rolls algorithm has time to reach the end of the obstacle (in seconds).
-	private final float MAXIMUM_ALGORITHM_TIME = 5.5f;
 	
 	/*
 	 * Distance to the right wall until the robot movement needs to be corrected.

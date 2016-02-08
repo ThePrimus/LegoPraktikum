@@ -12,13 +12,7 @@ import logic.Drive;
  * @author Group 1
  */
 public class FinalSpurt {
-	
-	/*
-	 * The distance between the two walls of the final spurt (measured from sonic sensor,
-	 * when robot is at the left wall).
-	 */
-	private static final float DISTANCE_TO_TURN_RIGHT = 5.0f;
-	
+		
 	/*
 	 * Distance to the right wall when the robot movement needs to be corrected to the left.
 	 */
@@ -30,7 +24,7 @@ public class FinalSpurt {
 	private static final float DISTANCE_TO_CORRECT_RIGHT = 0.20f;
 	
 	/*
-	 *  The maximum time that the barcode algorithm has time to search for a barccode (in seconds).
+	 *  The maximum time to reach the endboss obstacle (in seconds).
 	 */
 	private static final float MAXIMUM_TIME_TO_ENDBOSS = 30.0f;
 	

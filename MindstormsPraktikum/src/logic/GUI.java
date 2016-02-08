@@ -38,16 +38,9 @@ public class GUI {
 	 * the next one.
 	 */
 	public static final boolean RACE_MODE = true;
-
-	/*
-	 * Thread that executes the solution algorithm for the obstacles.
-	 */
-	private Thread obstacleThread;
-
-	// Current mode/state of the robot
-	public static int PROGRAM_STATUS = -1; // The id of the currently running
-											// obstacle program
-	public static boolean PROGRAM_STOP = false;
+	
+	// The id of the currently running obstacle program. -1 if non is running.
+	public static int PROGRAM_STATUS = -1;
 
 	// If an obstacle program finished completion and the next one should be
 	// loaded.
@@ -56,8 +49,6 @@ public class GUI {
 	// If an obstacle program finished completion and the search for a barcode
 	// should be started.
 	public static boolean PROGRAM_FINISHED_START_BARCODE = false;
-
-	// Constant/Id that defines the different obstacles/programs
 
 	// Ids equal to barcode
 	public static final int PROGRAM_MAZE = 0;
@@ -70,7 +61,6 @@ public class GUI {
 
 	// Other parkour elements: id not equal to any barcode
 	public static final int PROGRAM_FINAL_BOSS = 8;
-
 	public static final int PROGRAM_ELEVATOR = 9;
 	public static final int PROGRAM_EXIT = 10;
 	public static final int PROGRAM_BARCODE = 11;
@@ -92,7 +82,7 @@ public class GUI {
 	private Drive drive = new Drive(leftMotor, rightMotor);
 
 	// The obstacle programs
-	Barcode barcode;
+	private Barcode barcode;
 	private LineFollowing lineFollowing;
 	private Maze maze;
 	private Bridge bridge;
@@ -104,9 +94,10 @@ public class GUI {
 	private EndBoss endboss;
 
 
+	
 	/**
 	 * Initializes the main menu that enables the user to select a certain
-	 * obstacle mode.
+	 * obstacle mode. Creates KeyListener for controll of the obstacle programs.
 	 */
 	public GUI() {
 
@@ -129,13 +120,7 @@ public class GUI {
 		Button.ESCAPE.addKeyListener(new KeyListener() {
 			@Override
 			public void keyPressed(Key k) {
-				PROGRAM_STOP = true;
 				drive.stop();
-
-				if (obstacleThread != null) {
-					obstacleThread.interrupt();
-				}
-
 				endAllPrograms();
 
 				// Start the GUI again => main menu should be shown
@@ -164,7 +149,6 @@ public class GUI {
 					"Endgegner", "Exit", "Barcode"};
 
 			TextMenu menu = new TextMenu(viewItems, 1);
-			// LCD.clear();
 			int selection = menu.select();
 
 			/*
@@ -232,7 +216,6 @@ public class GUI {
 				// Terminate whole program on ev3 brick
 				LCD.clear();
 				PROGRAM_STATUS = PROGRAM_EXIT;
-				PROGRAM_STOP = true;
 				System.exit(0);
 			} else if (selection == 10) {
 				// Barcode
@@ -242,7 +225,6 @@ public class GUI {
 				barcode(true);
 			}
 
-			PROGRAM_STOP = false;
 			PROGRAM_STATUS = -1;
 		}
 	}
@@ -263,6 +245,9 @@ public class GUI {
 		if (bridge != null) {
 			bridge.end();
 		}
+		if (elevator != null) {
+			elevator.end();
+		}
 		if (seesaw != null) {
 			seesaw.end();
 		}
@@ -277,9 +262,6 @@ public class GUI {
 		}
 		if (endboss != null) {
 			endboss.end();
-		}
-		if (elevator != null) {
-			elevator.end();
 		}
 	}
 
@@ -304,7 +286,6 @@ public class GUI {
 	/*
 	 * Initializing the follow line mode.
 	 */
-
 	private void followLine() {
 		this.lineFollowing = new LineFollowing(drive, colorSensor);
 		lineFollowing.run();
@@ -439,8 +420,6 @@ public class GUI {
 
 		if (barcode != null) {
 			int foundBarcode = barcode.getBarcode();
-			LCD.clear();
-			//System.out.println("Barcode: " + foundBarcode);
 
 			if (foundBarcode != -1) {
 				// Change the current program if a valid barcode has been found
@@ -474,7 +453,7 @@ public class GUI {
 	}
 
 	/**
-	 * Main method.
+	 * Main method. Gives the command to start/initialize the GUI/main menu.
 	 * 
 	 * @param args
 	 *            program arguments

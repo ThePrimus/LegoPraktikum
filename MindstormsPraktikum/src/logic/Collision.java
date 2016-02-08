@@ -1,7 +1,6 @@
 package logic;
 
 import lejos.hardware.lcd.LCD;
-import lejos.hardware.motor.EV3MediumRegulatedMotor;
 import lejos.hardware.sensor.EV3TouchSensor;
 import lejos.hardware.sensor.EV3UltrasonicSensor;
 import lejos.utility.Delay;
