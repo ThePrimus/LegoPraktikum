@@ -197,7 +197,7 @@ public class Maze {
 		
 		LCD.clear();
 		// Make sure the sonic sensor is facing sideways
-		/*sonicMotor.setAcceleration(4000);
+		/*sonicMotor.setAcceleration(100);
 		sonicMotor.rotate(-31);
 		sonicMotor.waitComplete();*/
 				
@@ -205,7 +205,7 @@ public class Maze {
 				
 		long algorithmStart = System.nanoTime(); 	// Stores when the algorithm starts
 				
-		this.drive.moveForward(drive.maxSpeed() * 0.4f, drive.maxSpeed() * 0.3f);
+		this.drive.moveForward(drive.maxSpeed() * 0.6f, drive.maxSpeed() * 0.5f);
 				
 		while (ProgramRunning) {
 				
@@ -227,11 +227,11 @@ public class Maze {
 						
 			// Sonic sensor encounters a needed movement correction
 			if (sonicSensorResults[0] < 0.15) {
-				drive.moveForward(drive.maxSpeed() * 0.3f, drive.maxSpeed() * 0.4f);
+				drive.moveForward(drive.maxSpeed() * 0.5f, drive.maxSpeed() * 0.6f);
 			} else {
 				// ToDo: Might be possible to increase the left motor speed to make
 				// closer turns. Also maybe increase overall speed
-				drive.moveForward(drive.maxSpeed() * 0.6f, drive.maxSpeed() * 0.3f);
+				drive.moveForward(drive.maxSpeed() * 0.8f, drive.maxSpeed() * 0.4f);
 			}
 			
 			// ToDo: Stop algorithm if the color sensor detects the white/silver line of the 

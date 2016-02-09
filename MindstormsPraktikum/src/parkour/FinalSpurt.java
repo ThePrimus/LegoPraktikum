@@ -4,6 +4,7 @@ import lejos.hardware.motor.EV3MediumRegulatedMotor;
 import lejos.hardware.sensor.EV3TouchSensor;
 import lejos.hardware.sensor.EV3UltrasonicSensor;
 import lejos.robotics.SampleProvider;
+import lejos.utility.Delay;
 import logic.Drive;
 
 /**
@@ -86,7 +87,7 @@ public class FinalSpurt {
 	public void run() {
 		
 		// Make sure the sonic sensor is facing sideways
-		/*sonicMotor.setAcceleration(4000);
+		/*sonicMotor.setAcceleration(100);
 		sonicMotor.rotate(-31);
 		sonicMotor.waitComplete();*/
 		
@@ -98,6 +99,7 @@ public class FinalSpurt {
 		
 		while (programRunning) {
 		
+			
 			// Check the two touch sensors while the program is running
 			float[] touchSensorResultsLeft = new float[touchSensorLeft.sampleSize()];
 			touchSensorLeft.fetchSample(touchSensorResultsLeft, 0);

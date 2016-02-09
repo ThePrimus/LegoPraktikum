@@ -106,8 +106,7 @@ public class Rolls {
 			currentColorValue = sample[0] * 1.25f;
 			
 			if (currentColorValue > THRESHOLD_WHITE) {
-				
-				drive.stop();
+				drive.stopSynchronized();
 				
 				Sound.beep();
 				measureDistance = false;

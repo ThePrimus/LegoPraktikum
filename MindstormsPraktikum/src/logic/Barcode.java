@@ -117,6 +117,7 @@ public class Barcode {
 				} else if (barcode >= 1 && traveledDistanceMM > WIDTH_BARCODE_ELEMENT) {
 					// Barcode completed and detected. Other classes can use Barcode.getBarcode() to
 					// get the result
+					drive.stopSynchronized();
 					programRunning = false;
 					System.out.println("Detected barcode = " + barcode);
 				}
@@ -127,7 +128,7 @@ public class Barcode {
 			if (((System.nanoTime() - algorithmStart) / 1000000000.0f) > MAXIMUM_ALGORITHM_TIME
 					|| barcode > 6) {
 				barcode = 0;
-				drive.stop();
+				drive.stopSynchronized();
 				programRunning = false;
 			}
 		}	
@@ -137,7 +138,7 @@ public class Barcode {
 	 * Ends this algorithm that searches for the barcode.
 	 */
 	public void end() {
-		drive.stop();
+		drive.stopSynchronized();
 		programRunning = false;
 	}
 	

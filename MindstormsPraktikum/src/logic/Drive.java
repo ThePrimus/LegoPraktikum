@@ -1,6 +1,8 @@
 package logic;
 
 import lejos.hardware.motor.EV3LargeRegulatedMotor;
+import lejos.robotics.RegulatedMotor;
+import lejos.robotics.RegulatedMotorListener;
 
 /**
  * Implements the logic to drive and navigate the robot.
@@ -357,11 +359,23 @@ public class Drive {
 	}
 
 	/**
-	 * Stops the current movement of the robot immediately.
+	 * Stops the current movement of the robot immediately without synchronization.
 	 */
 	public void stop() {
-		rightMotor.stop();
 		leftMotor.stop();
+		rightMotor.stop();
+	}
+	
+	/**
+	 * Stops the current movement of the robot immediately with synchronization.
+	 */
+	public void stopSynchronized() {
+		leftMotor.startSynchronization();
+		rightMotor.startSynchronization();
+		leftMotor.stop();
+		rightMotor.stop();
+		leftMotor.endSynchronization();
+		rightMotor.endSynchronization();
 	}
 
 	/**
