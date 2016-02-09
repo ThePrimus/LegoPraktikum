@@ -118,6 +118,7 @@ public class Barcode {
 					// Barcode completed and detected. Other classes can use Barcode.getBarcode() to
 					// get the result
 					drive.stopSynchronized();
+					drive.moveDistance(300, 12);
 					programRunning = false;
 					System.out.println("Detected barcode = " + barcode);
 				}

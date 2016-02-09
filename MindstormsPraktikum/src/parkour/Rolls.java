@@ -83,7 +83,6 @@ public class Rolls {
 		/*sonicMotor.setAcceleration(2000);
 		sonicMotor.rotate(-31);
 		sonicMotor.waitComplete();*/
-		boolean measureDistance = true;
 		
 		this.drive.moveForward(drive.maxSpeed() * 0.5f, drive.maxSpeed() * 0.5f);
 		
@@ -92,12 +91,14 @@ public class Rolls {
 			float[] sonicSensorResults = new float [sonicSensor.sampleSize()];
 			sonicSensor.fetchSample(sonicSensorResults, 0);
 				
-			if (sonicSensorResults[0] < DISTANCE_TO_TURN_LEFT && measureDistance) {
+			if (sonicSensorResults[0] < DISTANCE_TO_TURN_LEFT) {
 				// Sonic sensor encounters a needed movement correction
 				//drive.turnLeft(7);
 				drive.moveForward(drive.maxSpeed() * 0.5f, drive.maxSpeed() * 0.7f);
-			} else if (sonicSensorResults[0] > DISTANCE_TO_TURN_RIGHT && measureDistance) {
+			} else if (sonicSensorResults[0] > DISTANCE_TO_TURN_RIGHT) {
 				drive.moveForward(drive.maxSpeed() * 0.7f, drive.maxSpeed() * 0.5f);
+			} else if (sonicSensorResults[0] > DISTANCE_TO_TURN_RIGHT + 0.02f) {
+				drive.stopSynchronized();
 			}
 			
 			// Getting the current color value from the sensor
@@ -109,7 +110,6 @@ public class Rolls {
 				drive.stopSynchronized();
 				
 				Sound.beep();
-				measureDistance = false;
 				
 				// White/silver line detected => rolls obstacle finished, move a few cm back,
 				// because distance rolls obstacle to barcode is very short. Then switch to barcode
