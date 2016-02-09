@@ -14,6 +14,7 @@ import lejos.robotics.SampleProvider;
 import lejos.utility.Delay;
 import lejos.utility.SensorSelectorException;
 import logic.Drive;
+import logic.GUI;
 /**
  * Implements the logic to beat the chain bridge obstacle.
  * 
@@ -99,6 +100,10 @@ public class ChainBridge {
 		sonicMotor.setAcceleration(100);
 
 		bridgeRoutine3();
+
+		sonicMotor.setAcceleration(100);
+		sonicMotor.rotate(-SONIC_SENSOR_WALL_POS + 2, true);
+		GUI.PROGRAM_FINISHED_START_BARCODE = true;
 	}
 
 	private void startBridgeRoutine() {

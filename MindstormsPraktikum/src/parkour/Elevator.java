@@ -43,7 +43,7 @@ public class Elevator {
 	private ComModule communication;
 	private SampleProvider distanceProvider;
 	private boolean runMoveForwardUntilTouch = true;
-	private static final float ABYSS_THRESHOLD = 0.18f; // in m
+	private static final float ABYSS_THRESHOLD = 0.10f; // in m
 
 	/**
 	 * Constructor:
@@ -97,6 +97,7 @@ public class Elevator {
 			if (isFree) {
 				break;
 			}
+			Delay.msDelay(100);
 		}
 
 		// is free then call for it
@@ -111,6 +112,7 @@ public class Elevator {
 			if (isOk) {
 				break;
 			}
+			Delay.msDelay(100);
 		}
 	}
 
@@ -124,6 +126,7 @@ public class Elevator {
 
 			// Elevator is ready, could also be down with http
 			if (curColor > 0.20) {
+				Sound.beepSequence();
 				break;
 			}
 		}
@@ -132,7 +135,7 @@ public class Elevator {
 
 	private void enterElevator() {
 		float curPos = 0;
-		drive.moveForward(drive.maxSpeed() * 0.2f,drive.maxSpeed() * 0.3f);
+		drive.moveForward(drive.maxSpeed() * 0.3f,drive.maxSpeed() * 0.3f);
 		while(runMoveForwardUntilTouch ){		
 
 			float[] sampleR = new float[touchRightSensor.sampleSize()];
@@ -151,12 +154,12 @@ public class Elevator {
 
 			if (curPos > ABYSS_THRESHOLD) { // Driving towards abyss therefor
 											// turn left
-				drive.setSpeedLeftMotor(drive.maxSpeed() * 0.2f);
-				drive.setSpeedRightMotor(drive.maxSpeed()*0.3f);
+				drive.setSpeedLeftMotor(drive.maxSpeed() * 0.1f);
+				drive.setSpeedRightMotor(drive.maxSpeed()*0.5f);
 			} else { // on the bridge so turn right to follow right side of the
 						// bridge
-				drive.setSpeedLeftMotor(drive.maxSpeed()*0.3f);
-				drive.setSpeedRightMotor(drive.maxSpeed() * 0.2f);
+				drive.setSpeedLeftMotor(drive.maxSpeed()*0.5f);
+				drive.setSpeedRightMotor(drive.maxSpeed() * 0.1f);
 			}
 			
 		}
@@ -164,8 +167,12 @@ public class Elevator {
 		sonicMotor.setAcceleration(100);
 		sonicMotor.rotate(-(SONIC_SENSOR_GROUND_POS + SONIC_SENSOR_WALL_POS), true);
 		sonicMotor.waitComplete();
-		drive.moveDistance(300, -5);
-		drive.turnLeft(30);
+		drive.moveDistance(300, -10);
+		drive.stopSynchronized();
+		Delay.msDelay(1000);
+		drive.turnLeft(15,true);
+		drive.stopSynchronized();
+		
 
 		Sound.beepSequenceUp();
 
@@ -181,17 +188,32 @@ public class Elevator {
 				Sound.buzz();
 				break;
 			} else if (sampleL[0] == 1 && sampleR[0] == 0) {
+				Delay.msDelay(200);
+
+				sampleR = new float[touchRightSensor.sampleSize()];
+				touchRightSensor.fetchSample(sampleR, 0);
+				
+				if(sampleR[0] == 1){
+					break;
+				}
+				
 				drive.moveDistance(300, -10);
-				drive.turnRight(20);
+				drive.turnRight(15);
 				drive.moveForward(300, 300);
 			} else if (sampleL[0] == 0 && sampleR[0] == 1) {
+				Delay.msDelay(200);
+				sampleL = new float[touchLeftSensor.sampleSize()];
+				touchLeftSensor.fetchSample(sampleL, 0);
+				if(sampleL[0] == 1){
+					break;
+				}
 				drive.moveDistance(300, -10);
-
-				drive.turnLeft(20);
+				drive.turnLeft(15);
 				drive.moveForward(300, 300);
 			}
 
 		}
+		drive.moveDistance(300, -5);
 	}
 
 	private void goDownAndLeaveElevator() {
@@ -209,13 +231,16 @@ public class Elevator {
 				Sound.playTone(440, 2000);
 				break;
 			}
+			Delay.msDelay(100);
 		}
+
 		// wait for 10 seconds until elevator is down
 		Delay.msDelay(5000);
 		Sound.buzz();
 		Sound.buzz();
+		//drive.moveDistance(500, 20);
 		
-		// GUI.PROGRAM_FINISHED_START_BARCODE = true;
+		GUI.PROGRAM_FINISHED_START_BARCODE = true;
 
 	}
 
