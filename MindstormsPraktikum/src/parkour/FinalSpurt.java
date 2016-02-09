@@ -33,8 +33,6 @@ public class FinalSpurt {
 	 */
 	boolean programRunning = true;
 	
-	
-	
 	/*
 	 * The navigation class.
 	 */

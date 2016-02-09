@@ -3,6 +3,7 @@ package logic;
 import lejos.hardware.Button;
 import lejos.hardware.Key;
 import lejos.hardware.KeyListener;
+import lejos.hardware.Sound;
 import lejos.hardware.lcd.LCD;
 import lejos.hardware.motor.EV3LargeRegulatedMotor;
 import lejos.hardware.motor.EV3MediumRegulatedMotor;
@@ -82,7 +83,7 @@ public class GUI {
 	private Drive drive = new Drive(leftMotor, rightMotor);
 
 	// The obstacle programs
-	Barcode barcode;
+	private Barcode barcode;
 	private LineFollowing lineFollowing;
 	private Maze maze;
 	private Bridge bridge;
@@ -119,7 +120,6 @@ public class GUI {
 		Button.ESCAPE.addKeyListener(new KeyListener() {
 			@Override
 			public void keyPressed(Key k) {
-				//PROGRAM_STOP = true;
 				drive.stop();
 
 				endAllPrograms();
@@ -418,7 +418,7 @@ public class GUI {
 	 * next program will be loaded.
 	 */
 	private void barcode(boolean moveRobot) {
-		barcode = new Barcode(drive, colorSensor, moveRobot);
+		this.barcode = new Barcode(drive, colorSensor, moveRobot);
 		barcode.run();
 
 		if (barcode != null) {
@@ -427,8 +427,9 @@ public class GUI {
 			//System.out.println("Barcode: " + foundBarcode);
 
 			if (foundBarcode != -1) {
+				Sound.beep();
 				// Change the current program if a valid barcode has been found
-				changeProgram(foundBarcode);
+				//changeProgram(foundBarcode);
 			}
 		}
 	}
@@ -444,6 +445,8 @@ public class GUI {
 			if (barcode == PROGRAM_FOLLOW_LINE) {
 				followLine();
 			} else if (barcode == PROGRAM_FINAL_SPURT) {
+				Sound.beep();
+				Sound.beep();
 				finalSpurt();
 			} else if (barcode == PROGRAM_BRIDGE) {
 				bridge();

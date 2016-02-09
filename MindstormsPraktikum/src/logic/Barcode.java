@@ -1,5 +1,6 @@
 package logic;
 
+import lejos.hardware.Sound;
 import lejos.hardware.lcd.LCD;
 import lejos.hardware.sensor.EV3ColorSensor;
 
@@ -74,7 +75,7 @@ public class Barcode {
 			// Getting the current color value from the sensor
 			float[] sample = new float[colorSensor.sampleSize()];
 			colorSensor.fetchSample(sample, 0);
-			currentColorValue = sample[0];
+			currentColorValue = sample[0] * 1.25f;
 			
 			// Displaying the current detected bar code
 			LCD.clear();
@@ -84,7 +85,7 @@ public class Barcode {
 			
 			// If barcode thread running parallel to obstacle, the obstacle thread handles the movement of the robot
 			if (moveRobot) {
-				drive.moveForward(drive.maxSpeed() * 0.3f);		// Start robot movement with 30% speed
+				drive.moveForward(drive.maxSpeed() * 0.35f);		// Start robot movement with 30% speed
 			}
 			
 				
