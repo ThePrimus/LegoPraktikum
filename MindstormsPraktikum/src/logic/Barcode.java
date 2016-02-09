@@ -35,7 +35,7 @@ public class Barcode {
 	
 	// The width of an element pair of the barcode (in millimeter: one white line 
 	// (= 25mm), one black ground (= 25mm)).
-	private final float WIDTH_BARCODE_ELEMENT = 50.0f; 
+	private final float WIDTH_BARCODE_ELEMENT = 60.0f; 
 	
 	// The maximum time that the barcode algorithm has time to search for a barccode (in seconds).
 	private final float MAXIMUM_ALGORITHM_TIME = 10.0f;
@@ -95,6 +95,7 @@ public class Barcode {
 					// Robot was previously on a black line/ground
 					position = WHITE;
 					startTime = System.nanoTime();
+					Sound.beep();
 					barcode++;
 				}
 			} else {
@@ -130,6 +131,7 @@ public class Barcode {
 					|| barcode > 6) {
 				barcode = 0;
 				drive.stopSynchronized();
+				Sound.twoBeeps();
 				programRunning = false;
 			}
 		}	

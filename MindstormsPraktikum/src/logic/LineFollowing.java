@@ -139,7 +139,7 @@ public class LineFollowing {
 	}
 		
 		
-		GUI.PROGRAM_FINISHED_START_BARCODE = false;
+		GUI.PROGRAM_FINISHED_START_BARCODE = true;
 		terminate = false;
 		timestamp = 0;
 	}
