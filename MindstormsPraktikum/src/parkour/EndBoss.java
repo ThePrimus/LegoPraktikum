@@ -70,7 +70,7 @@ public class EndBoss {
 		long algorithmStart = System.nanoTime(); 			// Stores when the algorithm starts
 		
 		// Start moving forward and begin playing music
-		this.drive.moveForward(drive.maxSpeed() * 0.98f, drive.maxSpeed());
+		this.drive.moveForward(drive.maxSpeed() * 0.9f, drive.maxSpeed());
 		//gameOfThrones = new MusicPlay();
 		//Thread musicThread = new Thread(gameOfThrones);
 		//musicThread.start();
@@ -86,10 +86,10 @@ public class EndBoss {
 			
 			if (touchSensorResultsLeft[0] == 1 || touchSensorResultsRight[0] == 1) {
 				// Touch sensor pressed, drive back a bit and turn right
-				drive.moveBackward(drive.maxSpeed() * 0.98f, drive.maxSpeed());
+				drive.moveBackward(drive.maxSpeed() * 0.9f, drive.maxSpeed());
 				Delay.msDelay(1000);
 				drive.turnRight(50);
-				drive.moveForward(drive.maxSpeed() * 0.98f, drive.maxSpeed());
+				drive.moveForward(drive.maxSpeed() * 0.9f, drive.maxSpeed());
 			}
 				
 			// Check the sonic sensor to keep a minimum distance to the right wall.
@@ -100,7 +100,7 @@ public class EndBoss {
 			if (sonicSensorResults[0] < DISTANCE_TO_CORRECT_MOVEMENT) {
 				// Sonic sensor encounters a needed movement correction
 				drive.turnLeft(45);
-				drive.moveForward(drive.maxSpeed() * 0.98f, drive.maxSpeed());
+				drive.moveForward(drive.maxSpeed() * 0.9f, drive.maxSpeed());
 			} 
 			
 			// End program if it is running for a longer period of time, because it can't be 

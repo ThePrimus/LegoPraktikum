@@ -453,7 +453,7 @@ public class GUI {
 			} else if (barcode == PROGRAM_FINAL_SPURT) {
 				finalSpurt();
 			} else if (barcode == PROGRAM_BRIDGE) {
-				bridge();
+				//bridge();
 			} else if (barcode == PROGRAM_SEESAW) {
 				seesaw();
 			} else if (barcode == PROGRAM_CHAIN_BRDIGE) {

@@ -103,7 +103,7 @@ public class Maze {
 			} else {
 				// ToDo: Might be possible to increase the left motor speed to make
 				// closer turns. Also maybe increase overall speed
-				drive.moveForward(drive.maxSpeed() * 0.8f, drive.maxSpeed() * 0.4f);
+				drive.moveForward(drive.maxSpeed() * 0.65f, drive.maxSpeed() * 0.4f);
 			}
 			
 			// Stop algorithm if the color sensor detects the white/silver line of the 
