@@ -1,6 +1,8 @@
 package logic;
 
 import lejos.hardware.motor.EV3LargeRegulatedMotor;
+import lejos.robotics.RegulatedMotor;
+import lejos.robotics.RegulatedMotorListener;
 
 /**
  * Implements the logic to drive and navigate the robot.
@@ -160,7 +162,6 @@ public class Drive {
 	}
 	
 	
-	
 	/**
 	 * Moves the robot forward or backward by the assigned distance with the 
 	 * assigned speed.
@@ -169,12 +170,11 @@ public class Drive {
 	 * @param distance the distance to move (in cm). If positive the robot is moving
 	 * 			forward, if negative the robot is moving backward.
 	 */
-	public void moveDistance(float speed, float distance) {
-
+	public void moveDistance(float speed, float distance) {		
 		if (speed > 0.0f) {
 			
-			this.speedLeft = speed;
-			this.speedRight = speed;
+			speedLeft = speed;
+			speedRight = speed;
 			
 			// Calculate the needed number of rotations of the two motors by
 			// the given speed and moving distance
@@ -196,6 +196,7 @@ public class Drive {
 			rightMotor.waitComplete();
 		}
 	}
+	
 
 	/**
 	 * Moves the robot backward until "stop" of this class is called.
@@ -358,11 +359,23 @@ public class Drive {
 	}
 
 	/**
-	 * Stops the current movement of the robot immediately.
+	 * Stops the current movement of the robot immediately without synchronization.
 	 */
 	public void stop() {
 		leftMotor.stop();
 		rightMotor.stop();
+	}
+	
+	/**
+	 * Stops the current movement of the robot immediately with synchronization.
+	 */
+	public void stopSynchronized() {
+		leftMotor.startSynchronization();
+		rightMotor.startSynchronization();
+		leftMotor.stop();
+		rightMotor.stop();
+		leftMotor.endSynchronization();
+		rightMotor.endSynchronization();
 	}
 
 	/**

@@ -1,5 +1,6 @@
 package logic;
 
+import lejos.hardware.Sound;
 import lejos.hardware.lcd.LCD;
 import lejos.hardware.sensor.EV3ColorSensor;
 
@@ -74,7 +75,7 @@ public class Barcode {
 			// Getting the current color value from the sensor
 			float[] sample = new float[colorSensor.sampleSize()];
 			colorSensor.fetchSample(sample, 0);
-			currentColorValue = sample[0];
+			currentColorValue = sample[0] * 1.25f;
 			
 			// Displaying the current detected bar code
 			LCD.clear();
@@ -84,7 +85,7 @@ public class Barcode {
 			
 			// If barcode thread running parallel to obstacle, the obstacle thread handles the movement of the robot
 			if (moveRobot) {
-				drive.moveForward(drive.maxSpeed() * 0.3f);		// Start robot movement with 30% speed
+				drive.moveForward(drive.maxSpeed() * 0.35f);		// Start robot movement with 30% speed
 			}
 			
 				
@@ -116,6 +117,7 @@ public class Barcode {
 				} else if (barcode >= 1 && traveledDistanceMM > WIDTH_BARCODE_ELEMENT) {
 					// Barcode completed and detected. Other classes can use Barcode.getBarcode() to
 					// get the result
+					drive.stopSynchronized();
 					programRunning = false;
 					System.out.println("Detected barcode = " + barcode);
 				}
@@ -126,7 +128,7 @@ public class Barcode {
 			if (((System.nanoTime() - algorithmStart) / 1000000000.0f) > MAXIMUM_ALGORITHM_TIME
 					|| barcode > 6) {
 				barcode = 0;
-				drive.stop();
+				drive.stopSynchronized();
 				programRunning = false;
 			}
 		}	
@@ -136,7 +138,7 @@ public class Barcode {
 	 * Ends this algorithm that searches for the barcode.
 	 */
 	public void end() {
-		drive.stop();
+		drive.stopSynchronized();
 		programRunning = false;
 	}
 	

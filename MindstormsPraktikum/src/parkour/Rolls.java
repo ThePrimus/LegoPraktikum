@@ -64,6 +64,8 @@ public class Rolls {
 		this.sonicSensor = sonicSensor;
 		this.sonicMotor = sonicMotor;
 		this.colorSensor = colorSensor;
+		
+		this.colorSensor.setCurrentMode("Red");
 	}
 	
 	
@@ -81,6 +83,7 @@ public class Rolls {
 		/*sonicMotor.setAcceleration(2000);
 		sonicMotor.rotate(-31);
 		sonicMotor.waitComplete();*/
+		boolean measureDistance = true;
 		
 		this.drive.moveForward(drive.maxSpeed() * 0.5f, drive.maxSpeed() * 0.5f);
 		
@@ -89,26 +92,28 @@ public class Rolls {
 			float[] sonicSensorResults = new float [sonicSensor.sampleSize()];
 			sonicSensor.fetchSample(sonicSensorResults, 0);
 				
-			if (sonicSensorResults[0] < DISTANCE_TO_TURN_LEFT) {
+			if (sonicSensorResults[0] < DISTANCE_TO_TURN_LEFT && measureDistance) {
 				// Sonic sensor encounters a needed movement correction
 				//drive.turnLeft(7);
 				drive.moveForward(drive.maxSpeed() * 0.5f, drive.maxSpeed() * 0.7f);
-			} else if (sonicSensorResults[0] > DISTANCE_TO_TURN_RIGHT) {
+			} else if (sonicSensorResults[0] > DISTANCE_TO_TURN_RIGHT && measureDistance) {
 				drive.moveForward(drive.maxSpeed() * 0.7f, drive.maxSpeed() * 0.5f);
 			}
 			
 			// Getting the current color value from the sensor
 			float[] sample = new float[this.colorSensor.sampleSize()];
 			this.colorSensor.fetchSample(sample, 0);
-			currentColorValue = sample[0];
+			currentColorValue = sample[0] * 1.25f;
 			
 			if (currentColorValue > THRESHOLD_WHITE) {
+				drive.stopSynchronized();
+				
 				Sound.beep();
+				measureDistance = false;
 				
 				// White/silver line detected => rolls obstacle finished, move a few cm back,
 				// because distance rolls obstacle to barcode is very short. Then switch to barcode
 				// to scan it.
-				drive.stop();
 				drive.moveDistance(300, -15);
 				programRunning = false;
 				GUI.PROGRAM_FINISHED_START_BARCODE = true;
