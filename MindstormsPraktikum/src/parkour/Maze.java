@@ -125,9 +125,9 @@ public class Maze {
 			}
 			
 			// Terminate program automatically after 240seconds
-			if (((System.nanoTime() - algorithmStart) / 1000000000.0f) > 240.0f) {
+			/*if (((System.nanoTime() - algorithmStart) / 1000000000.0f) > 240.0f) {
 				end();
-			}
+			}*/
 		}
 	}
 	

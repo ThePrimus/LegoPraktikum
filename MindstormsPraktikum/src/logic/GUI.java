@@ -361,8 +361,11 @@ public class GUI {
 	 * Initializing the seesaw mode.
 	 */
 	private void seesaw() {
-		this.seesaw = new Seesaw(drive, colorSensor);
-		seesaw.run();
+		this.lineFollowing = new LineFollowing(drive, colorSensor);
+		lineFollowing.run(false);
+		
+		//this.seesaw = new Seesaw(drive, colorSensor);
+		//seesaw.run();
 
 		// Start search for barcode.
 		if (RACE_MODE && PROGRAM_FINISHED_START_BARCODE) {
@@ -395,7 +398,7 @@ public class GUI {
 	 */
 	private void finalSpurt() {
 		FinalSpurt finalSpurt = new FinalSpurt(drive, sonicSensor, touchLeftSensor, 
-												touchRightSensor, sonicMotor);
+												touchRightSensor, sonicMotor, colorSensor);
 		finalSpurt.run();
 
 		// Change final spurt -> final boss

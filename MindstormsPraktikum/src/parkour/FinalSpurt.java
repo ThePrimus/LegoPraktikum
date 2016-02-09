@@ -1,11 +1,13 @@
 package parkour;
 
 import lejos.hardware.motor.EV3MediumRegulatedMotor;
+import lejos.hardware.sensor.EV3ColorSensor;
 import lejos.hardware.sensor.EV3TouchSensor;
 import lejos.hardware.sensor.EV3UltrasonicSensor;
 import lejos.robotics.SampleProvider;
 import lejos.utility.Delay;
 import logic.Drive;
+import logic.GUI;
 
 /**
  * Implements the logic for the final spurt (drive as fast as possible).
@@ -28,6 +30,11 @@ public class FinalSpurt {
 	 *  The maximum time to reach the endboss obstacle (in seconds).
 	 */
 	private static final float MAXIMUM_TIME_TO_ENDBOSS = 30.0f;
+	
+	/*
+	 * The endboss obstacle is separated from this end run obstacle by a red line.
+	 */
+	private static final float THRESHOLD_RED_LINE = 0.20f;
 	
 	/*
 	 * If the program is running. 
@@ -59,6 +66,10 @@ public class FinalSpurt {
 	 */
 	private EV3MediumRegulatedMotor sonicMotor;
 	
+	/*
+	 * The color sensor to detect the red line.
+	 */
+	private EV3ColorSensor colorSensor; 
 	
 	
 	/**
@@ -68,12 +79,14 @@ public class FinalSpurt {
 	 */
 	public FinalSpurt(Drive drive, EV3UltrasonicSensor sonicSensor, EV3TouchSensor touchLeftSensor, 
 						EV3TouchSensor touchRightSensor,
-						EV3MediumRegulatedMotor sonicMotor) {
+						EV3MediumRegulatedMotor sonicMotor,
+						EV3ColorSensor colorSensor) {
 		this.drive = drive;
 		this.sonicSensor = sonicSensor;
 		this.touchSensorLeft = touchLeftSensor;
 		this.touchSensorRight = touchRightSensor;
 		this.sonicMotor = sonicMotor;
+		this.colorSensor = colorSensor;
 	}
 	
 
@@ -87,19 +100,19 @@ public class FinalSpurt {
 	public void run() {
 		
 		// Make sure the sonic sensor is facing sideways
-		/*sonicMotor.setAcceleration(100);
-		sonicMotor.rotate(-31);
-		sonicMotor.waitComplete();*/
+		sonicMotor.setAcceleration(100);
+		sonicMotor.rotate(-30);
+		sonicMotor.waitComplete();
 		
 		SampleProvider distanceProvider = sonicSensor.getDistanceMode();
 		
 		long algorithmStart = System.nanoTime(); 	// Stores when the algorithm starts
+		float currentColorValue = 0;
 		
 		this.drive.moveForward(drive.maxSpeed() * 0.97f, drive.maxSpeed());
 		
 		while (programRunning) {
 		
-			
 			// Check the two touch sensors while the program is running
 			float[] touchSensorResultsLeft = new float[touchSensorLeft.sampleSize()];
 			touchSensorLeft.fetchSample(touchSensorResultsLeft, 0);
@@ -123,8 +136,26 @@ public class FinalSpurt {
 				drive.moveForward(drive.maxSpeed() * 1.0f, drive.maxSpeed() * 0.85f);
 			}
 			
-			if (((System.nanoTime() - algorithmStart) / 1000000000.0f) > MAXIMUM_TIME_TO_ENDBOSS) {
+			/*if (((System.nanoTime() - algorithmStart) / 1000000000.0f) > MAXIMUM_TIME_TO_ENDBOSS) {
 				end();
+			}*/
+			
+			float[] sample = new float[this.colorSensor.sampleSize()];
+			this.colorSensor.fetchSample(sample, 0);
+			currentColorValue = sample[0];
+			
+			if (currentColorValue > THRESHOLD_RED_LINE) {
+				drive.stopSynchronized();
+				
+				// Move sonic sensor to the initial position
+				sonicMotor.setAcceleration(100);
+				sonicMotor.rotate(30, true);
+				sonicMotor.waitComplete();
+				
+				// Red line detected, final spurt obstacle finished, switch to endboss
+				programRunning = false;
+				GUI.PROGRAM_CHANGED = true;
+			 	GUI.PROGRAM_STATUS = GUI.PROGRAM_FINAL_BOSS;
 			}
 		}
 	}

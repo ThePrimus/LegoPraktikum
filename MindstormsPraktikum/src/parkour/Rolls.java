@@ -80,9 +80,9 @@ public class Rolls {
 		float currentColorValue = 0;
 		
 		// Make sure the sonic sensor is facing sideways
-		/*sonicMotor.setAcceleration(2000);
-		sonicMotor.rotate(-31);
-		sonicMotor.waitComplete();*/
+		sonicMotor.setAcceleration(100);
+		sonicMotor.rotate(-30);
+		sonicMotor.waitComplete();
 		
 		this.drive.moveForward(drive.maxSpeed() * 0.5f, drive.maxSpeed() * 0.5f);
 		
@@ -113,6 +113,12 @@ public class Rolls {
 				// because distance rolls obstacle to barcode is very short. Then switch to barcode
 				// to scan it.
 				drive.moveDistance(300, -15);
+				
+				// Move sonic sensor to the initial position
+				sonicMotor.setAcceleration(100);
+				sonicMotor.rotate(30, true);
+				sonicMotor.waitComplete();
+				
 				programRunning = false;
 				GUI.PROGRAM_FINISHED_START_BARCODE = true;
 			}
