@@ -171,7 +171,7 @@ public class GUI {
 				LCD.clear();
 				LCD.drawString("Mode: Linie folgen", 0, 0);
 				PROGRAM_STATUS = PROGRAM_FOLLOW_LINE;
-				followLine();
+				followLine(false);
 			} else if (selection == 2) {
 				// Bridge
 				LCD.clear();
@@ -289,9 +289,9 @@ public class GUI {
 	 * Initializing the follow line mode.
 	 */
 
-	private void followLine() {
+	private void followLine(boolean startChainBridge) {
 		this.lineFollowing = new LineFollowing(drive, colorSensor);
-		lineFollowing.run();
+		lineFollowing.run(startChainBridge);
 
 		// Start search for barcode.
 		if (RACE_MODE && PROGRAM_FINISHED_START_BARCODE) {
@@ -299,6 +299,11 @@ public class GUI {
 			LCD.clear();
 			System.out.println("Mode: Barcode");
 			barcode(true);
+		} else if (RACE_MODE && PROGRAM_STATUS == PROGRAM_BRIDGE) {
+			PROGRAM_CHANGED = false;
+			LCD.clear();
+			System.out.println("Mode: Bridge");
+			bridge();
 		}
 	}
 
@@ -427,7 +432,6 @@ public class GUI {
 			//System.out.println("Barcode: " + foundBarcode);
 
 			if (foundBarcode != -1) {
-				Sound.beep();
 				// Change the current program if a valid barcode has been found
 				changeProgram(foundBarcode);
 			}
@@ -443,16 +447,15 @@ public class GUI {
 	private void changeProgram(final int barcode) {
 		if (RACE_MODE) {
 			if (barcode == PROGRAM_FOLLOW_LINE) {
-				followLine();
+				followLine(false);
 			} else if (barcode == PROGRAM_FINAL_SPURT) {
-				Sound.beep();
-				Sound.beep();
 				finalSpurt();
 			} else if (barcode == PROGRAM_BRIDGE) {
 				bridge();
 			} else if (barcode == PROGRAM_SEESAW) {
 				seesaw();
 			} else if (barcode == PROGRAM_CHAIN_BRDIGE) {
+				followLine(true);
 				chainBridge();
 			} else if (barcode == PROGRAM_ROLLS) {
 				rolls();

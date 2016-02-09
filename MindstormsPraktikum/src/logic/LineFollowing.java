@@ -73,8 +73,12 @@ public class LineFollowing {
 	 * Executes an algorithm so that the robot follows a silver/white line.
 	 * Idea: Adjust the whole time to reach a red intensity between 0.5 - 0.4
 	 * ToDo: handling of special cases like 90 degree turns and reflections.
+	 * 
+	 * @param startChainBridge if true the chain bridge program is started next if this follow
+	 * 			line program doesn't find a line anymore, otherwise the
+	 * 			barcode program is started
 	 */
-	public void run(){
+	public void run(boolean startChainBridge){
 		int counter = 0;
 		float[] colorResults = new float[colorProvider.sampleSize()];
 		Sound.twoBeeps();
@@ -121,25 +125,34 @@ public class LineFollowing {
 					drive.stopSynchronized();
 					Sound.beep();
 					//LCD.drawString("Break!", 0, 5);
-					drive.turnLeft(-90, false);
+					
+					if (startChainBridge) {
+						drive.turnLeft(-90, true);
+						break;
+					} else {
+						drive.turnLeft(-90, false);
+					}
+					
 					if(!searchLine())
 					{
 						LCD.drawString("Line not Found!", 0, 5);
 						break;
 					}
-					
-					
 				}
+				
 				drive.setSpeedRightMotor(rSpeed);
 			}
 			
-			
 			counter++;
-			
-	}
+		}
 		
-		
-		GUI.PROGRAM_FINISHED_START_BARCODE = true;
+		// No line found anymore, start bridge or barcode program next.
+		if (startChainBridge) {
+			GUI.PROGRAM_CHANGED = true;
+		  	GUI.PROGRAM_STATUS = GUI.PROGRAM_CHAIN_BRDIGE;
+		} else {
+			GUI.PROGRAM_FINISHED_START_BARCODE = true;
+		}
 		terminate = false;
 		timestamp = 0;
 	}
