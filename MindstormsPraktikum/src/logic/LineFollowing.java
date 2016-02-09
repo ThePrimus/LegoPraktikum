@@ -52,18 +52,40 @@ public class LineFollowing {
 		int inc = 10;
 		float [] samples = new float[colorProvider.sampleSize()];
 		float curVal  = 0;
-		while(deg < 90) {
-				drive.turnLeft(-inc, false);
+		while(deg <= 90) {
+			drive.turnLeft(-inc, false);
+			deg += inc;
+			colorProvider.fetchSample(samples, 0);
+			curVal = samples[0] * 1.25f;
+			if(curVal > 0.7)
+			{
+				Sound.beep();
+				found = true;
+				break;
+			}			
+		}
+		
+		deg = 0;
+		if(!found)
+		{
+			while(deg <= 90) {
+				drive.turnRight(inc, false);
 				deg += inc;
 				colorProvider.fetchSample(samples, 0);
 				curVal = samples[0] * 1.25f;
 				if(curVal > 0.7)
 				{
-					Sound.beepSequenceUp();
+					Sound.buzz();
 					found = true;
 					break;
 				}			
 			}
+			if(!found)
+			{
+				drive.turnRight(-90, false);
+			}
+			
+		}
 			
 	return found;
 	}
@@ -91,7 +113,7 @@ public class LineFollowing {
 				//terminate = true;
 				break;
 			}
-			if(counter > 100000) {
+			if(counter > 20000) {
 				Sound.twoBeeps();
 				terminate = true;
 				drive.stopSynchronized();
