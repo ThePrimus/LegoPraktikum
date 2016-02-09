@@ -63,13 +63,9 @@ public class EndBoss {
 	public void run() {
 		
 		// Make sure the sonic sensor is facing sideways
-		LCD.clear();
-		System.out.println("Sonic position: " + sonicMotor.getTachoCount());
-		if (sonicMotor.getTachoCount() < 0) {
-			sonicMotor.setAcceleration(3000);
-			sonicMotor.rotate(-31);
-			sonicMotor.waitComplete();
-		}
+		sonicMotor.setAcceleration(100);
+		sonicMotor.rotate(-30);
+		sonicMotor.waitComplete();
 		
 		long algorithmStart = System.nanoTime(); 			// Stores when the algorithm starts
 		
