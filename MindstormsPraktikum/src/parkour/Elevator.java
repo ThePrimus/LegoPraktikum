@@ -80,7 +80,7 @@ public class Elevator {
 	}
 
 	private void initPosition() {
-		drive.moveDistance(300, 5);
+		drive.moveDistance(300,600,5);
 		drive.stopSynchronized();
 	}
 
@@ -158,8 +158,8 @@ public class Elevator {
 				drive.setSpeedRightMotor(drive.maxSpeed()*0.5f);
 			} else { // on the bridge so turn right to follow right side of the
 						// bridge
-				drive.setSpeedLeftMotor(drive.maxSpeed()*0.5f);
-				drive.setSpeedRightMotor(drive.maxSpeed() * 0.1f);
+				drive.setSpeedLeftMotor(drive.maxSpeed()*0.3f);
+				drive.setSpeedRightMotor(drive.maxSpeed() * 0.2f);
 			}
 			
 		}
@@ -167,10 +167,11 @@ public class Elevator {
 		sonicMotor.setAcceleration(100);
 		sonicMotor.rotate(-(SONIC_SENSOR_GROUND_POS + SONIC_SENSOR_WALL_POS), true);
 		sonicMotor.waitComplete();
-		drive.moveDistance(300, -10);
+		drive.moveDistance(300, -2);
 		drive.stopSynchronized();
 		Delay.msDelay(1000);
-		drive.turnLeft(15,true);
+		drive.moveForward(100, 300);
+		Delay.msDelay(500);
 		drive.stopSynchronized();
 		
 
@@ -197,8 +198,8 @@ public class Elevator {
 					break;
 				}
 				
-				drive.moveDistance(300, -10);
-				drive.turnRight(15);
+				drive.moveDistance(300, -2);
+				drive.turnRight(5);
 				drive.moveForward(300, 300);
 			} else if (sampleL[0] == 0 && sampleR[0] == 1) {
 				Delay.msDelay(200);
@@ -207,8 +208,8 @@ public class Elevator {
 				if(sampleL[0] == 1){
 					break;
 				}
-				drive.moveDistance(300, -10);
-				drive.turnLeft(15);
+				drive.moveDistance(300, -2);
+				drive.turnLeft(5);
 				drive.moveForward(300, 300);
 			}
 

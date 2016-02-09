@@ -75,7 +75,7 @@ public class Bridge {
 
 			if (curPos > ABYSS_THRESHOLD) { // Driving towards abyss therefor
 											// turn left
-				drive.setSpeedLeftMotor(drive.maxSpeed() * 0.3f);
+				drive.setSpeedLeftMotor(drive.maxSpeed() * 0.2f);
 				drive.setSpeedRightMotor(drive.maxSpeed());
 			} else { // on the bridge so turn right to follow right side of the
 						// bridge

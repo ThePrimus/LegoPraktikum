@@ -11,6 +11,7 @@ import lejos.hardware.sensor.EV3ColorSensor;
 import lejos.hardware.sensor.EV3UltrasonicSensor;
 import lejos.hardware.sensor.SensorMode;
 import lejos.robotics.SampleProvider;
+import lejos.robotics.filter.MedianFilter;
 import lejos.utility.Delay;
 import lejos.utility.SensorSelectorException;
 import logic.Drive;
@@ -152,35 +153,36 @@ public class ChainBridge {
 			  // wall can't be detected therefore it's lower then the sensor
 			    if (curPos < 0.2) {
 			   	//	drive.stop();
-			    	drive.moveForward(300, 300);
-			    	Delay.msDelay(100);
+			    	drive.moveForward(280, 700);
+			    	//Delay.msDelay(1000);
 			    	runColorFollow = false;
 			       	break;
 				}
 		}
 	
+		MedianFilter filter = new MedianFilter(distanceProvider, 5);
 		while (runBridgeRoutine3) {		
 			
 			// get current distance
-			float[] sonicSensorResults = new float[distanceProvider
+			float[] sonicSensorResults = new float[filter
 					.sampleSize()];
-			distanceProvider.fetchSample(sonicSensorResults, 0);
+			filter.fetchSample(sonicSensorResults, 0);
 			float curPos = sonicSensorResults[0];
 			
 			
 			if(curPos > 0.20) {
-				drive.stop();
+				drive.stopSynchronized();
 				break;
 			}
 	
 			if (curPos > 0.12) { // move right if robot is to far
 												// from wall
 				drive.moveForward((drive.maxSpeed() * 0.3f),
-						(drive.maxSpeed() * 0.1f));
+						(drive.maxSpeed() * 0.2f));
 	
 			} else {// move left if if to close to wall
 				drive.moveForward((drive.maxSpeed() * 0.2f),
-						(drive.maxSpeed() * 0.1f));
+						(drive.maxSpeed() * 0.3f));
 			}
 		}
 		drive.turnRight(15, false);
