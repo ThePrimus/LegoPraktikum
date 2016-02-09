@@ -1,7 +1,11 @@
 package logic;
 
+import lejos.hardware.Sound;
 import lejos.hardware.lcd.LCD;
 import lejos.hardware.sensor.EV3ColorSensor;
+import lejos.robotics.RegulatedMotor;
+import lejos.robotics.RegulatedMotorListener;
+import lejos.robotics.SampleProvider;
 import lejos.robotics.filter.MedianFilter;
 import lejos.robotics.filter.SampleThread;
 import lejos.utility.Delay;
@@ -16,17 +20,21 @@ public class LineFollowing {
 	/*
 	 * The color sensor.
 	 */
-	private EV3ColorSensor sensor;
+	private SampleProvider colorProvider;
 	
 	/*
 	 *  The navigation class.
 	 */
 	private Drive drive;
+	private float mSpeed;
+	private final float diffSpeed = 140; //140 oder 100 mit emplified
+	private float initSpeed; //= mSpeed - 2 * diffSpeed;
+	private float timestamp = 0;
 	
+	private int tachoCount = 0;
 	
-	private float redMax = 1;
 	private boolean terminate = false;
-	private char lastState = 's';
+	//private char lastState = 's';
 	
 	/**
 	 * Constructor: 
@@ -35,58 +43,37 @@ public class LineFollowing {
 	 */
 	public LineFollowing(Drive drive, EV3ColorSensor sensor) {
 		this.drive = drive;
-		this.sensor = sensor;
+		this.colorProvider = sensor.getRedMode();
 		
-		sensor.setCurrentMode("Red");
+		
+		mSpeed = 600; //600 oder 500
+		initSpeed = mSpeed - 2 * diffSpeed;
 	}
+	
 	/**
 	 * Searches the line in a 180 degree range by 5 degree steps.
 	 * If line is found, save from the side from which the line was approached(Left or right turn).
 	 */
-	private void searchLine() {
+	private boolean searchLine() {
+		boolean found = false;
 		int deg = 0;
 		int inc = 10;
-		float [] samples = new float[sensor.getRedMode().sampleSize()];
-		
-		while(deg < 180) {
-			if(deg < 90) {
-				drive.turnLeft(inc, false);
+		float [] samples = new float[colorProvider.sampleSize()];
+		float curVal  = 0;
+		while(deg < 120) {
+				drive.turnLeft(-inc, false);
 				deg += inc;
-				sensor.getRedMode().fetchSample(samples, 0);
-				if(samples[0] > 0.9)
+				colorProvider.fetchSample(samples, 0);
+				curVal = samples[0] * 1.25f;
+				if(curVal > 0.7)
 				{
-					lastState = 'l';
-					//Sound.beep();
+					Sound.beepSequenceUp();
+					found = true;
 					break;
-				}
-					
+				}			
 			}
 			
-			if(deg == 90)
-			{
-				drive.turnRight(90, false);
-			}
-			
-			if(deg >= 90)
-			{
-				drive.turnRight(inc, false);
-				deg += inc;
-				sensor.getRedMode().fetchSample(samples, 0);
-				if(samples[0] > 0.9)
-				{
-					lastState = 'r';
-					//Sound.buzz();
-					break;
-				}
-			}
-			
-			LCD.drawString("Deg: " + String.valueOf(deg), 0, 2);
-			LCD.drawString("State: " + lastState, 0, 4);
-		}
-		LCD.clear();
-		LCD.drawString("Last state: " + lastState, 0, 5);
-		Delay.msDelay(2000);
-		LCD.clear();
+	return found;
 	}
 	
 	/**
@@ -94,6 +81,7 @@ public class LineFollowing {
 	 * Idea: Stay on line and adjust depending on last adjustment.
 	 * Problem: Parameterization of states and state switching depends on sample fetching frequency
 	 */
+	/*
 	public void runt(){
 		LCD.clear();
 
@@ -155,52 +143,107 @@ public class LineFollowing {
 		}
 		drive.stop();
 	}
-	
+	*/
 	/**
 	 * Executes an algorithm so that the robot follows a silver/white line.
 	 * Idea: Adjust the whole time to reach a red intensity between 0.5 - 0.4
 	 * ToDo: handling of special cases like 90 degree turns and reflections.
 	 */
 	public void run(){
-		int count = 0;
-		float[] sample = new float[sensor.sampleSize()];
-
-		drive.moveForward(drive.maxSpeed() * 0.4f, drive.maxSpeed() * 0.4f);
-		LCD.clear();
-		MedianFilter filter = new MedianFilter(sensor, 10);
-		
-		
-		while(!terminate){	
-			if(count > 20000) {
-				terminate = true;
+		int counter = 0;
+		float[] colorResults = new float[colorProvider.sampleSize()];
+		Sound.twoBeeps();
+		while (!terminate) {
+			LCD.drawString("Counter: " +  String.valueOf(counter) ,0, 2);
+			// get color of line
+			if(terminate) {
+				Sound.beep();
+				drive.stop();
+				//terminate = true;
 				break;
 			}
-			//sensor.fetchSample(sample, 0);
-			filter.fetchSample(sample, 0);
-			
-			
-			if(sample[0] >= redMax * 0.5) {
-			
-				drive.moveForward(drive.maxSpeed() * 0.6f,drive.maxSpeed() * 0.1f);
-				//drive.rightBackward(drive.maxSpeed() * 0.1f);
-			
-			} else if(sample[0] < redMax * 0.4) {
-				
-				drive.moveForward(drive.maxSpeed() * 0.1f, drive.maxSpeed() * 0.6f);
-			//	drive.leftBackward(drive.maxSpeed() * 0.1f);
-	
-			} else {
-				drive.moveForward(300, 100);
+			if(counter > 100000) {
+				Sound.twoBeeps();
+				terminate = true;
+				drive.stop();
+				break;
 			}
-			count++;
+			
+			colorProvider.fetchSample(colorResults, 0);
+			float curColor = colorResults[0] * 1.25f;
+
+			// correct movement according to the youtube video
+			float lSpeed = curColor * mSpeed - diffSpeed;
+			float rSpeed = initSpeed - lSpeed;
+			
+
+			if (lSpeed < 0) {
+				drive.leftBackward(lSpeed);
+			} else {
+				timestamp = 0;
+				tachoCount = 0;
+				drive.setSpeedLeftMotor(lSpeed);
+			}
+
+			if (rSpeed < 0) {
+				drive.rightBackward(rSpeed);
+			} else {
+				if(timestamp == 0)
+				{
+					timestamp = System.nanoTime();
+					//Sound.beep();
+					
+				} else if(((System.nanoTime() - timestamp) / 1000000000.0f) > 1.4) {
+					drive.stop();
+					Sound.beep();
+					//LCD.drawString("Break!", 0, 5);
+					drive.turnLeft(-90, false);
+					if(!searchLine())
+					{
+						LCD.drawString("Line not Found!", 0, 5);
+						break;
+					}
+					
+					//Delay.msDelay(000);
+					/*while(!lineFound()) {
+						if(search > 18) {
+							LCD.drawString("Line not Found!", 0, 1);
+							deg = 0;
+							break;
+						}
+						LCD.drawString("Looking for Line...", 0, 1);
+						search++;
+					}*/
+				}
+				drive.setSpeedRightMotor(rSpeed);
+			}
+			
+			//LCD.drawString("Dif: " + String.valueOf(Math.abs(lastSample - curColor)), 0, 2);
+			//LCD.drawString("Left: " + String.valueOf(lSpeed), 0, 3);
+			//LCD.drawString( "Right: " + String.valueOf(lSpeed), 0, 2);
+			counter++;
+			//lastSample = curColor;
+			//LCD.drawString("Timestamp: " + String.valueOf(timestamp), 0, 2);
+			//LCD.drawString("Dif: " + String.valueOf(timestamp - System.currentTimeMillis()), 0, 4);
+			/*System.out.println();
+			System.out.println("Dif: " + String.valueOf(timestamp - System.currentTimeMillis()));*/
 		}
+		//}
 		
-		drive.stop();
-		LCD.clear();
+		//Delay.msDelay(1000);
+		//searchLine();
+		
+		// ToDo: Move code to correct position: seesaw obstacle finished, inform GUI to start
+		// the search for a barcode
+		GUI.PROGRAM_FINISHED_START_BARCODE = false;
+		terminate = false;
+		timestamp = 0;
 	}
 	
 	
 	public void end() {
+		drive.stop();
 		this.terminate = true;
 	}
+	
 }

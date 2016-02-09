@@ -48,13 +48,9 @@ public class Seesaw {
 	}
 	
 	private boolean lineFound()
-	{
-		
+	{		
 		boolean found = false;
 		float[] sample = new float[colorProvider.sampleSize()];
-		drive.turnRight(45);
-		
-		//drive.setSpeed(drive.maxSpeed());
 		
 		//while(deg < 90) {
 			colorProvider.fetchSample(sample, 0);
@@ -97,18 +93,16 @@ public class Seesaw {
 		float counter = 0;
 		float search = 0;
 		float lastSample = 0;
-		//MeanFilter filter = new MeanFilter(colorProvider, 10);
-		//SampleThread thread = new SampleThread(colorProvider, 5);
 		float[] colorResults = new float[colorProvider.sampleSize()];
 		while (LineFollowing) {
-			//if(thread.isNewSampleAvailable()) {
+			
 			// get color of line
 			if(!LineFollowing) {
 				drive.stop();
 				LineFollowing = false;
 				break;
 			}
-			if(counter > 500000) {
+			if(counter > 50000) {
 				LineFollowing = false;
 				drive.stop();
 				break;
@@ -121,13 +115,6 @@ public class Seesaw {
 			float lSpeed = curColor * mSpeed - diffSpeed;
 			float rSpeed = initSpeed - lSpeed;
 			
-			/*if(Math.abs(lastSample - curColor) > 0.5) {
-				drive.stop();
-				Sound.buzz();
-				//drive.moveDistance(800, -2);
-				//drive.turnRight(40, false);
-				
-			}*/
 
 			if (lSpeed < 0) {
 				drive.leftBackward(lSpeed);
@@ -139,18 +126,20 @@ public class Seesaw {
 			if (rSpeed < 0) {
 				drive.rightBackward(rSpeed);
 			} else {
-				/*if(timestamp == 0)
+				if(timestamp == 0)
 				{
 					timestamp = System.currentTimeMillis();
 					//Sound.beep();
 					
-				} else if(Math.abs(timestamp - System.currentTimeMillis()) > 600 ) {
-					//Sound.buzz();
+				} else if(Math.abs(timestamp - System.currentTimeMillis()) > 1000 ) {
+					Sound.buzz();
 					LCD.drawString("Break!", 0, 5);
 					timestamp = 0;
 					drive.stop();
+					LineFollowing = false;
+					break;
 					//Delay.msDelay(000);
-					while(!lineFound()) {
+					/*while(!lineFound()) {
 						if(search > 18) {
 							LCD.drawString("Line not Found!", 0, 1);
 							deg = 0;
@@ -158,8 +147,8 @@ public class Seesaw {
 						}
 						LCD.drawString("Looking for Line...", 0, 1);
 						search++;
-					}
-				}*/
+					}*/
+				}
 				drive.setSpeedRightMotor(rSpeed);
 			}
 			
