@@ -429,7 +429,7 @@ public class GUI {
 			if (foundBarcode != -1) {
 				Sound.beep();
 				// Change the current program if a valid barcode has been found
-				//changeProgram(foundBarcode);
+				changeProgram(foundBarcode);
 			}
 		}
 	}
