@@ -68,7 +68,7 @@ public class Maze {
 		LCD.clear();
 		// Make sure the sonic sensor is facing sideways
 		sonicMotor.setAcceleration(100);
-		sonicMotor.rotate(-30);
+		sonicMotor.rotate(-31);
 		sonicMotor.waitComplete();
 				
 		SampleProvider distanceProvider = sonicSensor.getDistanceMode();
@@ -99,11 +99,11 @@ public class Maze {
 						
 			// Sonic sensor encounters a needed movement correction
 			if (sonicSensorResults[0] < 0.15) {
-				drive.moveForward(drive.maxSpeed() * 0.5f, drive.maxSpeed() * 0.6f);
+				drive.moveForward(drive.maxSpeed() * 0.4f, drive.maxSpeed() * 0.5f);
 			} else {
 				// ToDo: Might be possible to increase the left motor speed to make
 				// closer turns. Also maybe increase overall speed
-				drive.moveForward(drive.maxSpeed() * 0.65f, drive.maxSpeed() * 0.4f);
+				drive.moveForward(drive.maxSpeed() * 0.7f, drive.maxSpeed() * 0.38f);
 			}
 			
 			// Stop algorithm if the color sensor detects the white/silver line of the 
@@ -116,7 +116,7 @@ public class Maze {
 			if (currentColorValue > THRESHOLD_WHITE) {
 				end();
 				sonicMotor.setAcceleration(100);
-				sonicMotor.rotate(30, true);
+				sonicMotor.rotate(31, true);
 				sonicMotor.waitComplete();
 				drive.moveDistance(300, -12);
 				

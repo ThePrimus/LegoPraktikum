@@ -122,7 +122,7 @@ public class FinalSpurt {
 			
 			if (touchSensorResultsLeft[0] == 1 && touchSensorResultsRight[0] == 1) {
 				// Touch sensors pressed, drive back a bit and turn right
-				drive.moveDistance(400, -15);
+				drive.moveDistance(400, -13);
 				drive.turnRight(70);
 			}
 				
@@ -131,9 +131,9 @@ public class FinalSpurt {
 			
 			// Sonic sensor encounters a needed movement correction
 			if (sonicSensorResults[0] < DISTANCE_TO_CORRECT_LEFT) {
-				drive.moveForward(drive.maxSpeed() * 0.85f, drive.maxSpeed() * 1.0f);
+				drive.moveForward(drive.maxSpeed() * 0.8f, drive.maxSpeed() * 1.0f);
 			} else if (sonicSensorResults[0] > DISTANCE_TO_CORRECT_RIGHT) {
-				drive.moveForward(drive.maxSpeed() * 1.0f, drive.maxSpeed() * 0.85f);
+				drive.moveForward(drive.maxSpeed() * 1.0f, drive.maxSpeed() * 0.8f);
 			}
 			
 			/*if (((System.nanoTime() - algorithmStart) / 1000000000.0f) > MAXIMUM_TIME_TO_ENDBOSS) {
@@ -146,11 +146,6 @@ public class FinalSpurt {
 			
 			if (currentColorValue > THRESHOLD_RED_LINE) {
 				drive.stopSynchronized();
-				
-				// Move sonic sensor to the initial position
-				sonicMotor.setAcceleration(100);
-				sonicMotor.rotate(30, true);
-				sonicMotor.waitComplete();
 				
 				// Red line detected, final spurt obstacle finished, switch to endboss
 				programRunning = false;
