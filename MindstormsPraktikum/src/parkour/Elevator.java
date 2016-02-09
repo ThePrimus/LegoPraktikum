@@ -4,11 +4,14 @@ import java.io.IOException;
 
 import connection.ComModule;
 import connection.Communication;
+import lejos.hardware.Sound;
 import lejos.hardware.motor.EV3MediumRegulatedMotor;
 import lejos.hardware.sensor.EV3ColorSensor;
 import lejos.hardware.sensor.EV3TouchSensor;
 import lejos.hardware.sensor.EV3UltrasonicSensor;
 import lejos.hardware.sensor.SensorMode;
+import lejos.robotics.SampleProvider;
+import lejos.robotics.filter.MedianFilter;
 import lejos.utility.Delay;
 import logic.Collision;
 import logic.Drive;
@@ -38,6 +41,9 @@ public class Elevator {
 	private final int SONIC_SENSOR_GROUND_POS = -90;
 	private EV3MediumRegulatedMotor sonicMotor;
 	private ComModule communication;
+	private SampleProvider distanceProvider;
+	private boolean runMoveForwardUntilTouch = true;
+	private static final float ABYSS_THRESHOLD = 0.18f; // in m
 
 	/**
 	 * Constructor:
@@ -62,6 +68,7 @@ public class Elevator {
 		this.collisionDetection = new Collision(false, drive, touchLeftSensor,
 				touchRightSensor, sonicSensor);
 		this.communication = Communication.getModule();
+		this.distanceProvider = sonicSensor.getDistanceMode();
 	}
 
 	public void run() {
@@ -73,9 +80,8 @@ public class Elevator {
 	}
 
 	private void initPosition() {
-		drive.turnRight(45, false);
-		drive.stop();
-		sonicMotor.rotate(-SONIC_SENSOR_GROUND_POS, true);
+		drive.moveDistance(300, 5);
+		drive.stopSynchronized();
 	}
 
 	private void callElevator() {
@@ -86,7 +92,7 @@ public class Elevator {
 			try {
 				isFree = communication.requestStatus();
 			} catch (IOException e1) {
-				e1.printStackTrace();
+			//	e1.printStackTrace();
 			}
 			if (isFree) {
 				break;
@@ -100,7 +106,7 @@ public class Elevator {
 			try {
 				isOk = communication.requestElevator();
 			} catch (IOException e1) {
-				e1.printStackTrace();
+				//e1.printStackTrace();
 			}
 			if (isOk) {
 				break;
@@ -109,14 +115,15 @@ public class Elevator {
 	}
 
 	private void waitForElevator() {
+		MedianFilter filter = new MedianFilter(colorProvider, 5);
 		while (runWaitForElevator) {
-			// get color
-			float[] colorResults = new float[colorProvider.sampleSize()];
-			colorProvider.fetchSample(colorResults, 0);
+			// get ambient
+			float[] colorResults = new float[filter.sampleSize()];
+			filter.fetchSample(colorResults, 0);
 			float curColor = colorResults[0];
 
 			// Elevator is ready, could also be down with http
-			if (curColor > 0.2) {
+			if (curColor > 0.20) {
 				break;
 			}
 		}
@@ -124,10 +131,45 @@ public class Elevator {
 	}
 
 	private void enterElevator() {
-		drive.moveDistance(300, 25);
+		float curPos = 0;
+		drive.moveForward(drive.maxSpeed() * 0.2f,drive.maxSpeed() * 0.3f);
+		while(runMoveForwardUntilTouch ){		
 
-		////
-		drive.moveForward(300, 250);
+			float[] sampleR = new float[touchRightSensor.sampleSize()];
+			touchRightSensor.fetchSample(sampleR, 0);
+			if (sampleR[0] == 1) {
+				drive.stopSynchronized();
+				Sound.buzz();
+				break;
+			}
+			
+			
+			// get distance to ground
+			float[] samples = new float[distanceProvider.sampleSize()];
+			distanceProvider.fetchSample(samples, 0);
+			curPos = samples[0];
+
+			if (curPos > ABYSS_THRESHOLD) { // Driving towards abyss therefor
+											// turn left
+				drive.setSpeedLeftMotor(drive.maxSpeed() * 0.2f);
+				drive.setSpeedRightMotor(drive.maxSpeed()*0.3f);
+			} else { // on the bridge so turn right to follow right side of the
+						// bridge
+				drive.setSpeedLeftMotor(drive.maxSpeed()*0.3f);
+				drive.setSpeedRightMotor(drive.maxSpeed() * 0.2f);
+			}
+			
+		}
+
+		sonicMotor.setAcceleration(100);
+		sonicMotor.rotate(-(SONIC_SENSOR_GROUND_POS + SONIC_SENSOR_WALL_POS), true);
+		sonicMotor.waitComplete();
+		drive.moveDistance(300, -5);
+		drive.turnLeft(30);
+
+		Sound.beepSequenceUp();
+
+		drive.moveForward(300, 300);
 		while (runEnterElevator) {
 			float[] sampleL = new float[touchLeftSensor.sampleSize()];
 			touchLeftSensor.fetchSample(sampleL, 0);
@@ -135,14 +177,18 @@ public class Elevator {
 			float[] sampleR = new float[touchRightSensor.sampleSize()];
 			touchRightSensor.fetchSample(sampleR, 0);
 			if (sampleL[0] == 1 && sampleR[0] == 1) {
-				drive.stop();
+				drive.stopSynchronized();
+				Sound.buzz();
 				break;
 			} else if (sampleL[0] == 1 && sampleR[0] == 0) {
-				drive.moveDistance(300, -5);
-				drive.moveForward(300, 250);
-			} else if (sampleL[0] == 1 && sampleR[0] == 0) {
-				drive.moveDistance(300, -5);
-				drive.moveForward(250, 300);
+				drive.moveDistance(300, -10);
+				drive.turnRight(20);
+				drive.moveForward(300, 300);
+			} else if (sampleL[0] == 0 && sampleR[0] == 1) {
+				drive.moveDistance(300, -10);
+
+				drive.turnLeft(20);
+				drive.moveForward(300, 300);
 			}
 
 		}
@@ -156,16 +202,20 @@ public class Elevator {
 			try {
 				isOk = communication.moveElevatorDown();
 			} catch (IOException e1) {
-				e1.printStackTrace();
+			//	e1.printStackTrace();
 			}
 
 			if (isOk) {
+				Sound.playTone(440, 2000);
 				break;
 			}
 		}
 		// wait for 10 seconds until elevator is down
-		Delay.msDelay(10000);
-		GUI.PROGRAM_FINISHED_START_BARCODE = true;
+		Delay.msDelay(5000);
+		Sound.buzz();
+		Sound.buzz();
+		
+		// GUI.PROGRAM_FINISHED_START_BARCODE = true;
 
 	}
 
@@ -175,5 +225,6 @@ public class Elevator {
 		runEnterElevator = false;
 		runWaitForFree = false;
 		runGoDown = false;
+		runMoveForwardUntilTouch = false;
 	}
 }

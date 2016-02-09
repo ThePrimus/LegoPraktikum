@@ -63,7 +63,7 @@ public class Bridge {
 			// exit if reached lift which shows color red
 			// TODO find correct threshold
 			if (curColor > 0.5) {
-				drive.stop();
+				drive.stopSynchronized();
 				runBridge = false;
 				break;
 			}
@@ -85,7 +85,7 @@ public class Bridge {
 		}
 		// Activate elevator program
 		GUI.PROGRAM_CHANGED = true;
-	  	GUI.PROGRAM_STATUS = GUI.PROGRAM_ELEVATOR;
+	 	GUI.PROGRAM_STATUS = GUI.PROGRAM_ELEVATOR;
 	}
 
 	public void run() {
