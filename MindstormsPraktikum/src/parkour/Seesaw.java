@@ -173,7 +173,7 @@ public class Seesaw {
 	}
 
 	public void end() {
-		drive.stop();
+		drive.stopSynchronized();
 		LineFollowing = false;
 	}
 }

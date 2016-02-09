@@ -85,7 +85,7 @@ public class Barcode {
 			
 			// If barcode thread running parallel to obstacle, the obstacle thread handles the movement of the robot
 			if (moveRobot) {
-				drive.moveForward(drive.maxSpeed() * 0.35f);		// Start robot movement with 30% speed
+				drive.moveForward(drive.maxSpeed() * 0.30f);		// Start robot movement with 30% speed
 			}
 			
 				

@@ -109,8 +109,6 @@ public class Rolls {
 			if (currentColorValue > THRESHOLD_WHITE) {
 				drive.stopSynchronized();
 				
-				Sound.beep();
-				
 				// White/silver line detected => rolls obstacle finished, move a few cm back,
 				// because distance rolls obstacle to barcode is very short. Then switch to barcode
 				// to scan it.
@@ -126,7 +124,7 @@ public class Rolls {
 	 * Ends the rolls program.
 	 */
 	public void end() {
-		drive.stop();
+		drive.stopSynchronized();
 		programRunning = false;
 	}
 }

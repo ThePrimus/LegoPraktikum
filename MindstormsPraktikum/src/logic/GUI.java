@@ -3,7 +3,6 @@ package logic;
 import lejos.hardware.Button;
 import lejos.hardware.Key;
 import lejos.hardware.KeyListener;
-import lejos.hardware.Sound;
 import lejos.hardware.lcd.LCD;
 import lejos.hardware.motor.EV3LargeRegulatedMotor;
 import lejos.hardware.motor.EV3MediumRegulatedMotor;
@@ -273,7 +272,7 @@ public class GUI {
 	private void maze() {
 
 		this.maze = new Maze(drive, sonicSensor, sonicMotor, touchLeftSensor,
-				touchRightSensor);
+				touchRightSensor,  colorSensor);
 		maze.run();
 		
 		// Start search for barcode.
