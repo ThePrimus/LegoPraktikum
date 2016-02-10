@@ -1,11 +1,9 @@
 package parkour;
 
-import lejos.hardware.lcd.LCD;
 import lejos.hardware.motor.EV3MediumRegulatedMotor;
 import lejos.hardware.sensor.EV3ColorSensor;
 import lejos.hardware.sensor.EV3TouchSensor;
 import lejos.hardware.sensor.EV3UltrasonicSensor;
-import lejos.utility.Delay;
 import logic.Drive;
 import music.MusicPlay;
 
@@ -57,6 +55,8 @@ public class EndBoss {
 		this.touchSensorLeft = touchLeftSensor;
 		this.touchSensorRight = touchRightSensor;
 		this.colorSensor = colorSensor;
+		
+		this.colorSensor.setCurrentMode("Red");
 	}
 
 
@@ -81,9 +81,10 @@ public class EndBoss {
 		
 		// Start moving forward and begin playing music
 		this.drive.moveForward(drive.maxSpeed() * 0.9f, drive.maxSpeed() * 0.75f);
-		//gameOfThrones = new MusicPlay();
-		//Thread musicThread = new Thread(gameOfThrones);
-		//musicThread.start();
+		
+		gameOfThrones = new MusicPlay();
+		Thread musicThread = new Thread(gameOfThrones);
+		musicThread.start();
 		
 		while (programRunning) {
 		

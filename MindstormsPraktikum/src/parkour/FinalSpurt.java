@@ -87,6 +87,8 @@ public class FinalSpurt {
 		this.touchSensorRight = touchRightSensor;
 		this.sonicMotor = sonicMotor;
 		this.colorSensor = colorSensor;
+		
+		this.colorSensor.setCurrentMode("Red");
 	}
 	
 
