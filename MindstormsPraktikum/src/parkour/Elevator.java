@@ -263,7 +263,7 @@ public class Elevator {
 
 		// wait for 10 seconds until elevator is down
 		Delay.msDelay(5000);
-		drive.moveForward(300);
+		drive.moveForward(200);
 		Sound.buzz();
 		Sound.buzz();
 		SampleProvider redProver = colorSensor.getRedMode();

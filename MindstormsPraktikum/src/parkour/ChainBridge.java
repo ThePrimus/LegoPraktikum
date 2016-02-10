@@ -143,18 +143,22 @@ public class ChainBridge {
 		Delay.msDelay(2000);
 		runBridgeRoutine3 = true;
 		runColorFollow = true;
-		
+		//MedianFilter firstContactFilter = new MedianFilter(distanceProvider, 5);		
 		while(runColorFollow){
 			float[] sonicSensorResults = new float[distanceProvider
-			                   					.sampleSize()];
+				                   					.sampleSize()];
 			distanceProvider.fetchSample(sonicSensorResults, 0);
-			                   			float curPos = sonicSensorResults[0];
+		//	float[] sonicSensorResults = new float[firstContactFilter.sampleSize()];
+		//	firstContactFilter.fetchSample(sonicSensorResults, 0);
+			
+			float curPos = sonicSensorResults[0];
 	
 			  // wall can't be detected therefore it's lower then the sensor
 			    if (curPos < 0.2) {
 			   	//	drive.stop();
-			    	drive.moveForward(200, 700);
-			    	Delay.msDelay(500);
+			    	drive.moveForward(280, 700);//drive.moveForward(300, 302);
+			    	
+			    //	Delay.msDelay(1000);
 			    	runColorFollow = false;
 			       	break;
 				}
