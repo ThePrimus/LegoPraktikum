@@ -21,7 +21,7 @@ public class LineFollowing {
 	 */
 	private Drive drive;
 	private float mSpeed;
-	private final float diffSpeed = 140; //140 oder 100 mit emplified
+	private final float diffSpeed = 250; //140 oder 100 mit emplified
 	private float initSpeed; //= mSpeed - 2 * diffSpeed;
 	
 	private float timestamp = 0;
@@ -38,7 +38,7 @@ public class LineFollowing {
 		this.colorProvider = sensor.getRedMode();
 		
 		
-		mSpeed = 600; //600 oder 500
+		mSpeed = 700; //600 oder 500
 		initSpeed = mSpeed - 2 * diffSpeed;
 	}
 	

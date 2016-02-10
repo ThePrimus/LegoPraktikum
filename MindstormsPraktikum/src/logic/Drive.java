@@ -147,7 +147,7 @@ public class Drive {
 			float numberTurnsOfMotor = numberTurnsOfTire / MOTOR_TIRE_RATIO;
 			float degreesToRotate = numberTurnsOfMotor * 360.0f;
 			
-			stop();		// Stop motors for precise distance movement
+			stopSynchronized();		// Stop motors for precise distance movement
 			leftMotor.setSpeed(speedLeft);
 			rightMotor.setSpeed(speedRight);
 			
@@ -183,7 +183,7 @@ public class Drive {
 			float numberTurnsOfMotor = numberTurnsOfTire / MOTOR_TIRE_RATIO;
 			float degreesToRotate = numberTurnsOfMotor * 360.0f;
 			
-			stop();		// Stop motors for precise distance movement
+			stopSynchronized();		// Stop motors for precise distance movement
 			leftMotor.setSpeed(speed);
 			rightMotor.setSpeed(speed);
 			
