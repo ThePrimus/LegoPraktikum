@@ -44,7 +44,7 @@ public class Seesaw {
 	public void run() {
 		runColorFollow = true;
 		float algorithmStart = System.nanoTime();
-		drive.moveDistance(500, 10);
+		drive.moveDistance(500, 5);
 		while (runColorFollow) {
 			float[] colorResults = new float[colorProvider.sampleSize()];
 			colorProvider.fetchSample(colorResults, 0);
