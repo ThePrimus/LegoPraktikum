@@ -361,8 +361,8 @@ public class GUI {
 	 * Initializing the seesaw mode.
 	 */
 	private void seesaw() {
-		this.lineFollowing = new LineFollowing(drive, colorSensor);
-		lineFollowing.run(false);
+		this.seesaw = new Seesaw(drive, colorSensor);
+		seesaw.run();
 		
 		//this.seesaw = new Seesaw(drive, colorSensor);
 		//seesaw.run();
