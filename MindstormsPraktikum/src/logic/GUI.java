@@ -361,8 +361,8 @@ public class GUI {
 	 * Initializing the seesaw mode.
 	 */
 	private void seesaw() {
-		this.lineFollowing = new LineFollowing(drive, colorSensor);
-		lineFollowing.run(false);
+		this.seesaw = new Seesaw(drive, colorSensor);
+		seesaw.run();
 		
 		//this.seesaw = new Seesaw(drive, colorSensor);
 		//seesaw.run();
@@ -416,7 +416,7 @@ public class GUI {
 	 */
 	private void finalBoss() {
 		this.endboss = new EndBoss(drive, touchLeftSensor, touchRightSensor,
-				sonicMotor, sonicSensor);
+				sonicMotor, sonicSensor, colorSensor);
 		endboss.run();
 	}
 
@@ -453,7 +453,7 @@ public class GUI {
 			} else if (barcode == PROGRAM_FINAL_SPURT) {
 				finalSpurt();
 			} else if (barcode == PROGRAM_BRIDGE) {
-				//bridge();
+				bridge();
 			} else if (barcode == PROGRAM_SEESAW) {
 				seesaw();
 			} else if (barcode == PROGRAM_CHAIN_BRDIGE) {

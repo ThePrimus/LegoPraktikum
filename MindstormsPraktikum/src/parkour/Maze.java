@@ -98,7 +98,7 @@ public class Maze {
 			distanceProvider.fetchSample(sonicSensorResults, 0);
 						
 			// Sonic sensor encounters a needed movement correction
-			if (sonicSensorResults[0] < 0.16) {
+			if (sonicSensorResults[0] < 0.165) {
 				drive.moveForward(300, 400);
 			} else {
 				drive.moveForward(600, 300);

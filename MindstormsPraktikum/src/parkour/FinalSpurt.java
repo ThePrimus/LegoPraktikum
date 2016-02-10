@@ -19,12 +19,12 @@ public class FinalSpurt {
 	/*
 	 * Distance to the right wall when the robot movement needs to be corrected to the left.
 	 */
-	private static final float DISTANCE_TO_CORRECT_LEFT = 0.15f;
+	private static final float DISTANCE_TO_CORRECT_LEFT = 0.16f;
 	
 	/*
 	 * Distance to the right wall when the robot movement needs to be corrected to the right.
 	 */
-	private static final float DISTANCE_TO_CORRECT_RIGHT = 0.20f;
+	private static final float DISTANCE_TO_CORRECT_RIGHT = 0.21f;
 	
 	/*
 	 *  The maximum time to reach the endboss obstacle (in seconds).
@@ -87,6 +87,8 @@ public class FinalSpurt {
 		this.touchSensorRight = touchRightSensor;
 		this.sonicMotor = sonicMotor;
 		this.colorSensor = colorSensor;
+		
+		this.colorSensor.setCurrentMode("Red");
 	}
 	
 
@@ -132,8 +134,11 @@ public class FinalSpurt {
 			// Sonic sensor encounters a needed movement correction
 			if (sonicSensorResults[0] < DISTANCE_TO_CORRECT_LEFT) {
 				drive.moveForward(650, 800);
-			} else if (sonicSensorResults[0] > DISTANCE_TO_CORRECT_RIGHT) {
+			} else if (sonicSensorResults[0] > DISTANCE_TO_CORRECT_RIGHT
+						&& sonicSensorResults[0] < 0.45f) {
 				drive.moveForward(800, 650);
+			} else {
+				drive.moveForward(700, 800);
 			}
 			
 			/*if (((System.nanoTime() - algorithmStart) / 1000000000.0f) > MAXIMUM_TIME_TO_ENDBOSS) {
