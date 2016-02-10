@@ -44,27 +44,30 @@ public class Seesaw {
 	public void run() {
 		runColorFollow = true;
 		float algorithmStart = System.nanoTime();
-		drive.moveDistance(500, 5);
+		drive.moveDistance(500, 10);
+		drive.stopSynchronized();
 		while (runColorFollow) {
 			float[] colorResults = new float[colorProvider.sampleSize()];
 			colorProvider.fetchSample(colorResults, 0);
 			float curColor = colorResults[0] * 1.25f;
 
 			if (curColor > 0.6) {
-				drive.moveForward(560, 300);
+				drive.moveForward(600, 300);
 			} else  if (curColor < 0.4){
 				drive.moveForward(300,
-						560);
+						400);
 			} else {
 				drive.moveForward(300, 300);
 			}
-			if (((System.nanoTime() - algorithmStart) / 1000000000.0f) > 6) {
+			if (((System.nanoTime() - algorithmStart) / 1000000000.0f) > 6.5) {
 				end();
 				break;
 			}
 		}
 		
-		drive.moveDistance(500, 5);
+		drive.moveDistance(500, 10);
+		drive.stopSynchronized();
+		Sound.buzz();
 		GUI.PROGRAM_FINISHED_START_BARCODE = false;
 	}
 

@@ -52,6 +52,8 @@ public class LineFollowing {
 		int inc = 10;
 		float [] samples = new float[colorProvider.sampleSize()];
 		float curVal  = 0;
+		drive.moveDistance(300, 2);
+		drive.stopSynchronized();
 		while(deg < 70) {
 			drive.turnLeft(-inc, true);
 			deg += inc;
@@ -102,11 +104,11 @@ public class LineFollowing {
 	 * 			barcode program is started
 	 */
 	public void run(boolean startChainBridge){
-		int counter = 0;
 		float[] colorResults = new float[colorProvider.sampleSize()];
+		//int counter = 0;
 		Sound.twoBeeps();
 		while (!terminate) {
-			LCD.drawString("Counter: " +  String.valueOf(counter) ,0, 2);
+			//LCD.drawString("Counter: " +  String.valueOf(counter) ,0, 2);
 			// get color of line
 			if(terminate) {
 				Sound.beep();
@@ -114,12 +116,12 @@ public class LineFollowing {
 				//terminate = true;
 				break;
 			}
-			if(counter > 40000) {
+			/*if(counter > 40000) {
 				Sound.twoBeeps();
 				terminate = true;
 				drive.stopSynchronized();
 				break;
-			}
+			}*/
 			
 			colorProvider.fetchSample(colorResults, 0);
 			float curColor = colorResults[0] * 1.25f;
@@ -166,7 +168,7 @@ public class LineFollowing {
 				drive.setSpeedRightMotor(rSpeed);
 			}
 			
-			counter++;
+			//counter++;
 		}
 		
 		// No line found anymore, start bridge or barcode program next.
