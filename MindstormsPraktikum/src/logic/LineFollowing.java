@@ -52,7 +52,7 @@ public class LineFollowing {
 		int inc = 10;
 		float [] samples = new float[colorProvider.sampleSize()];
 		float curVal  = 0;
-		while(deg < 80) {
+		while(deg < 70) {
 			drive.turnLeft(-inc, true);
 			deg += inc;
 			colorProvider.fetchSample(samples, 0);
@@ -69,7 +69,7 @@ public class LineFollowing {
 		Sound.beepSequenceUp();
 		if(!found)
 		{
-			while(deg < 80) {
+			while(deg < 70) {
 				drive.turnRight(inc, true);
 				deg += inc;
 				colorProvider.fetchSample(samples, 0);
@@ -83,7 +83,7 @@ public class LineFollowing {
 			}
 			if(!found)
 			{
-				drive.turnRight(-90, true);
+				drive.turnRight(-85, true);
 			}
 			
 		}
