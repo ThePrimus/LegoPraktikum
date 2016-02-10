@@ -2,6 +2,7 @@ package parkour;
 
 import lejos.hardware.lcd.LCD;
 import lejos.hardware.motor.EV3MediumRegulatedMotor;
+import lejos.hardware.sensor.EV3ColorSensor;
 import lejos.hardware.sensor.EV3TouchSensor;
 import lejos.hardware.sensor.EV3UltrasonicSensor;
 import lejos.utility.Delay;
@@ -21,7 +22,12 @@ public class EndBoss {
 	/*
 	 * Distance to the right wall when the robot movement needs to be corrected.
 	 */
-	private static final float DISTANCE_TO_CORRECT_MOVEMENT = 0.15f;
+	private static final float DISTANCE_TO_CORRECT_MOVEMENT = 0.16f;
+	
+	/*
+	 * The finish is marked by a red line.
+	 */
+	private static final float THRESHOLD_RED_LINE = 0.20f;
 	
 	// The classes that control the robot and the sensors.
 	private Drive drive;
@@ -29,6 +35,8 @@ public class EndBoss {
 	private EV3UltrasonicSensor sonicSensor;
 	private EV3TouchSensor touchSensorLeft;
 	private EV3TouchSensor touchSensorRight;
+	private EV3ColorSensor colorSensor; 
+	
 	
 	// The class/thread for playing the Game of Thrones theme.
 	MusicPlay gameOfThrones;
@@ -42,12 +50,13 @@ public class EndBoss {
 	 */
 	public EndBoss(Drive drive, EV3TouchSensor touchLeftSensor,
 			EV3TouchSensor touchRightSensor, EV3MediumRegulatedMotor sonicMotor,
-			EV3UltrasonicSensor sonicSensor) {
+			EV3UltrasonicSensor sonicSensor, EV3ColorSensor colorSensor) {
 		this.drive = drive;
 		this.sonicMotor = sonicMotor;
 		this.sonicSensor = sonicSensor;
 		this.touchSensorLeft = touchLeftSensor;
 		this.touchSensorRight = touchRightSensor;
+		this.colorSensor = colorSensor;
 	}
 
 
@@ -68,9 +77,10 @@ public class EndBoss {
 		sonicMotor.waitComplete();
 		
 		long algorithmStart = System.nanoTime(); 			// Stores when the algorithm starts
+		float currentColorValue = 0;
 		
 		// Start moving forward and begin playing music
-		this.drive.moveForward(drive.maxSpeed() * 0.9f, drive.maxSpeed());
+		this.drive.moveForward(drive.maxSpeed() * 0.9f, drive.maxSpeed() * 0.75f);
 		//gameOfThrones = new MusicPlay();
 		//Thread musicThread = new Thread(gameOfThrones);
 		//musicThread.start();
@@ -84,11 +94,10 @@ public class EndBoss {
 			float[] touchSensorResultsRight = new float[touchSensorRight.sampleSize()];
 			touchSensorRight.fetchSample(touchSensorResultsRight, 0);
 			
-			if (touchSensorResultsLeft[0] == 1 || touchSensorResultsRight[0] == 1) {
+			if (touchSensorResultsLeft[0] == 1 && touchSensorResultsRight[0] == 1) {
 				// Touch sensor pressed, drive back a bit and turn right
-				drive.moveBackward(drive.maxSpeed() * 0.9f, drive.maxSpeed());
-				Delay.msDelay(1000);
-				drive.turnRight(50);
+				drive.moveDistance(500, -15);
+				drive.turnLeft(70);
 				drive.moveForward(drive.maxSpeed() * 0.9f, drive.maxSpeed());
 			}
 				
@@ -101,13 +110,25 @@ public class EndBoss {
 				// Sonic sensor encounters a needed movement correction
 				drive.turnLeft(45);
 				drive.moveForward(drive.maxSpeed() * 0.9f, drive.maxSpeed());
-			} 
+			} else if (sonicSensorResults[0] > 0.2f) {
+				drive.moveForward(730, 700);
+			}
+			
+			// Checking if the red line is detected, if so the end of the parkour has been reached.
+			float[] sample = new float[this.colorSensor.sampleSize()];
+			this.colorSensor.fetchSample(sample, 0);
+			currentColorValue = sample[0];
+			
+			if (currentColorValue > THRESHOLD_RED_LINE) {
+				end();
+			}
+			
 			
 			// End program if it is running for a longer period of time, because it can't be 
 			// differentiated if the touch sensors have been pressed by the enemy robot or the end wall
-			if (((System.nanoTime() - algorithmStart) / 1000000000.0f) > MAXIMUM_ALGORITHM_TIME) {
+			/*if (((System.nanoTime() - algorithmStart) / 1000000000.0f) > MAXIMUM_ALGORITHM_TIME) {
 				end();
-			}
+			}*/
 		}
 	}
 	
@@ -116,7 +137,7 @@ public class EndBoss {
 	 * Ends this obstacle program.
 	 */
 	public void end() {
-		drive.stop();
+		drive.stopSynchronized();
 		
 		if (gameOfThrones != null) {
 			gameOfThrones.end();

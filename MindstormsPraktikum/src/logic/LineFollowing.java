@@ -113,7 +113,7 @@ public class LineFollowing {
 				//terminate = true;
 				break;
 			}
-			if(counter > 20000) {
+			if(counter > 40000) {
 				Sound.twoBeeps();
 				terminate = true;
 				drive.stopSynchronized();
