@@ -38,7 +38,7 @@ public class LineFollowing {
 		this.colorProvider = sensor.getRedMode();
 		
 		
-		mSpeed = 800; //600 oder 500
+		mSpeed = 700; //600 oder 500 700 bei 7.5 800 bei 8
 		initSpeed = mSpeed - 2 * diffSpeed;
 	}
 	
@@ -53,7 +53,7 @@ public class LineFollowing {
 		float [] samples = new float[colorProvider.sampleSize()];
 		float curVal  = 0;
 		while(deg <= 90) {
-			drive.turnLeft(-inc, false);
+			drive.turnLeft(-inc, true);
 			deg += inc;
 			colorProvider.fetchSample(samples, 0);
 			curVal = samples[0] * 1.25f;
@@ -69,7 +69,7 @@ public class LineFollowing {
 		if(!found)
 		{
 			while(deg <= 90) {
-				drive.turnRight(inc, false);
+				drive.turnRight(inc, true);
 				deg += inc;
 				colorProvider.fetchSample(samples, 0);
 				curVal = samples[0] * 1.25f;
