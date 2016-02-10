@@ -109,7 +109,7 @@ public class FinalSpurt {
 		long algorithmStart = System.nanoTime(); 	// Stores when the algorithm starts
 		float currentColorValue = 0;
 		
-		this.drive.moveForward(drive.maxSpeed() * 0.97f, drive.maxSpeed());
+		this.drive.moveForward(780, 800);
 		
 		while (programRunning) {
 		
@@ -131,9 +131,9 @@ public class FinalSpurt {
 			
 			// Sonic sensor encounters a needed movement correction
 			if (sonicSensorResults[0] < DISTANCE_TO_CORRECT_LEFT) {
-				drive.moveForward(drive.maxSpeed() * 0.8f, drive.maxSpeed() * 1.0f);
+				drive.moveForward(650, 800);
 			} else if (sonicSensorResults[0] > DISTANCE_TO_CORRECT_RIGHT) {
-				drive.moveForward(drive.maxSpeed() * 1.0f, drive.maxSpeed() * 0.8f);
+				drive.moveForward(800, 650);
 			}
 			
 			/*if (((System.nanoTime() - algorithmStart) / 1000000000.0f) > MAXIMUM_TIME_TO_ENDBOSS) {

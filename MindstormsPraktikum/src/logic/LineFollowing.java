@@ -53,7 +53,7 @@ public class LineFollowing {
 		float [] samples = new float[colorProvider.sampleSize()];
 		float curVal  = 0;
 		while(deg <= 90) {
-			drive.turnLeft(-inc, false);
+			drive.turnLeft(-inc, true);
 			deg += inc;
 			colorProvider.fetchSample(samples, 0);
 			curVal = samples[0] * 1.25f;
@@ -69,7 +69,7 @@ public class LineFollowing {
 		if(!found)
 		{
 			while(deg <= 90) {
-				drive.turnRight(inc, false);
+				drive.turnRight(inc, true);
 				deg += inc;
 				colorProvider.fetchSample(samples, 0);
 				curVal = samples[0] * 1.25f;
