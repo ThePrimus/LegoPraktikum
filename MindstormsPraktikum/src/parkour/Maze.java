@@ -77,7 +77,7 @@ public class Maze {
 		float currentColorValue = 0;
 		
 		// Start moving
-		this.drive.moveForward(500, 400);
+		this.drive.moveForward(400, 300);
 				
 		while (programRunning) {
 				
@@ -98,12 +98,10 @@ public class Maze {
 			distanceProvider.fetchSample(sonicSensorResults, 0);
 						
 			// Sonic sensor encounters a needed movement correction
-			if (sonicSensorResults[0] < 0.15) {
-				drive.moveForward(350, 400);
+			if (sonicSensorResults[0] < 0.16) {
+				drive.moveForward(300, 400);
 			} else {
-				// ToDo: Might be possible to increase the left motor speed to make
-				// closer turns. Also maybe increase overall speed
-				drive.moveForward(650, 300);
+				drive.moveForward(600, 300);
 			}
 			
 			// Stop algorithm if the color sensor detects the white/silver line of the 

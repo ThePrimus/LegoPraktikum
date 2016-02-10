@@ -38,7 +38,7 @@ public class Barcode {
 	private final float WIDTH_BARCODE_ELEMENT = 60.0f; 
 	
 	// The maximum time that the barcode algorithm has time to search for a barccode (in seconds).
-	private final float MAXIMUM_ALGORITHM_TIME = 10.0f;
+	private final float MAXIMUM_ALGORITHM_TIME = 15.0f;
 	
 	
 		
@@ -85,7 +85,7 @@ public class Barcode {
 			
 			// If barcode thread running parallel to obstacle, the obstacle thread handles the movement of the robot
 			if (moveRobot) {
-				drive.moveForward(drive.maxSpeed() * 0.30f);		// Start robot movement with 30% speed
+				drive.moveForward(250);		// Start robot movement with 30% speed
 			}
 			
 				
