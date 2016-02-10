@@ -19,12 +19,12 @@ public class FinalSpurt {
 	/*
 	 * Distance to the right wall when the robot movement needs to be corrected to the left.
 	 */
-	private static final float DISTANCE_TO_CORRECT_LEFT = 0.15f;
+	private static final float DISTANCE_TO_CORRECT_LEFT = 0.16f;
 	
 	/*
 	 * Distance to the right wall when the robot movement needs to be corrected to the right.
 	 */
-	private static final float DISTANCE_TO_CORRECT_RIGHT = 0.20f;
+	private static final float DISTANCE_TO_CORRECT_RIGHT = 0.21f;
 	
 	/*
 	 *  The maximum time to reach the endboss obstacle (in seconds).
@@ -109,7 +109,7 @@ public class FinalSpurt {
 		long algorithmStart = System.nanoTime(); 	// Stores when the algorithm starts
 		float currentColorValue = 0;
 		
-		this.drive.moveForward(drive.maxSpeed() * 0.97f, drive.maxSpeed());
+		this.drive.moveForward(780, 800);
 		
 		while (programRunning) {
 		
@@ -131,9 +131,12 @@ public class FinalSpurt {
 			
 			// Sonic sensor encounters a needed movement correction
 			if (sonicSensorResults[0] < DISTANCE_TO_CORRECT_LEFT) {
-				drive.moveForward(drive.maxSpeed() * 0.8f, drive.maxSpeed() * 1.0f);
-			} else if (sonicSensorResults[0] > DISTANCE_TO_CORRECT_RIGHT) {
-				drive.moveForward(drive.maxSpeed() * 1.0f, drive.maxSpeed() * 0.8f);
+				drive.moveForward(650, 800);
+			} else if (sonicSensorResults[0] > DISTANCE_TO_CORRECT_RIGHT
+						&& sonicSensorResults[0] < 0.45f) {
+				drive.moveForward(800, 650);
+			} else {
+				drive.moveForward(700, 800);
 			}
 			
 			/*if (((System.nanoTime() - algorithmStart) / 1000000000.0f) > MAXIMUM_TIME_TO_ENDBOSS) {

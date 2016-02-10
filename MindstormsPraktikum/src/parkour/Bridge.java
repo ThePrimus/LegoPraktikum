@@ -5,6 +5,7 @@ import lejos.hardware.motor.EV3MediumRegulatedMotor;
 import lejos.hardware.sensor.EV3ColorSensor;
 import lejos.hardware.sensor.EV3UltrasonicSensor;
 import lejos.robotics.SampleProvider;
+import lejos.robotics.filter.MedianFilter;
 import logic.Drive;
 import logic.GUI;
 
@@ -52,6 +53,7 @@ public class Bridge {
 	private void followBridge() {
 		float curPos = 0;
 		drive.moveDistance(300, 290, 30);
+		MedianFilter filter = new MedianFilter(distanceProvider, 5);
 		
 		while (runBridge) {
 
@@ -69,18 +71,18 @@ public class Bridge {
 			}
 
 			// get distance to ground
-			float[] samples = new float[distanceProvider.sampleSize()];
-			distanceProvider.fetchSample(samples, 0);
+			float[] samples = new float[filter.sampleSize()];
+			filter.fetchSample(samples, 0);
 			curPos = samples[0];
 
 			if (curPos > ABYSS_THRESHOLD) { // Driving towards abyss therefor
 											// turn left
-				drive.setSpeedLeftMotor(drive.maxSpeed() * 0.2f);
-				drive.setSpeedRightMotor(drive.maxSpeed());
+				drive.setSpeedLeftMotor(200);
+				drive.setSpeedRightMotor(800);
 			} else { // on the bridge so turn right to follow right side of the
 						// bridge
-				drive.setSpeedLeftMotor(drive.maxSpeed());
-				drive.setSpeedRightMotor(drive.maxSpeed() * 0.6f);
+				drive.setSpeedLeftMotor(800);
+				drive.setSpeedRightMotor(700); // vorher 500
 			}
 		}
 		// Activate elevator program

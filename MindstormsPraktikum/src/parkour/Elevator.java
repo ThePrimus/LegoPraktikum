@@ -43,6 +43,7 @@ public class Elevator {
 	private ComModule communication;
 	private SampleProvider distanceProvider;
 	private boolean runMoveForwardUntilTouch = true;
+	private boolean runToBlack = true;
 	private static final float ABYSS_THRESHOLD = 0.10f; // in m
 
 	/**
@@ -73,10 +74,33 @@ public class Elevator {
 
 	public void run() {
 		callElevator();
-		initPosition();
+		//initPosition();
+		initPosition2();
 		waitForElevator();
 		enterElevator();
+		//drive.moveForward(300);
+
+		//drive.moveDistance(300, 70);
+		//drive.stopSynchronized();
+		
+		
 		goDownAndLeaveElevator();
+	}
+	
+	private void initPosition2() {
+		//Delay.msDelay(2000);
+		drive.turnLeft(80,true);
+		drive.moveForward(300);
+		drive.moveDistance(300, 10);
+		Sound.twoBeeps();
+		//drive.moveForward(300);
+		//Delay.msDelay(1000);
+		//drive.stopSynchronized();
+		//drive.stopSynchronized();
+		//Delay.msDelay(2000);
+		drive.turnRight(90,true);
+		drive.moveForward(300);
+		drive.moveDistance(300, 5);
 	}
 
 	private void initPosition() {
@@ -135,6 +159,7 @@ public class Elevator {
 
 	private void enterElevator() {
 		float curPos = 0;
+		/*
 		drive.moveForward(drive.maxSpeed() * 0.3f,drive.maxSpeed() * 0.3f);
 		while(runMoveForwardUntilTouch ){		
 
@@ -163,17 +188,18 @@ public class Elevator {
 			}
 			
 		}
-
+*/
 		sonicMotor.setAcceleration(100);
 		sonicMotor.rotate(-(SONIC_SENSOR_GROUND_POS + SONIC_SENSOR_WALL_POS), true);
 		sonicMotor.waitComplete();
+		/*
 		drive.moveDistance(300, -2);
 		drive.stopSynchronized();
 		Delay.msDelay(1000);
 		drive.moveForward(100, 300);
 		Delay.msDelay(500);
 		drive.stopSynchronized();
-		
+		*/
 
 		Sound.beepSequenceUp();
 
@@ -237,8 +263,22 @@ public class Elevator {
 
 		// wait for 10 seconds until elevator is down
 		Delay.msDelay(5000);
+		drive.moveForward(300);
 		Sound.buzz();
 		Sound.buzz();
+		SampleProvider redProver = colorSensor.getRedMode();
+		MedianFilter filter = new MedianFilter(redProver, 5);
+		while(runToBlack ) {
+			float[] colorResults = new float[filter.sampleSize()];
+			filter.fetchSample(colorResults, 0);
+			float curColor = colorResults[0];
+			
+			if(curColor < 0.1) {
+				drive.stopSynchronized();
+				break;
+			}
+			
+		}
 		//drive.moveDistance(500, 20);
 		
 		GUI.PROGRAM_FINISHED_START_BARCODE = true;
@@ -252,5 +292,6 @@ public class Elevator {
 		runWaitForFree = false;
 		runGoDown = false;
 		runMoveForwardUntilTouch = false;
+		runToBlack = false;
 	}
 }

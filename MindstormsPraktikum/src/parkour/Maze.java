@@ -77,7 +77,7 @@ public class Maze {
 		float currentColorValue = 0;
 		
 		// Start moving
-		this.drive.moveForward(drive.maxSpeed() * 0.6f, drive.maxSpeed() * 0.5f);
+		this.drive.moveForward(400, 300);
 				
 		while (programRunning) {
 				

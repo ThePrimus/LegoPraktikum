@@ -21,7 +21,7 @@ public class LineFollowing {
 	 */
 	private Drive drive;
 	private float mSpeed;
-	private final float diffSpeed = 250; //140 oder 100 mit emplified 200 bei 7.5
+	private final float diffSpeed = 250; //140 oder 100 mit emplified
 	private float initSpeed; //= mSpeed - 2 * diffSpeed;
 	
 	private float timestamp = 0;
@@ -38,7 +38,7 @@ public class LineFollowing {
 		this.colorProvider = sensor.getRedMode();
 		
 		
-		mSpeed = 700; //600 oder 500 700 bei 7.5 800 bei 8
+		mSpeed = 700; //600 oder 500
 		initSpeed = mSpeed - 2 * diffSpeed;
 	}
 	
@@ -113,7 +113,7 @@ public class LineFollowing {
 				//terminate = true;
 				break;
 			}
-			if(counter > 20000) {
+			if(counter > 40000) {
 				Sound.twoBeeps();
 				terminate = true;
 				drive.stopSynchronized();
