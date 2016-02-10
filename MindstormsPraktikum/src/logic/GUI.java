@@ -456,7 +456,6 @@ public class GUI {
 				bridge();
 			} else if (barcode == PROGRAM_SEESAW) {
 				seesaw();
-				followLine(false);
 			} else if (barcode == PROGRAM_CHAIN_BRDIGE) {
 				followLine(true);
 				chainBridge();
