@@ -1,6 +1,5 @@
 package parkour;
 
-import lejos.hardware.Sound;
 import lejos.hardware.motor.EV3MediumRegulatedMotor;
 import lejos.hardware.sensor.EV3ColorSensor;
 import lejos.hardware.sensor.EV3UltrasonicSensor;

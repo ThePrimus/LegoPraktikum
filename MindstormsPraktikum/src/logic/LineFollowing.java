@@ -38,7 +38,7 @@ public class LineFollowing {
 		this.colorProvider = sensor.getRedMode();
 		
 		
-		mSpeed = 700; //600 oder 500
+		mSpeed = 800; //600 oder 500
 		initSpeed = mSpeed - 2 * diffSpeed;
 	}
 	
@@ -52,9 +52,9 @@ public class LineFollowing {
 		int inc = 10;
 		float [] samples = new float[colorProvider.sampleSize()];
 		float curVal  = 0;
-		drive.stopSynchronized();
+		/*drive.stopSynchronized();
 		drive.moveDistance(100, 2);
-		drive.stopSynchronized();
+		drive.stopSynchronized();*/
 		while(deg < 70) {
 			drive.turnLeft(-inc, true);
 			deg += inc;
@@ -86,7 +86,7 @@ public class LineFollowing {
 			}
 			if(!found)
 			{
-				drive.turnRight(-95, true);
+				drive.turnRight(-50, true);
 			}
 			
 		}
@@ -153,7 +153,7 @@ public class LineFollowing {
 					//LCD.drawString("Break!", 0, 5);
 					
 					if (startChainBridge) {
-						drive.turnLeft(-90, true);
+						drive.turnLeft(-110, true);
 						break;
 					} else {
 						drive.turnLeft(-90, false);
@@ -174,8 +174,8 @@ public class LineFollowing {
 		
 		// No line found anymore, start bridge or barcode program next.
 		if (startChainBridge) {
-			GUI.PROGRAM_CHANGED = true;
-		  	GUI.PROGRAM_STATUS = GUI.PROGRAM_CHAIN_BRDIGE;
+			//GUI.PROGRAM_CHANGED = true;
+		  	//GUI.PROGRAM_STATUS = GUI.PROGRAM_CHAIN_BRDIGE;
 		} else {
 			GUI.PROGRAM_FINISHED_START_BARCODE = true;
 		}

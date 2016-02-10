@@ -52,7 +52,7 @@ public class Bridge {
 
 	private void followBridge() {
 		float curPos = 0;
-		drive.moveDistance(300, 290, 30);
+		drive.moveDistance(300, 10);
 		MedianFilter filter = new MedianFilter(distanceProvider, 5);
 		
 		while (runBridge) {

@@ -194,7 +194,8 @@ public class GUI {
 				LCD.clear();
 				LCD.drawString("Mode: Wippe", 0, 0);
 				PROGRAM_STATUS = PROGRAM_SEESAW;
-				seesaw();
+				//seesaw();
+				followLine(false);
 			} else if (selection == 6) {
 				// Elevator
 				LCD.clear();
@@ -329,7 +330,7 @@ public class GUI {
 	 */
 	private void chainBridge() {
 		this.chainBridge = new ChainBridge(drive, sonicSensor, sonicMotor,
-				colorSensor);
+				colorSensor, touchLeftSensor, touchRightSensor);
 		chainBridge.run();
 
 		// Start search for barcode.
@@ -458,7 +459,7 @@ public class GUI {
 				//seesaw();
 				followLine(false);
 			} else if (barcode == PROGRAM_CHAIN_BRDIGE) {
-				followLine(false);
+				//followLine(true);
 				chainBridge();
 			} else if (barcode == PROGRAM_ROLLS) {
 				rolls();

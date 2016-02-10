@@ -116,6 +116,7 @@ public class Maze {
 				sonicMotor.setAcceleration(100);
 				sonicMotor.rotate(31, true);
 				sonicMotor.waitComplete();
+				drive.stopSynchronized();
 				drive.moveDistance(300, -12);
 				
 				programRunning = false;

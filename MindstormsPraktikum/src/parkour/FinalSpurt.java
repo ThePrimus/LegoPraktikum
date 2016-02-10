@@ -5,7 +5,6 @@ import lejos.hardware.sensor.EV3ColorSensor;
 import lejos.hardware.sensor.EV3TouchSensor;
 import lejos.hardware.sensor.EV3UltrasonicSensor;
 import lejos.robotics.SampleProvider;
-import lejos.utility.Delay;
 import logic.Drive;
 import logic.GUI;
 

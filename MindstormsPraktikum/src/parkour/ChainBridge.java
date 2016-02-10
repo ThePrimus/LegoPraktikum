@@ -8,6 +8,7 @@ import lejos.hardware.ev3.EV3;
 import lejos.hardware.lcd.LCD;
 import lejos.hardware.motor.EV3MediumRegulatedMotor;
 import lejos.hardware.sensor.EV3ColorSensor;
+import lejos.hardware.sensor.EV3TouchSensor;
 import lejos.hardware.sensor.EV3UltrasonicSensor;
 import lejos.hardware.sensor.SensorMode;
 import lejos.robotics.SampleProvider;
@@ -28,6 +29,18 @@ public class ChainBridge {
 	 * The navigation class.
 	 */
 	private Drive drive;
+	
+	/*
+	 * The left touch sensor.
+	 */
+	private EV3TouchSensor touchSensorLeft;
+	
+	/*
+	 * The right touch sensor.
+	 */
+	private EV3TouchSensor touchSensorRight;
+	
+	
 
 	/*
 	 * The distance between the two walls of the final spurt (measured from
@@ -51,6 +64,7 @@ public class ChainBridge {
 	
 	private float gapFound = 0;
 	private SensorMode colorProvider;
+	private boolean runTouch = true;
 
 	/**
 	 * Constructor:
@@ -59,12 +73,15 @@ public class ChainBridge {
 	 *            the drive class for navigation and motor control.
 	 */
 	public ChainBridge(Drive drive, EV3UltrasonicSensor sonicSensor,
-			EV3MediumRegulatedMotor sonicMotor, EV3ColorSensor sensor) {
+			EV3MediumRegulatedMotor sonicMotor, EV3ColorSensor sensor,
+			EV3TouchSensor touchLeftSensor, EV3TouchSensor touchRightSensor) {
 		this.drive = drive;
 		this.sonicMotor = sonicMotor;
 		this.distanceProvider = sonicSensor.getDistanceMode();
 		this.colorSensor = sensor;
 		this.colorProvider = sensor.getRedMode();
+		this.touchSensorLeft = touchLeftSensor;
+		this.touchSensorRight = touchRightSensor;
 	}
 
 	/**
@@ -96,6 +113,31 @@ public class ChainBridge {
 		sonicMotor.waitComplete(); // short wait to make
 							// sure that it's in the
 							// right position
+		
+		drive.moveForward(500);
+			
+		while(runTouch) {
+			
+			// Find beginning of bridge: check the two touch sensors
+			float[] touchSensorResultsLeft = new float[touchSensorLeft.sampleSize()];
+			touchSensorLeft.fetchSample(touchSensorResultsLeft, 0);
+			
+			float[] touchSensorResultsRight = new float[touchSensorRight.sampleSize()];
+			touchSensorRight.fetchSample(touchSensorResultsRight, 0);
+			
+			if (touchSensorResultsLeft[0] == 1 && touchSensorResultsRight[0] == 1) {
+				// Touch sensors pressed, drive back a bit and turn right
+				drive.moveDistance(400, -15);
+				drive.turnRight(90);
+				drive.moveForward(400);
+				drive.moveDistance(400, 40);
+				
+				runTouch = false;
+			}
+		}
+		
+		
+		
 		startBridgeRoutine();
 	
 		sonicMotor.setAcceleration(100);
@@ -237,6 +279,7 @@ public class ChainBridge {
 		runBridgeRoutine2 = false;
 		runBridgeRoutine3 = false;
 		runEndBridge = false;
+		runTouch = false;
 		runColorFollow = false;
 		drive.stop();
 	}

@@ -82,9 +82,9 @@ public class EndBoss {
 		// Start moving forward and begin playing music
 		this.drive.moveForward(drive.maxSpeed() * 0.9f, drive.maxSpeed() * 0.75f);
 		
-		gameOfThrones = new MusicPlay();
-		Thread musicThread = new Thread(gameOfThrones);
-		musicThread.start();
+		//gameOfThrones = new MusicPlay();
+		//Thread musicThread = new Thread(gameOfThrones);
+		//musicThread.start();
 		
 		while (programRunning) {
 		

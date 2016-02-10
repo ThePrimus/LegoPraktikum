@@ -1,8 +1,6 @@
 package logic;
 
 import lejos.hardware.motor.EV3LargeRegulatedMotor;
-import lejos.robotics.RegulatedMotor;
-import lejos.robotics.RegulatedMotorListener;
 
 /**
  * Implements the logic to drive and navigate the robot.
