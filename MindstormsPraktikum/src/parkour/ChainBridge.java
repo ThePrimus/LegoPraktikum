@@ -1,11 +1,5 @@
 package parkour;
 
-import lejos.hardware.BrickFinder;
-import lejos.hardware.Key;
-import lejos.hardware.Keys;
-import lejos.hardware.Sound;
-import lejos.hardware.ev3.EV3;
-import lejos.hardware.lcd.LCD;
 import lejos.hardware.motor.EV3MediumRegulatedMotor;
 import lejos.hardware.sensor.EV3ColorSensor;
 import lejos.hardware.sensor.EV3TouchSensor;
@@ -14,7 +8,6 @@ import lejos.hardware.sensor.SensorMode;
 import lejos.robotics.SampleProvider;
 import lejos.robotics.filter.MedianFilter;
 import lejos.utility.Delay;
-import lejos.utility.SensorSelectorException;
 import logic.Drive;
 import logic.GUI;
 /**
