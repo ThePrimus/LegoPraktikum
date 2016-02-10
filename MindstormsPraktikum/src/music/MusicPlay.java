@@ -17,10 +17,10 @@ public class MusicPlay implements Runnable {
 
 	// Sheet music and duration of the Game of Thrones theme.
 	private static String[] gameOfThrones = {
-			"G4","C4", "E4", "F4", "G2","C2", "E4", "F4",
-			"G4","C4", "E4", "F4", "G2","C2", "E4", "F4",
-			"G4","C4", "E4", "F4", "G2","C2", "E4", "F4",
-			"G4","C4", "E4", "F4", "G2","C2", "E4", "F4"};
+			"G4","C4", "E4", "F4", "G4","C4", "E4", "F4",
+			"G4","C4", "E4", "F4", "G4","C4", "E4", "F4",
+			"G4","C4", "E4", "F4", "G4","C4", "E4", "F4",
+			"G4","C4", "E4", "F4", "G4","C4", "E4", "F4"};
 	private static int[] gameOfThronesDuration = {
 			500, 500, 250,250, 500,500, 250, 250,
 			500, 500, 250,250, 500,500, 250, 250,

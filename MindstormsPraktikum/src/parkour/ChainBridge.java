@@ -153,8 +153,8 @@ public class ChainBridge {
 			  // wall can't be detected therefore it's lower then the sensor
 			    if (curPos < 0.2) {
 			   	//	drive.stop();
-			    	drive.moveForward(280, 300);
-			    	Delay.msDelay(1000);
+			    	drive.moveForward(200, 700);
+			    	Delay.msDelay(500);
 			    	runColorFollow = false;
 			       	break;
 				}
