@@ -65,8 +65,8 @@ public class Seesaw {
 			}
 		}
 		
-		drive.moveDistance(500, 10);
-		drive.stopSynchronized();
+		//drive.moveDistance(500, 10);
+		//drive.stopSynchronized();
 		Sound.buzz();
 		GUI.PROGRAM_FINISHED_START_BARCODE = false;
 	}

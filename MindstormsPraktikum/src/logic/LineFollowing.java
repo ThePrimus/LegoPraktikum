@@ -52,7 +52,8 @@ public class LineFollowing {
 		int inc = 10;
 		float [] samples = new float[colorProvider.sampleSize()];
 		float curVal  = 0;
-		drive.moveDistance(300, 2);
+		drive.stopSynchronized();
+		drive.moveDistance(100, 2);
 		drive.stopSynchronized();
 		while(deg < 70) {
 			drive.turnLeft(-inc, true);
@@ -85,7 +86,7 @@ public class LineFollowing {
 			}
 			if(!found)
 			{
-				drive.turnRight(-85, true);
+				drive.turnRight(-95, true);
 			}
 			
 		}

@@ -455,10 +455,10 @@ public class GUI {
 			} else if (barcode == PROGRAM_BRIDGE) {
 				bridge();
 			} else if (barcode == PROGRAM_SEESAW) {
-				seesaw();
+				//seesaw();
 				followLine(false);
 			} else if (barcode == PROGRAM_CHAIN_BRDIGE) {
-				followLine(true);
+				followLine(false);
 				chainBridge();
 			} else if (barcode == PROGRAM_ROLLS) {
 				rolls();
