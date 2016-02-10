@@ -116,13 +116,13 @@ public class EndBoss {
 			}
 			
 			// Checking if the red line is detected, if so the end of the parkour has been reached.
-			float[] sample = new float[this.colorSensor.sampleSize()];
+			/*float[] sample = new float[this.colorSensor.sampleSize()];
 			this.colorSensor.fetchSample(sample, 0);
 			currentColorValue = sample[0];
 			
 			if (currentColorValue > THRESHOLD_RED_LINE) {
 				end();
-			}
+			}*/
 			
 			
 			// End program if it is running for a longer period of time, because it can't be 

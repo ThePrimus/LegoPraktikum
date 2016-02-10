@@ -147,7 +147,7 @@ public class Drive {
 			float numberTurnsOfMotor = numberTurnsOfTire / MOTOR_TIRE_RATIO;
 			float degreesToRotate = numberTurnsOfMotor * 360.0f;
 			
-						
+			
 			stopSynchronized();		// Stop motors for precise distance movement
 			setSpeedLeftMotor(speedLeft);
 			setSpeedRightMotor(speedRight);
