@@ -19,14 +19,8 @@ public class Seesaw {
 
 	// The navigation class.
 	private Drive drive;
-	private boolean LineFollowing = true;
 	private SampleProvider colorProvider;
-	private float mSpeed;
-	private final float diffSpeed = 140; //140 oder 100 mit emplified
-	private float initSpeed; //= mSpeed - 2 * diffSpeed;
-	private long timestamp = 0;
-	
-	private int deg = 0;
+	private boolean runColorFollow;
 
 
 	/**
@@ -41,139 +35,41 @@ public class Seesaw {
 	public Seesaw(Drive drive, EV3ColorSensor colorSensor) {
 		this.drive = drive;
 		this.colorProvider = colorSensor.getRedMode();
-		
-		
-		mSpeed = 600; //600 oder 500
-		initSpeed = mSpeed - 2 * diffSpeed;
 	}
 	
-	private boolean lineFound()
-	{		
-		boolean found = false;
-		float[] sample = new float[colorProvider.sampleSize()];
-		
-		//while(deg < 90) {
-			colorProvider.fetchSample(sample, 0);
-			LCD.drawString("Sample: " + String.valueOf(sample[0]), 0, 6);
-			if(deg <= 180) {
-				if(sample[0] > 0.8) {
-					deg = 0;
-					found = true;
-					//break;
-				} else {
-					drive.turnRight(5);
-					deg += 5;
-				}	
-			}/* else if(deg == 95) {
-				if(sample[0] > 0.8) {
-					found = true;
-					deg = 0;
-					//break;
-				} else {
-					drive.turnLeft(95);
-					deg++;
-				}	
-			} else if(deg <= 181) {
-				if(sample[0] > 0.9) {
-					found = true;
-					deg = 0;
-					//break;
-				} else {
-					drive.turnLeft(5);
-					deg += 5;
-				}
-			}*/
-		//}
-		return found;
-	}
+	
 	// Idea:Follow right side of the line
 	// TODO: Adjust values
 	// see : https://www.youtube.com/watch?v=tViA21Y08cU
 	public void run() {
-		float counter = 0;
-		float search = 0;
-		float lastSample = 0;
-		float[] colorResults = new float[colorProvider.sampleSize()];
-		while (LineFollowing) {
-			
-			// get color of line
-			if(!LineFollowing) {
-				drive.stop();
-				LineFollowing = false;
-				break;
-			}
-			if(counter > 50000) {
-				LineFollowing = false;
-				drive.stop();
-				break;
-			}
-			
+		runColorFollow = true;
+		float algorithmStart = System.nanoTime();
+		drive.moveDistance(500, 10);
+		while (runColorFollow) {
+			float[] colorResults = new float[colorProvider.sampleSize()];
 			colorProvider.fetchSample(colorResults, 0);
 			float curColor = colorResults[0] * 1.25f;
 
-			// correct movement according to the youtube video
-			float lSpeed = curColor * mSpeed - diffSpeed;
-			float rSpeed = initSpeed - lSpeed;
-			
-
-			if (lSpeed < 0) {
-				drive.leftBackward(lSpeed);
+			if (curColor > 0.6) {
+				drive.moveForward(560, 300);
+			} else  if (curColor < 0.4){
+				drive.moveForward(300,
+						560);
 			} else {
-				timestamp = 0;
-				drive.setSpeedLeftMotor(lSpeed);
+				drive.moveForward(300, 300);
 			}
-
-			if (rSpeed < 0) {
-				drive.rightBackward(rSpeed);
-			} else {
-				if(timestamp == 0)
-				{
-					timestamp = System.currentTimeMillis();
-					//Sound.beep();
-					
-				} else if(Math.abs(timestamp - System.currentTimeMillis()) > 1000 ) {
-					Sound.buzz();
-					LCD.drawString("Break!", 0, 5);
-					timestamp = 0;
-					drive.stop();
-					LineFollowing = false;
-					break;
-					//Delay.msDelay(000);
-					/*while(!lineFound()) {
-						if(search > 18) {
-							LCD.drawString("Line not Found!", 0, 1);
-							deg = 0;
-							break;
-						}
-						LCD.drawString("Looking for Line...", 0, 1);
-						search++;
-					}*/
-				}
-				drive.setSpeedRightMotor(rSpeed);
+			if (((System.nanoTime() - algorithmStart) / 1000000000.0f) > 6) {
+				end();
+				break;
 			}
-			
-			//LCD.drawString("Dif: " + String.valueOf(Math.abs(lastSample - curColor)), 0, 2);
-			//LCD.drawString("Left: " + String.valueOf(lSpeed), 0, 3);
-			//LCD.drawString( "Right: " + String.valueOf(lSpeed), 0, 2);
-			counter++;
-			lastSample = curColor;
-			//LCD.drawString("Timestamp: " + String.valueOf(timestamp), 0, 2);
-			//LCD.drawString("Dif: " + String.valueOf(timestamp - System.currentTimeMillis()), 0, 4);
-			/*System.out.println();
-			System.out.println("Dif: " + String.valueOf(timestamp - System.currentTimeMillis()));*/
 		}
-		//}
 		
-		//Delay.msDelay(1000);
-		//searchLine();
-		
-		// ToDo: Move code to correct position: seesaw obstacle finished, inform GUI to start
-		// the search for a barcode
+		drive.moveDistance(500, 5);
 		GUI.PROGRAM_FINISHED_START_BARCODE = false;
 	}
 
 	public void end() {
 		drive.stopSynchronized();
-		LineFollowing = false;
+		runColorFollow = false;
 	}
 }
