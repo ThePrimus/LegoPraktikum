@@ -2,6 +2,9 @@ package parkour;
 
 import logic.Drive;
 import logic.GUI;
+import lejos.hardware.BrickFinder;
+import lejos.hardware.Keys;
+import lejos.hardware.ev3.EV3;
 import lejos.hardware.lcd.LCD;
 import lejos.hardware.motor.EV3MediumRegulatedMotor;
 import lejos.hardware.sensor.EV3UltrasonicSensor;
@@ -70,7 +73,12 @@ public class Maze {
 		sonicMotor.setAcceleration(100);
 		sonicMotor.rotate(-31);
 		sonicMotor.waitComplete();
-				
+		
+		EV3 ev3 = (EV3) BrickFinder.getLocal();
+		Keys keys = ev3.getKeys();
+		
+		keys.waitForAnyPress();
+		
 		SampleProvider distanceProvider = sonicSensor.getDistanceMode();
 				
 		long algorithmStart = System.nanoTime(); 	// Stores when the algorithm starts
@@ -118,6 +126,7 @@ public class Maze {
 				sonicMotor.waitComplete();
 				drive.stopSynchronized();
 				drive.moveDistance(300, -12);
+				drive.turnRight(10);
 				
 				programRunning = false;
 				GUI.PROGRAM_FINISHED_START_BARCODE = true;

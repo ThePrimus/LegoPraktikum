@@ -135,7 +135,7 @@ public class FinalSpurt {
 				drive.moveForward(650, 800);
 			} else if (sonicSensorResults[0] > DISTANCE_TO_CORRECT_RIGHT
 						&& sonicSensorResults[0] < 0.45f) {
-				drive.moveForward(800, 650);
+				drive.moveForward(720, 650);
 			} else {
 				drive.moveForward(700, 800);
 			}

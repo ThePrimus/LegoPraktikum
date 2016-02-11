@@ -86,7 +86,7 @@ public class LineFollowing {
 			}
 			if(!found)
 			{
-				drive.turnRight(-50, true);
+				drive.turnRight(-75, true);
 			}
 			
 		}
@@ -108,6 +108,7 @@ public class LineFollowing {
 		float[] colorResults = new float[colorProvider.sampleSize()];
 		//int counter = 0;
 		Sound.twoBeeps();
+		drive.moveForward(400);
 		while (!terminate) {
 			//LCD.drawString("Counter: " +  String.valueOf(counter) ,0, 2);
 			// get color of line
@@ -147,7 +148,7 @@ public class LineFollowing {
 					timestamp = System.nanoTime();
 					//Sound.beep();
 					
-				} else if(((System.nanoTime() - timestamp) / 1000000000.0f) > 1.4) {
+				} else if(((System.nanoTime() - timestamp) / 1000000000.0f) > 1) { //1.4
 					drive.stopSynchronized();
 					Sound.beep();
 					//LCD.drawString("Break!", 0, 5);
@@ -156,7 +157,7 @@ public class LineFollowing {
 						drive.turnLeft(-110, true);
 						break;
 					} else {
-						drive.turnLeft(-90, false);
+						drive.turnLeft(-85, false);
 					}
 					
 					if(!searchLine())

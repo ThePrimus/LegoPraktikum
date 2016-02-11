@@ -364,9 +364,6 @@ public class GUI {
 	private void seesaw() {
 		this.seesaw = new Seesaw(drive, colorSensor);
 		seesaw.run();
-		
-		//this.seesaw = new Seesaw(drive, colorSensor);
-		//seesaw.run();
 
 		// Start search for barcode.
 		if (RACE_MODE && PROGRAM_FINISHED_START_BARCODE) {
@@ -457,7 +454,10 @@ public class GUI {
 				bridge();
 			} else if (barcode == PROGRAM_SEESAW) {
 				//seesaw();
-				followLine(false);
+				
+				// Seesaw can be solved with simple line following.
+				// No extra obstacle program needed
+				followLine(false);		
 			} else if (barcode == PROGRAM_CHAIN_BRDIGE) {
 				//followLine(true);
 				chainBridge();

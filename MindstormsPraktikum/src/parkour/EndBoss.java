@@ -20,7 +20,7 @@ public class EndBoss {
 	/*
 	 * Distance to the right wall when the robot movement needs to be corrected.
 	 */
-	private static final float DISTANCE_TO_CORRECT_MOVEMENT = 0.16f;
+	private static final float DISTANCE_TO_CORRECT_MOVEMENT = 0.05f;
 	
 	/*
 	 * The finish is marked by a red line.
@@ -82,9 +82,9 @@ public class EndBoss {
 		// Start moving forward and begin playing music
 		this.drive.moveForward(drive.maxSpeed() * 0.9f, drive.maxSpeed() * 0.75f);
 		
-		//gameOfThrones = new MusicPlay();
-		//Thread musicThread = new Thread(gameOfThrones);
-		//musicThread.start();
+		gameOfThrones = new MusicPlay();
+		Thread musicThread = new Thread(gameOfThrones);
+		musicThread.start();
 		
 		while (programRunning) {
 		

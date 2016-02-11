@@ -70,6 +70,10 @@ public class Barcode {
 		
 		float currentColorValue = 0;
 		
+		if (moveRobot) {
+			drive.moveForward(250);	
+		}
+		
 		while (programRunning) {
 			
 			// Getting the current color value from the sensor
@@ -83,7 +87,6 @@ public class Barcode {
 			LCD.drawInt(barcode, 2, "Barcode:".length(), 1);
 			//System.out.println("Barcode = " + barcode);
 			
-			// If barcode thread running parallel to obstacle, the obstacle thread handles the movement of the robot
 			if (moveRobot) {
 				drive.moveForward(250);		// Start robot movement with 30% speed
 			}

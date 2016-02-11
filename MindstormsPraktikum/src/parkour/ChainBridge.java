@@ -121,7 +121,7 @@ public class ChainBridge {
 			if (touchSensorResultsLeft[0] == 1 && touchSensorResultsRight[0] == 1) {
 				// Touch sensors pressed, drive back a bit and turn right
 				drive.moveDistance(400, -15);
-				drive.turnRight(90);
+				drive.turnRight(90, true);
 				drive.moveForward(400);
 				drive.moveDistance(400, 40);
 				
